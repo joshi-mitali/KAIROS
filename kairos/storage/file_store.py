@@ -118,6 +118,19 @@ class FileStore:
         logger.info(f"Exported {len(records)} records to Parquet at {safe_path.relative_to(self.base_dir.parent)}")
         return safe_path
 
+    def export_jsonl(self, domain: str, filename: str, records: List[Dict[str, Any]]) -> Path:
+        """Exports a list of dictionary records to a newline-delimited JSON (JSONL) file."""
+        domain_dir = self.processed_dir / domain
+        domain_dir.mkdir(parents=True, exist_ok=True)
+        safe_path = resolve_safe_path(domain_dir, filename)
+
+        with open(safe_path, "w", encoding="utf-8") as f:
+            for r in records:
+                f.write(json.dumps(r, default=str) + "\n")
+
+        logger.info(f"Exported {len(records)} records to JSONL at {safe_path.relative_to(self.base_dir.parent)}")
+        return safe_path
+
     def save_manifest(self, manifest: DatasetManifest) -> Path:
         """Persists a dataset manifest to data/manifests/{manifest_id}.json."""
         manifest_filename = f"{manifest.manifest_id}.json"

@@ -17,6 +17,7 @@ class HistoricalBar(BaseModel):
     adjusted_close: Optional[float] = Field(default=None, gt=0.0, description="Corporate-action adjusted close")
     volume: int = Field(..., ge=0, description="Trading volume")
     source: str = Field(default="yfinance_mcp", description="Source MCP server provider")
+    provenance: str = Field(default="LIVE_YAHOO_FINANCE_MCP", description="Data provenance classification")
     retrieval_timestamp: str = Field(
         default_factory=lambda: datetime.now(timezone.utc).isoformat()
     )

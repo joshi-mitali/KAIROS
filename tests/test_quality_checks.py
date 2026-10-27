@@ -1,6 +1,7 @@
 """Unit tests for DataQualityChecker."""
 
 import json
+import tempfile
 import unittest
 from pathlib import Path
 
@@ -10,7 +11,11 @@ from kairos.validation.quality_checks import DataQualityChecker
 class TestQualityChecks(unittest.TestCase):
 
     def setUp(self):
-        self.checker = DataQualityChecker()
+        self.tmp_dir = tempfile.TemporaryDirectory()
+        self.checker = DataQualityChecker(reports_dir=Path(self.tmp_dir.name))
+
+    def tearDown(self):
+        self.tmp_dir.cleanup()
 
     def test_quality_analysis_clean(self):
         records = [

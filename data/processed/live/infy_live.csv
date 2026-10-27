@@ -1,2 +1,2 @@
-symbol,bid,ask,last_price,open,day_high,day_low,previous_close,volume,currency,exchange,quote_delay,is_live_data,source,provenance,retrieval_timestamp
-INFY.NS,1161.37,1162.53,1161.95,1151.95,1165.8,1129.3,1166.0,9974111,INR,NSE,15_MIN_DELAYED,True,yfinance_mcp,LIVE_YAHOO_FINANCE_MCP,2026-10-27T08:26:39.749215+00:00
+symbol,last_price,quote_timestamp,volume,day_open,open,day_high,day_low,previous_close,bid,ask,currency,exchange,provider_name,quote_delay,is_live_data,source,provenance,retrieval_timestamp
+INFY,1163.0,2026-10-27T14:06:15.770326+00:00,20116414,1151.95,1151.95,1165.8,1129.3,1166.0,1162.42,1163.58,INR,NSE,yfinance_mcp,15_MIN_DELAYED,True,yfinance_mcp,LIVE_YAHOO_FINANCE_MCP,2026-10-27T14:06:15.770326+00:00

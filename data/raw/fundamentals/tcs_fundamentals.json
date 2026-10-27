@@ -12,7 +12,7 @@
     "profit_margins": 0.1843,
     "source": "yfinance_mcp",
     "provenance": "LIVE_YAHOO_FINANCE_MCP",
-    "retrieval_timestamp": "2026-10-27T08:26:41.198889+00:00"
+    "retrieval_timestamp": "2026-10-27T14:06:19.963790+00:00"
   },
   "facts": [
     {
@@ -25,7 +25,7 @@
       "fiscal_period": "FY",
       "source": "yfinance_mcp",
       "provenance": "LIVE_YAHOO_FINANCE_MCP",
-      "retrieval_timestamp": "2026-10-27T08:26:41.198889+00:00"
+      "retrieval_timestamp": "2026-10-27T14:06:19.963790+00:00"
     },
     {
       "ticker": "TCS",
@@ -37,7 +37,7 @@
       "fiscal_period": "FY",
       "source": "yfinance_mcp",
       "provenance": "LIVE_YAHOO_FINANCE_MCP",
-      "retrieval_timestamp": "2026-10-27T08:26:41.198889+00:00"
+      "retrieval_timestamp": "2026-10-27T14:06:19.963790+00:00"
     },
     {
       "ticker": "TCS",
@@ -49,7 +49,7 @@
       "fiscal_period": "FY",
       "source": "yfinance_mcp",
       "provenance": "LIVE_YAHOO_FINANCE_MCP",
-      "retrieval_timestamp": "2026-10-27T08:26:41.198889+00:00"
+      "retrieval_timestamp": "2026-10-27T14:06:19.963790+00:00"
     },
     {
       "ticker": "TCS",
@@ -61,7 +61,7 @@
       "fiscal_period": "FY",
       "source": "yfinance_mcp",
       "provenance": "LIVE_YAHOO_FINANCE_MCP",
-      "retrieval_timestamp": "2026-10-27T08:26:41.198889+00:00"
+      "retrieval_timestamp": "2026-10-27T14:06:19.963790+00:00"
     },
     {
       "ticker": "TCS",
@@ -73,7 +73,7 @@
       "fiscal_period": "FY",
       "source": "yfinance_mcp",
       "provenance": "LIVE_YAHOO_FINANCE_MCP",
-      "retrieval_timestamp": "2026-10-27T08:26:41.198889+00:00"
+      "retrieval_timestamp": "2026-10-27T14:06:19.963790+00:00"
     }
   ],
   "provenance": "LIVE_YAHOO_FINANCE_MCP"

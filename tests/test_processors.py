@@ -1,7 +1,10 @@
 """Unit tests for processors and indicators."""
 
+import tempfile
 import unittest
 from pathlib import Path
+
+from kairos.storage.file_store import FileStore
 
 from kairos.processors.clean_fundamentals import CleanFundamentalsProcessor
 from kairos.processors.clean_market import (
@@ -43,19 +46,21 @@ class TestProcessors(unittest.TestCase):
         self.assertIsNotNone(hist[-1])
 
     def test_market_deduplication_and_export(self):
-        processor = CleanMarketProcessor()
-        b1 = MarketBar(timestamp="2026-10-20", open=100.0, high=105.0, low=99.0, close=104.0, volume=1000)
-        b2 = MarketBar(timestamp="2026-10-20", open=100.0, high=105.0, low=99.0, close=104.0, volume=1000)  # duplicate
-        b3 = MarketBar(timestamp="2026-10-21", open=104.0, high=108.0, low=103.0, close=107.0, volume=2000)
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            fs = FileStore(base_dir=tmp_dir)
+            processor = CleanMarketProcessor(file_store=fs)
+            b1 = MarketBar(timestamp="2026-10-20", open=100.0, high=105.0, low=99.0, close=104.0, volume=1000)
+            b2 = MarketBar(timestamp="2026-10-20", open=100.0, high=105.0, low=99.0, close=104.0, volume=1000)  # duplicate
+            b3 = MarketBar(timestamp="2026-10-21", open=104.0, high=108.0, low=103.0, close=107.0, volume=2000)
 
-        payload = MarketDataPayload(ticker="TEST", bars=[b1, b2, b3])
-        res = processor.process_and_export(payload)
+            payload = MarketDataPayload(ticker="TEST", bars=[b1, b2, b3])
+            res = processor.process_and_export(payload)
 
-        self.assertEqual(res["total_bars"], 3)
-        self.assertEqual(res["clean_bars"], 2)
-        self.assertEqual(res["duplicates_removed"], 1)
-        self.assertTrue(Path(res["csv_path"]).exists())
-        self.assertTrue(Path(res["parquet_path"]).exists())
+            self.assertEqual(res["total_bars"], 3)
+            self.assertEqual(res["clean_bars"], 2)
+            self.assertEqual(res["duplicates_removed"], 1)
+            self.assertTrue(Path(res["csv_path"]).exists())
+            self.assertTrue(Path(res["parquet_path"]).exists())
 
     def test_reddit_pii_redaction(self):
         raw_text = "Contact trader@wallstreet.com or call 555-123-4567 regarding u/wallstreet_king"
@@ -68,27 +73,29 @@ class TestProcessors(unittest.TestCase):
         self.assertIn("[REDACTED_USER]", redacted)
 
     def test_news_deduplication(self):
-        processor = CleanNewsProcessor()
-        a1 = NewsArticle(
-            headline="NVIDIA Expands AI Chips",
-            summary="New GPU announcements",
-            source="TechNews",
-            url="https://technews.com/nvidia-ai-1",
-            datetime="2026-10-25",
-        )
-        a2 = NewsArticle(
-            headline="NVIDIA Expands AI Chips",
-            summary="Identical story",
-            source="TechNews",
-            url="https://technews.com/nvidia-ai-1",  # duplicate URL
-            datetime="2026-10-25",
-        )
-        payload = NewsPayload(ticker="NVDA", articles=[a1, a2])
-        res = processor.process_and_export(payload)
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            fs = FileStore(base_dir=tmp_dir)
+            processor = CleanNewsProcessor(file_store=fs)
+            a1 = NewsArticle(
+                headline="Reliance Expands Retail Network",
+                summary="New store announcements",
+                source="The Economic Times",
+                url="https://economictimes.indiatimes.com/markets/stocks/news",
+                datetime="2026-10-25",
+            )
+            a2 = NewsArticle(
+                headline="Reliance Expands Retail Network",
+                summary="Identical story",
+                source="The Economic Times",
+                url="https://economictimes.indiatimes.com/markets/stocks/news",  # duplicate URL
+                datetime="2026-10-25",
+            )
+            payload = NewsPayload(ticker="RELIANCE", articles=[a1, a2])
+            res = processor.process_and_export(payload)
 
-        self.assertEqual(res["total_articles"], 2)
-        self.assertEqual(res["clean_articles"], 1)
-        self.assertEqual(res["duplicates_removed"], 1)
+            self.assertEqual(res["total_articles"], 2)
+            self.assertEqual(res["clean_articles"], 1)
+            self.assertEqual(res["duplicates_removed"], 1)
 
 
 if __name__ == "__main__":

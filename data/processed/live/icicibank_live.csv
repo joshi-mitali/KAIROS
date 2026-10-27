@@ -1,2 +1,2 @@
-symbol,bid,ask,last_price,open,day_high,day_low,previous_close,volume,currency,exchange,quote_delay,is_live_data,source,provenance,retrieval_timestamp
-ICICIBANK.NS,1380.61,1381.99,1381.3,1400.9,1400.9,1380.0,1403.0,7796893,INR,NSE,15_MIN_DELAYED,True,yfinance_mcp,LIVE_YAHOO_FINANCE_MCP,2026-10-27T08:26:39.749215+00:00
+symbol,last_price,quote_timestamp,volume,day_open,open,day_high,day_low,previous_close,bid,ask,currency,exchange,provider_name,quote_delay,is_live_data,source,provenance,retrieval_timestamp
+ICICIBANK,1386.9,2026-10-27T14:06:15.770326+00:00,15877198,1400.9,1400.9,1400.9,1377.6,1403.0,1386.21,1387.59,INR,NSE,yfinance_mcp,15_MIN_DELAYED,True,yfinance_mcp,LIVE_YAHOO_FINANCE_MCP,2026-10-27T14:06:15.770326+00:00

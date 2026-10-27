@@ -1,18 +1,21 @@
 {
-  "symbol": "ICICIBANK.NS",
-  "bid": 1380.61,
-  "ask": 1381.99,
-  "last_price": 1381.3,
+  "symbol": "ICICIBANK",
+  "last_price": 1386.9,
+  "quote_timestamp": "2026-10-27T14:06:15.770326+00:00",
+  "volume": 15877198,
+  "day_open": 1400.9,
   "open": 1400.9,
   "day_high": 1400.9,
-  "day_low": 1380.0,
+  "day_low": 1377.6,
   "previous_close": 1403.0,
-  "volume": 7796893,
+  "bid": 1386.21,
+  "ask": 1387.59,
   "currency": "INR",
   "exchange": "NSE",
+  "provider_name": "yfinance_mcp",
   "quote_delay": "15_MIN_DELAYED",
   "is_live_data": true,
   "source": "yfinance_mcp",
   "provenance": "LIVE_YAHOO_FINANCE_MCP",
-  "retrieval_timestamp": "2026-10-27T08:26:39.749215+00:00"
+  "retrieval_timestamp": "2026-10-27T14:06:15.770326+00:00"
 }

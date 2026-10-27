@@ -13,7 +13,7 @@ class LiveQuote(BaseModel):
     last_price: float = Field(..., gt=0.0, description="Last traded price in INR")
     quote_timestamp: str = Field(..., description="Timestamp of the exchange quote")
     volume: Optional[int] = Field(default=None, ge=0, description="Cumulative day volume")
-    day_open: Optional[float] = Field(default=None, gt=0.0, description="Day opening price")
+    day_open: Optional[float] = Field(default=None, gt=0.0, description="Day opening price", alias="open")
     day_high: Optional[float] = Field(default=None, gt=0.0, description="Day high price")
     day_low: Optional[float] = Field(default=None, gt=0.0, description="Day low price")
     previous_close: Optional[float] = Field(default=None, gt=0.0, description="Previous session closing price")
@@ -30,6 +30,8 @@ class LiveQuote(BaseModel):
         default_factory=lambda: datetime.now(timezone.utc).isoformat(),
         description="ISO timestamp when ingested"
     )
+
+    model_config = {"populate_by_name": True}
 
     @field_validator("symbol")
     @classmethod

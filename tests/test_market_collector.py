@@ -1,16 +1,23 @@
 """Unit tests for Indian equities market collectors."""
 
+import tempfile
 import unittest
 from kairos.collectors.history_collector import HistoryCollector
 from kairos.collectors.live_quote_collector import LiveQuoteCollector
 from kairos.schemas.common import QuoteDelayClassification
+from kairos.storage.file_store import FileStore
 
 
 class TestIndianMarketCollectors(unittest.TestCase):
 
     def setUp(self):
-        self.history_collector = HistoryCollector()
-        self.live_collector = LiveQuoteCollector()
+        self.tmp_dir = tempfile.TemporaryDirectory()
+        self.file_store = FileStore(base_dir=self.tmp_dir.name)
+        self.history_collector = HistoryCollector(file_store=self.file_store)
+        self.live_collector = LiveQuoteCollector(file_store=self.file_store)
+
+    def tearDown(self):
+        self.tmp_dir.cleanup()
 
     def test_live_quote_collection_reliance(self):
         payload = self.live_collector.fetch_live_quote("RELIANCE")
