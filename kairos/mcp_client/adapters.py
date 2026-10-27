@@ -129,3 +129,4 @@ class RedditMCPAdapter:
             tool_name="search_reddit",
             arguments={"query": query, "subreddit": subreddit},
         )
+

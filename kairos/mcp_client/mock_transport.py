@@ -46,42 +46,44 @@ class MockMCPTransport:
         clean_sym = symbol.replace(".NS", "").replace(".BO", "")
         base_price = self.BASE_PRICES.get(symbol, self.BASE_PRICES.get(clean_sym, 1000.0))
 
-        if tool_name == "get_historical_stock_prices":
+        if tool_name in ("get_historical_stock_prices", "get_stock_history"):
             period = args.get("period", "10y")
             interval = args.get("interval", "1d")
 
-            # Determine number of trading days (10 years = ~2470 trading days)
-            days_count = 2470 if "10y" in period or "max" in period else (252 if "1y" in period else 100)
+            # 10 years date span ending at current date in October 2026
+            start_dt = datetime(2016, 10, 27, tzinfo=timezone.utc)
+            end_dt = datetime(2026, 10, 27, tzinfo=timezone.utc)
 
             bars = []
-            start_dt = datetime(2014, 10, 27, tzinfo=timezone.utc)
             curr_price = base_price * 0.45  # 10 years ago starting price
+            curr_dt = start_dt
+            day_idx = 0
 
-            for i in range(days_count):
-                dt = start_dt + timedelta(days=int(i * 1.47))
+            while curr_dt <= end_dt:
                 # Skip weekends
-                if dt.weekday() >= 5:
-                    continue
+                if curr_dt.weekday() < 5:
+                    drift = (day_idx % 7 - 3) * 0.008
+                    curr_price = max(50.0, curr_price * (1.0 + drift + 0.0003))
 
-                drift = (i % 7 - 3) * 0.008
-                curr_price = max(50.0, curr_price * (1.0 + drift + 0.0003))
+                    op = round(curr_price * 0.998, 2)
+                    cl = round(curr_price, 2)
+                    hi = round(max(op, cl) * 1.012, 2)
+                    lo = round(min(op, cl) * 0.988, 2)
+                    adj_cl = round(cl * (0.85 + (day_idx / 2600.0) * 0.15), 2)
+                    vol = int(1500000 + (day_idx % 10) * 120000)
 
-                op = round(curr_price * 0.998, 2)
-                cl = round(curr_price, 2)
-                hi = round(max(op, cl) * 1.012, 2)
-                lo = round(min(op, cl) * 0.988, 2)
-                adj_cl = round(cl * (0.85 + (i / days_count) * 0.15), 2)
-                vol = int(1500000 + (i % 10) * 120000)
-
-                bars.append({
-                    "date": dt.strftime("%Y-%m-%d"),
-                    "open": op,
-                    "high": hi,
-                    "low": lo,
-                    "close": cl,
-                    "adjusted_close": adj_cl,
-                    "volume": vol,
-                })
+                    bars.append({
+                        "date": curr_dt.strftime("%Y-%m-%d"),
+                        "open": op,
+                        "high": hi,
+                        "low": lo,
+                        "close": cl,
+                        "adjusted_close": adj_cl,
+                        "volume": vol,
+                        "provenance": "SYNTHETIC_FIXTURE",
+                    })
+                    day_idx += 1
+                curr_dt += timedelta(days=1)
 
             return {
                 "symbol": symbol,
@@ -89,6 +91,8 @@ class MockMCPTransport:
                 "period": period,
                 "count": len(bars),
                 "bars": bars,
+                "data": bars,
+                "provenance": "SYNTHETIC_FIXTURE",
             }
 
         elif tool_name == "get_stock_info":
@@ -108,7 +112,7 @@ class MockMCPTransport:
                 "quoteDelay": "15_MIN_DELAYED",
             }
 
-        elif tool_name == "get_financial_statement":
+        elif tool_name in ("get_financial_statement", "get_income_statement", "get_balance_sheet", "get_cash_flow"):
             return {
                 "symbol": symbol,
                 "currency": "INR",
@@ -121,9 +125,10 @@ class MockMCPTransport:
                     "TotalLiabilities": 8200000000000 if clean_sym == "RELIANCE" else 550000000000,
                     "OperatingCashFlow": 1400000000000 if clean_sym == "RELIANCE" else 480000000000,
                 },
+                "provenance": "SYNTHETIC_FIXTURE",
             }
 
-        elif tool_name == "get_news":
+        elif tool_name in ("get_news", "get_stock_news"):
             return {
                 "symbol": symbol,
                 "news": [
@@ -154,7 +159,7 @@ class MockMCPTransport:
         symbol = args.get("symbol", "RELIANCE").upper().replace(".NS", "").replace(".BO", "")
         base_price = self.BASE_PRICES.get(symbol, 1000.0)
 
-        if tool_name == "stock_quote":
+        if tool_name in ("stock_quote", "cm_get_stock_quote"):
             return {
                 "symbol": symbol,
                 "lastPrice": base_price,
@@ -168,6 +173,7 @@ class MockMCPTransport:
                 "timestamp": datetime.now(timezone.utc).strftime("%d-%b-%Y %H:%M:%S"),
                 "isRealTime": True,
                 "marketStatus": "Open",
+                "provenance": "SYNTHETIC_FIXTURE",
             }
         elif tool_name == "market_status":
             return {
@@ -259,3 +265,4 @@ class MockMCPTransport:
             },
         ]
         return {"subreddit": sub, "posts": posts}
+

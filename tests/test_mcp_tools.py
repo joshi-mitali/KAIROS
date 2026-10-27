@@ -30,9 +30,11 @@ class TestMCPClientIntegration(unittest.TestCase):
         res = self.yf_adapter.get_historical_stock_prices("RELIANCE.NS", period="10y")
         self.assertIn("bars", res)
         self.assertGreater(len(res["bars"]), 1000)
-        # Check first bar date to verify ~10-year span
+        # Check first and latest bar dates to verify ~10-year span through 2026
         first_date = res["bars"][0]["date"]
-        self.assertTrue(first_date.startswith("2014"))
+        latest_date = res["bars"][-1]["date"]
+        self.assertTrue(first_date.startswith("2016") or first_date.startswith("2014"))
+        self.assertTrue(latest_date.startswith("2026"))
 
     def test_yfinance_mcp_stock_info(self):
         res = self.yf_adapter.get_stock_info("TCS.NS")

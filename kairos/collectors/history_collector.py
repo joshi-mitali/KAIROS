@@ -193,3 +193,4 @@ class HistoryCollector:
             macd=latest_macd,
             interval=interval,
         )
+

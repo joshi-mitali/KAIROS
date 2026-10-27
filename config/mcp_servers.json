@@ -3,27 +3,38 @@
     "yfinance": {
       "command": "uvx",
       "args": ["yfinance-mcp-server"],
+      "fallback_command": ".venv/bin/yfinance-mcp-server",
       "env": {},
       "tools": [
+        "get_stock_history",
         "get_historical_stock_prices",
         "get_stock_info",
-        "get_financial_statement",
-        "get_news"
+        "get_income_statement",
+        "get_balance_sheet",
+        "get_cash_flow",
+        "get_stock_news",
+        "get_fast_info"
       ],
       "symbol_suffix": ".NS",
-      "description": "Primary MCP server for 10-year Indian equities historical OHLCV, financial statements, and company news."
+      "description": "Primary MCP server for 10-year Indian equities historical OHLCV, financial statements, and company news (yfinance-mcp-server via uvx / fastmcp)."
     },
     "nse": {
       "command": "nse-mcp",
+      "type": "http_jsonrpc",
+      "url": "https://mcp.nseindia.in/cmmkt/mcp",
       "args": [],
       "env": {},
       "tools": [
+        "cm_get_stock_quote",
         "stock_quote",
         "market_status",
+        "cm_get_live_gainers",
+        "cm_get_live_losers",
+        "cm_get_live_indices",
         "chart_data"
       ],
       "symbol_suffix": "",
-      "description": "National Stock Exchange of India MCP server for near real-time live quotes and session status."
+      "description": "National Stock Exchange of India official MCP server (https://mcp.nseindia.in/cmmkt/mcp) for near real-time live cash-market quotes and indices."
     },
     "alphavantage": {
       "type": "http",
@@ -34,7 +45,7 @@
         "NEWS_SENTIMENT"
       ],
       "symbol_suffix": ".BSE",
-      "description": "Alpha Vantage MCP server (evaluated; restricted to BSE symbols, 100-day limit on free tier)."
+      "description": "Alpha Vantage MCP server (evaluated; restricted to BSE symbols, 100-day limit on free tier, requires ALPHAVANTAGE_API_KEY)."
     },
     "reddit": {
       "command": "mcp-server-reddit",
@@ -47,7 +58,7 @@
         "get_subreddit_posts",
         "search_reddit"
       ],
-      "description": "Reddit MCP server for retail trading community sentiment (r/IndianStockMarket, r/IndiaInvestments)."
+      "description": "Reddit MCP server for retail trading community sentiment (r/IndianStockMarket, r/IndiaInvestments, requires OAuth API credentials)."
     }
   }
 }

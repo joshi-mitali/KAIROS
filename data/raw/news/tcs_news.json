@@ -1,23 +1,128 @@
 {
-  "symbol": "TCS.NS",
-  "news": [
+  "ticker": "TCS",
+  "count": 10,
+  "articles": [
     {
-      "title": "TCS Reports Strong Quarterly Earnings Across Retail and Enterprise Verticals",
-      "publisher": "The Economic Times",
-      "link": "https://economictimes.indiatimes.com/markets/stocks/tcs-q2-results",
-      "providerPublishTime": 1793077207
+      "article_id": "87e5f3646f7fc067",
+      "ticker": "TCS",
+      "headline": "Tata Consultancy Services Limited (TCS.NS) stock price, news, quote and history - Yahoo Finance Australia",
+      "summary": "Disclosures and market reporting on TCS published by Yahoo Finance Australia.",
+      "source": "Yahoo Finance Australia",
+      "url": "https://news.google.com/rss/articles/CBMiVEFVX3lxTFBWdmdOZjZMMXdyaFpFaVUwSzlid08zSng2ZzZZNnA3eG1LS2xpQnF6anhfbDhiaUFjZ2VMZ3dldnRGSUlONGN2SUtENk9nQ2E5TDhseA?oc=5",
+      "datetime": "Mon, 26 Oct 2026 20:07:39 GMT",
+      "provider": "google_news_rss",
+      "provenance": "LIVE_MEDIA_FEED",
+      "retrieved_at": "2026-10-27T08:26:45.710828+00:00"
     },
     {
-      "title": "FII Inflows Drive Rally in Nifty Index as TCS Rebounds",
-      "publisher": "Livemint",
-      "link": "https://www.livemint.com/market/stock-market-news/tcs-fii-inflows",
-      "providerPublishTime": 1793073607
+      "article_id": "b473d03974c0ee4e",
+      "ticker": "TCS",
+      "headline": "TCS share price surges 28% in October, hits over 7-month high; here's why - Business Standard",
+      "summary": "Disclosures and market reporting on TCS published by Business Standard.",
+      "source": "Business Standard",
+      "url": "https://news.google.com/rss/articles/CBMi0wFBVV95cUxQRHJkNU5lNUtYWnBHY1lnQ25VMjJCUEhfZ2NRLXNEdERZTFRpaFFURGZLYWw2NTduZEtGYnNRRmJxc3RUYklWVFRkdmhobndHNTlGb09Bd0lOMURPTnB3VUNXVXVlWGpWaWE2WjNfZFZzWlY5TWlsRnBJWXdKQ2tCdFhZbWZrXzJFZ0V2cXM4ZG5pZHYwVzdTOFBnUUNBeVlENjVZSW4tR1lEX1JIMzFNZFg1TGdPVlJCOVpmcmhfRkhheWltVGdHRUJXSlVSZnpUUGU00gHYAUFVX3lxTE1IcEJrS2MxQkpDandGS2FvQ3RaZVE3ZVE3X3lmVVpYeDVSd0FzWHVycmhBbGg2VHQza3E1VmZjMldJRXNqMFdYc1ZPRFhlWERCeVZpS0FGckNSTW9XbWMwekhQYVM2NmdJWVZHMXFmNXU3Y2xtQzUwZ1ZNeXRFZEZrMEMyN1E1NzIyNGpya2pRRjNpR3NSX3NxTURwbmdYRzk2WldQVFlGQnhYZ2lnNzdVZTNoQXBKMElQSGU1amU2a1BmcUN2R2txR2g1RUNDM2NpdXRxSUFDVw?oc=5",
+      "datetime": "Fri, 23 Oct 2026 07:05:35 GMT",
+      "provider": "google_news_rss",
+      "provenance": "LIVE_MEDIA_FEED",
+      "retrieved_at": "2026-10-27T08:26:45.710828+00:00"
     },
     {
-      "title": "Motilal Oswal Maintains Buy Rating on TCS with Target Price Upside",
-      "publisher": "Business Standard",
-      "link": "https://www.business-standard.com/markets/tcs-brokerage-report",
-      "providerPublishTime": 1793066407
+      "article_id": "42408ed1b7b5492c",
+      "ticker": "TCS",
+      "headline": "STOCK OF THE DAY Buy TCS Futures: SL 2475 Tgt 2535, 2545, 2575 - Expect IT shares to remain strong #StockOfTheDay #TCS #TCSFutures #ITStocks #TradingStrategy #StockMarket - Facebook",
+      "summary": "Disclosures and market reporting on TCS published by Facebook.",
+      "source": "Facebook",
+      "url": "https://news.google.com/rss/articles/CBMi4gFBVV95cUxOOFBLVU9TN3ZOQU14ZHNUWnVXMXIwMTBFSmFzWEdQODFRY19KNVNUdlp6cTdaalVlVWNGaGJzT2tpS3BsY3ZJOUtCT0FwZExEdGtXUzFOdng3U2x0VG9nazFuTVpmWWw4NUliMnNxa0dnd0owcG1sYWhBSDk3UWhCY1JpVE9Ea3RuMGx3RnV1akxRc1l2Wk9jdFBaZDktOU45VnpESHBqWmlodEZ3aEt2clhEdzBnaE9fNk05TVhyLXB6MjZoQjRIQ0ZodEhuRmxBcGFEWldZbU1FLUJKZGFBQU13?oc=5",
+      "datetime": "Fri, 23 Oct 2026 03:38:44 GMT",
+      "provider": "google_news_rss",
+      "provenance": "LIVE_MEDIA_FEED",
+      "retrieved_at": "2026-10-27T08:26:45.710828+00:00"
+    },
+    {
+      "article_id": "b0655719812b103e",
+      "ticker": "TCS",
+      "headline": "Indian IT Stocks Rise Despite Global Tech Rout: What Is Driving the Buying in TCS, Infosys and HCL Tech? - NiftyTrader",
+      "summary": "Disclosures and market reporting on TCS published by NiftyTrader.",
+      "source": "NiftyTrader",
+      "url": "https://news.google.com/rss/articles/CBMigwFBVV95cUxQUThxM3JRbkVHbGZxYVZ5TmlSOGlTS29Gd1FYUFVRYWc5M1hPQzQyaGdzcWVHQXBYbUJsLUJtNUNiTFhLZS1KZEp0YnN1UF80a0ZGT1BHSGo0Vlo1YjVkcGE0NTB0VzFsTHZ5TTREM1lRMW1jR2p6QUp5aUc2ckk1dU5ENA?oc=5",
+      "datetime": "Fri, 23 Oct 2026 09:31:18 GMT",
+      "provider": "google_news_rss",
+      "provenance": "LIVE_MEDIA_FEED",
+      "retrieved_at": "2026-10-27T08:26:45.710828+00:00"
+    },
+    {
+      "article_id": "7c070f06099e3003",
+      "ticker": "TCS",
+      "headline": "Infosys, TCS to HCL Tech: Tectonic rally in Indian IT stocks but experts recommend JUST one IT stock to buy | Target, SL - Livemint",
+      "summary": "Disclosures and market reporting on TCS published by Livemint.",
+      "source": "Livemint",
+      "url": "https://news.google.com/rss/articles/CBMikwJBVV95cUxOc2JqdGlVa0lrbXlOR3RqVldncVVVSkd2clBUTTdhdGQyRUNlZG5UV1QxTFZlNDEyOS1YS2NWRWF4TExsOW1URGFSaDJIaG0wMmx5NW5LQVEzM1Z0Y0RaTV9hTzhzWTRWQ3cxbmNGbV9oMnZHUGZSSFBNbndubVQ0VXdZYW1MRzRFSzBoUmdLRlQ5dW9HVjZaUzZiQ2lxOUNmYTZBZjNrc3ZqdjhVMTBnZTRqNWJmVGs3QnJTTlN3V3RzeFplQklyWGtpZGdTdW94N3MtS0VzMExQT3hNSWk4ZGZjYW1NRmhvdWcwY0F6RVphTTRvTWY0ZHF1eF9WbU1tQlY1cXI0d2x6RkxNNWNZYVJBTdIBmAJBVV95cUxObEZQUjk5cWJPbWIzYTZVaEpkNUJxRVkxVUx5azRsMnlJZ214OXdmMXdLWFUxQktIUEo5SV9zdjZVdXg5RGVaYlNtUTBfbFctUFg5bmhPR0duQnFoWUQ5c2U2QzZwbUVsZXNXTTk5dS1mZkJyeXl2NV9Lb2tMV3JpZ3I4WEFBV1dGVk5HRkttQjdEeS1na2s4OWV4WmJzWVdMbGxfQUdHb1VZcVNLdDd2NFZOa0tWUmhfdEo5cjZFUkFqcFNsOFlrNTB0cEpaSGxPd2ZLWEtHLTVFV25qd29oZU15SlhvQVgtcVlnWS1veWhRWVlacTQzYlBPS2g0WlNGTGR6WTUtWHpSbXBtOU9JeEtmYjNiNWFI?oc=5",
+      "datetime": "Wed, 21 Oct 2026 07:38:33 GMT",
+      "provider": "google_news_rss",
+      "provenance": "LIVE_MEDIA_FEED",
+      "retrieved_at": "2026-10-27T08:26:45.710828+00:00"
+    },
+    {
+      "article_id": "fc0720d87aff7a88",
+      "ticker": "TCS",
+      "headline": "IT stocks defy market correction: TCS, Infosys, TechM, HCLTech, Wipro rally up to 23% in a month - Fortune India",
+      "summary": "Disclosures and market reporting on TCS published by Fortune India.",
+      "source": "Fortune India",
+      "url": "https://news.google.com/rss/articles/CBMizwFBVV95cUxPXzRBOFN5OHFYVktwUXRjS2NpUlZGY1prRTRqZkVTdTJQYWJZb2k5OTY2cFNGbkNZN2tEOUprck83cjN3VmJyV01JMDJLQ2JpOHBMYy02Ny1wbHBzRE1pZk8tLVdiTFlOU0RCR0RkRkhCT2czTEJaRjlnMVU1WHdSbko1X3lYTVBodEsxalBSeVZQYlBWMGlXVmVxWEhWalRmVjZOM0g5VnVzcUJ5ZnRkRnpMY1FzaU1haG5pMnI0OEd1Mm95NkZ1US1ZZ2ktWEXSAdwBQVVfeXFMUEdEOENUclJ6d1hYdGI0N0VlcThlaXZKRTJMTG91ODJjcHo1aEQtTzRFaWVBaVJScTNEV09yLTM5ZFpIRWV6bUR6TWRJZFpQM3BQSmNkQUZiUlJnV0Z1ZlZ6Q2pXaWRSeVNNOVRJdkpUa1IwZkdEYU02RlVuR0V0RlRLdTdCMzNjOHhKTmdiZzJrSGJ3OFh0NkxiLWRzUjNObFU2QzNpOFk0eTRBSjk2STJKNlJGcjdxZWdRMk1GbkEyemp6TUpNRjNxaFhLVk5KRndIMHg3TkU3N2pmNA?oc=5",
+      "datetime": "Fri, 23 Oct 2026 05:06:38 GMT",
+      "provider": "google_news_rss",
+      "provenance": "LIVE_MEDIA_FEED",
+      "retrieved_at": "2026-10-27T08:26:45.710828+00:00"
+    },
+    {
+      "article_id": "7c54d19ebf52bb70",
+      "ticker": "TCS",
+      "headline": "Infosys, TCS, Coforge shares: IT stocks fall after Anthropic IPO filing; here's why - - IndiaIPO",
+      "summary": "Disclosures and market reporting on TCS published by IndiaIPO.",
+      "source": "IndiaIPO",
+      "url": "https://news.google.com/rss/articles/CBMitAFBVV95cUxNa2lJSlFMbVdUeHgxUWhMdGhlcEZidWZIaThLS3liZnZNUVFNZU5uWGo4TUxZTmhKSXdwYl9YR3VnVmdKV3ZDYnVYSWo0XzR0dncwanFPZWFNdEV5OWx0VTFGMjczbDA3OFJic0JiMkNZQXE1WU1lT1dDYzliWW56c1AxQXl6Vklod0UybDJUUVZrelQxdzRyUTJHa2ZvZi1sUWNEQXhBdjJUQTFCYTVnV240OXQ?oc=5",
+      "datetime": "Tue, 27 Oct 2026 06:39:24 GMT",
+      "provider": "google_news_rss",
+      "provenance": "LIVE_MEDIA_FEED",
+      "retrieved_at": "2026-10-27T08:26:45.710828+00:00"
+    },
+    {
+      "article_id": "91828df675b03847",
+      "ticker": "TCS",
+      "headline": "Investing in US stocks from India: How the \u20b910 lakh TCS threshold works - Business Today",
+      "summary": "Disclosures and market reporting on TCS published by Business Today.",
+      "source": "Business Today",
+      "url": "https://news.google.com/rss/articles/CBMixwFBVV95cUxPVVpHSm16cURfaWk4SEU1TE1Nd3BPQV9UMTJFT1c1OXRwTzNzZ2JGMGl0bzNfc0NYRVItRjB5dFdCTFlZME9mbW5UX1prcEFhR3N2aWREREVtUzhHZENiUmxIS2NhSnVWdk82Z3QzdW9BVlZ1c2I3azlGUUUzbkk4cnBIOWl3MW8tand3UnlDTUJmWFpDN2t6VjJiSzhobXp6VW02QU5nVk9MZ3VWNG1uYWdscXUzUkMtWEF4UlRndVRBXzBDeEJN0gHMAUFVX3lxTE5UbHdsTzFIVUtKbDdCQWVRdjd1bXVUUnZXQWZ3ZEY4dnI3TXBoaUJkWDgwWG0tUndzT0dJQ2kwNks0dm9pUWUxR2lyYXQ5X1N0Y2lraFMzOWFMQTBrOGtHLVFvQ002ek4zVmRNRHVheVdadVVkVWFQUElHU096U1NQcnk1YmhTcmZnMVk5YVFuS2ZCQ0xST3Nqakh4WEh4OV80Q21lUlQ5M1VVVXo1QnBSVXgzMFc3YzR3Ny1WR01Sc0xpZVBockhPd0JnSw?oc=5",
+      "datetime": "Wed, 21 Oct 2026 01:00:06 GMT",
+      "provider": "google_news_rss",
+      "provenance": "LIVE_MEDIA_FEED",
+      "retrieved_at": "2026-10-27T08:26:45.710828+00:00"
+    },
+    {
+      "article_id": "b56468cce9577c3c",
+      "ticker": "TCS",
+      "headline": "TCS, Infosys, other IT stocks drop up to 3% as Anthropic IPO sparks rally in global AI stocks - The Economic Times",
+      "summary": "Disclosures and market reporting on TCS published by The Economic Times.",
+      "source": "The Economic Times",
+      "url": "https://news.google.com/rss/articles/CBMi9wFBVV95cUxQZ2ZQVzNoZlJIdWdUUmh2ZVc1blRJX1lvOTl0bDZKVnNDVGMwOHZ1cXNocEtpTE0wUkNxVmI5QTJtSHdQc1hoV1pkbnNvUUwzRlJ3Tm5YM1liOHJHaXNjTml2WjlIWXh0SnZENEpJeC1HV2QzamMwcVQtRFVrdjBIRmNjTnRsbVpNRHRXN09tTmt3MmZ5cG84djY2czhzWHJ4b1otSDBVT0dFcWFjLUtDNE5fbmRrajNlZEdrX0dFdU9jdVd2NEdWcm1JSWVGenBlX01YeHpkWUI2eUF1SjYzaGQ4bDA1QnZWVU1Hb2htMFV1UWt1MjRn0gH8AUFVX3lxTE00VWVVYjh2YVQ2dGdRS09fWDlCV1piMXNXeTJnQ3pJZzh5U1N3X2Q4TGhaVnl5OE42N1VYd254ZW1HYnB1OFQ4T0F3YUZfN2kweWZyMXlOdjdKVl9GSEpWcmVHZlZibDZBcE10ckZKd2hLQ0FScXF1WWZVbXNBVF82VlpMdU1BeHRXVUpoTF9leWZIM29MQ2pTQzQ4YlhldFNkM0V3RzRnUVdLS2VINUR4c2RjYVJuekd2NnY0UlhBWHV5RVZFazFoNEtzQ2tMVG1XWEJfMC1namhwVHY3NWc4SEN5c3duZFFnSUxuYzZGbnRaMkUtWWIyYmZoVg?oc=5",
+      "datetime": "Tue, 27 Oct 2026 05:36:16 GMT",
+      "provider": "google_news_rss",
+      "provenance": "LIVE_MEDIA_FEED",
+      "retrieved_at": "2026-10-27T08:26:45.710828+00:00"
+    },
+    {
+      "article_id": "507adf9f2e9e148d",
+      "ticker": "TCS",
+      "headline": "Why Are TCS, Infosys, Coforge & Other IT Stocks Rising Today? Nifty IT Soars 4%; Key Reasons Behind IT Rally - Goodreturns",
+      "summary": "Disclosures and market reporting on TCS published by Goodreturns.",
+      "source": "Goodreturns",
+      "url": "https://news.google.com/rss/articles/CBMi2AFBVV95cUxNNk9JVmlWd0dWdnNHdEdfa2NXd0xHTEdZTWF5dHhnZE9nak5ZYVZzUnlTa21sTENpWHNHRHF4UUVSLWJKTHVBUkxRYnlHblJxeHpOZGtreE1pQ1NORjZScmZ0WkJ1dFBIaHMxZzRPZFpTS0RtMzlCckJBLWRPcm9rbGtrU09UaVUxU2FzQUFvZjRlYzQ1RXZKWGZ6RE1PQVFheGNVNk1PZjJBLW9USnhMS25keWdxbTYzZTRwbEFmLVVWNXRkaFF0dllkZTVYZ2pSOWNUUUN0dmE?oc=5",
+      "datetime": "Sun, 25 Oct 2026 17:59:49 GMT",
+      "provider": "google_news_rss",
+      "provenance": "LIVE_MEDIA_FEED",
+      "retrieved_at": "2026-10-27T08:26:45.710828+00:00"
     }
-  ]
+  ],
+  "provenance": "LIVE_MEDIA_FEED",
+  "retrieved_at": "2026-10-27T08:26:45.710828+00:00"
 }

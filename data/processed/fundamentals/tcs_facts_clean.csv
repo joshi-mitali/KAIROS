@@ -1,6 +1,6 @@
-ticker,cik,company_name,fact_name,taxonomy,value,unit,fiscal_year,fiscal_period,filing_date,accession_number,source,retrieval_timestamp
-TCS,,TCS INDIA LTD,TotalRevenue,mca-ind-as,2400000000000.0,INR,2025,FY,,,yfinance_mcp,2026-10-27T06:00:07.290652+00:00
-TCS,,TCS INDIA LTD,NetIncome,mca-ind-as,460000000000.0,INR,2025,FY,,,yfinance_mcp,2026-10-27T06:00:07.290652+00:00
-TCS,,TCS INDIA LTD,TotalAssets,mca-ind-as,1500000000000.0,INR,2025,FY,,,yfinance_mcp,2026-10-27T06:00:07.290652+00:00
-TCS,,TCS INDIA LTD,TotalLiabilities,mca-ind-as,550000000000.0,INR,2025,FY,,,yfinance_mcp,2026-10-27T06:00:07.290652+00:00
-TCS,,TCS INDIA LTD,OperatingCashFlow,mca-ind-as,480000000000.0,INR,2025,FY,,,yfinance_mcp,2026-10-27T06:00:07.290652+00:00
+ticker,fact_name,taxonomy,value,unit,fiscal_year,fiscal_period,source,provenance,retrieval_timestamp
+TCS,TotalRevenue,mca-ind-as,2670210000000.0,INR,2025,FY,yfinance_mcp,LIVE_YAHOO_FINANCE_MCP,2026-10-27T08:26:41.198889+00:00
+TCS,NetIncome,mca-ind-as,492100000000.0,INR,2025,FY,yfinance_mcp,LIVE_YAHOO_FINANCE_MCP,2026-10-27T08:26:41.198889+00:00
+TCS,TotalAssets,mca-ind-as,1823720000000.0,INR,2025,FY,yfinance_mcp,LIVE_YAHOO_FINANCE_MCP,2026-10-27T08:26:41.198889+00:00
+TCS,TotalLiabilities,mca-ind-as,738940000000.0,INR,2025,FY,yfinance_mcp,LIVE_YAHOO_FINANCE_MCP,2026-10-27T08:26:41.198889+00:00
+TCS,OperatingCashFlow,mca-ind-as,520940000000.0,INR,2025,FY,yfinance_mcp,LIVE_YAHOO_FINANCE_MCP,2026-10-27T08:26:41.198889+00:00

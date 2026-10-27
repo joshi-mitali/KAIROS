@@ -76,6 +76,11 @@ class LiveQuoteCollector:
         # Save raw payload
         self.file_store.save_raw("live", f"{clean_symbol.lower()}_live.json", quote_data)
 
+        # Determine provenance
+        prov = quote_data.get("provenance")
+        if not prov:
+            prov = "LIVE_NSE_MCP" if provider_name == "nse_mcp" else "LIVE_YAHOO_FINANCE_MCP"
+
         # Normalize to Pydantic model
         quote = LiveQuote(
             symbol=clean_symbol,
@@ -88,6 +93,7 @@ class LiveQuoteCollector:
             previous_close=float(quote_data["previousClose"]) if quote_data.get("previousClose") else None,
             provider_name=provider_name,
             quote_delay=delay_class,
+            provenance=prov,
         )
 
         payload = LiveQuotePayload(
@@ -102,3 +108,4 @@ class LiveQuoteCollector:
         self.file_store.export_parquet("live", f"{clean_symbol.lower()}_live.parquet", record)
 
         return payload
+

@@ -1,2 +1,2 @@
-ticker,cik,company_name,market_cap,pe_ratio,forward_pe,debt_to_equity,profit_margins,revenue,net_income,total_assets,total_liabilities,operating_cash_flow,source,retrieval_timestamp
-HDFCBANK,,HDFCBANK INDIA LTD,,,,0.5789,0.1917,2400000000000.0,460000000000.0,1500000000000.0,550000000000.0,480000000000.0,yfinance_mcp,2026-10-27T06:00:07.295026+00:00
+ticker,company_name,revenue,net_income,total_assets,total_liabilities,operating_cash_flow,debt_to_equity,profit_margins,source,provenance,retrieval_timestamp
+HDFCBANK,HDFCBANK INDIA LTD,2495617500000.0,704793400000.0,52621193200000.0,43460498500000.0,1118559900000.0,4.7442,0.2824,yfinance_mcp,LIVE_YAHOO_FINANCE_MCP,2026-10-27T08:26:41.198889+00:00

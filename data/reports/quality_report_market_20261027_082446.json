@@ -1,0 +1,31 @@
+{
+  "report_id": "quality_report_market_20261027_082446",
+  "run_id": "run_20261027_082446_f9915e",
+  "domain": "market",
+  "source_provider": "yfinance_mcp",
+  "data_classification": "10Y_HISTORICAL_OHLCV",
+  "total_records": 2612,
+  "valid_records": 2612,
+  "invalid_records": 0,
+  "duplicate_records": 0,
+  "missing_value_percentages": {
+    "date": 0.0,
+    "symbol": 0.0,
+    "open": 0.0,
+    "high": 0.0,
+    "low": 0.0,
+    "close": 0.0,
+    "volume": 0.0
+  },
+  "symbols": [
+    "TCS.NS"
+  ],
+  "date_coverage_start": "2016-10-27",
+  "date_coverage_end": "2026-10-27",
+  "coverage_years": 10.0,
+  "is_ten_year_complete": true,
+  "quote_delay_classification": null,
+  "api_warnings": [],
+  "quarantine_file": null,
+  "created_at": "2026-10-27T08:24:46.107649+00:00"
+}

@@ -1,13 +1,80 @@
 {
-  "symbol": "ICICIBANK.NS",
-  "currency": "INR",
-  "statement": "income",
-  "quarterly": false,
-  "financials": {
-    "TotalRevenue": 2400000000000,
-    "NetIncome": 460000000000,
-    "TotalAssets": 1500000000000,
-    "TotalLiabilities": 550000000000,
-    "OperatingCashFlow": 480000000000
-  }
+  "ticker": "ICICIBANK",
+  "summary": {
+    "ticker": "ICICIBANK",
+    "company_name": "ICICIBANK INDIA LTD",
+    "revenue": 2234071181000.0,
+    "net_income": 542077028000.0,
+    "total_assets": 29144979720000.0,
+    "total_liabilities": 25349265944000.0,
+    "operating_cash_flow": 673254189000.0,
+    "debt_to_equity": 6.6784,
+    "profit_margins": 0.2426,
+    "source": "yfinance_mcp",
+    "provenance": "LIVE_YAHOO_FINANCE_MCP",
+    "retrieval_timestamp": "2026-10-27T08:26:41.198889+00:00"
+  },
+  "facts": [
+    {
+      "ticker": "ICICIBANK",
+      "fact_name": "TotalRevenue",
+      "taxonomy": "mca-ind-as",
+      "value": 2234071181000.0,
+      "unit": "INR",
+      "fiscal_year": 2025,
+      "fiscal_period": "FY",
+      "source": "yfinance_mcp",
+      "provenance": "LIVE_YAHOO_FINANCE_MCP",
+      "retrieval_timestamp": "2026-10-27T08:26:41.198889+00:00"
+    },
+    {
+      "ticker": "ICICIBANK",
+      "fact_name": "NetIncome",
+      "taxonomy": "mca-ind-as",
+      "value": 542077028000.0,
+      "unit": "INR",
+      "fiscal_year": 2025,
+      "fiscal_period": "FY",
+      "source": "yfinance_mcp",
+      "provenance": "LIVE_YAHOO_FINANCE_MCP",
+      "retrieval_timestamp": "2026-10-27T08:26:41.198889+00:00"
+    },
+    {
+      "ticker": "ICICIBANK",
+      "fact_name": "TotalAssets",
+      "taxonomy": "mca-ind-as",
+      "value": 29144979720000.0,
+      "unit": "INR",
+      "fiscal_year": 2025,
+      "fiscal_period": "FY",
+      "source": "yfinance_mcp",
+      "provenance": "LIVE_YAHOO_FINANCE_MCP",
+      "retrieval_timestamp": "2026-10-27T08:26:41.198889+00:00"
+    },
+    {
+      "ticker": "ICICIBANK",
+      "fact_name": "TotalLiabilities",
+      "taxonomy": "mca-ind-as",
+      "value": 25349265944000.0,
+      "unit": "INR",
+      "fiscal_year": 2025,
+      "fiscal_period": "FY",
+      "source": "yfinance_mcp",
+      "provenance": "LIVE_YAHOO_FINANCE_MCP",
+      "retrieval_timestamp": "2026-10-27T08:26:41.198889+00:00"
+    },
+    {
+      "ticker": "ICICIBANK",
+      "fact_name": "OperatingCashFlow",
+      "taxonomy": "mca-ind-as",
+      "value": 673254189000.0,
+      "unit": "INR",
+      "fiscal_year": 2025,
+      "fiscal_period": "FY",
+      "source": "yfinance_mcp",
+      "provenance": "LIVE_YAHOO_FINANCE_MCP",
+      "retrieval_timestamp": "2026-10-27T08:26:41.198889+00:00"
+    }
+  ],
+  "provenance": "LIVE_YAHOO_FINANCE_MCP"
 }

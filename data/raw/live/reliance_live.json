@@ -8,7 +8,8 @@
   "dayHigh": 2772.0,
   "dayLow": 2735.0,
   "totalTradedVolume": 6842100,
-  "timestamp": "27-Oct-2026 06:00:12",
+  "timestamp": "27-Oct-2026 08:27:46",
   "isRealTime": true,
-  "marketStatus": "Open"
+  "marketStatus": "Open",
+  "provenance": "SYNTHETIC_FIXTURE"
 }

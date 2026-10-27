@@ -111,3 +111,4 @@ To fulfill all requirements with the smallest practical set of verified existing
 2. **`nse-mcp`**: Ingests **live market quotes** and **session status** directly from NSE India using plain symbols (`RELIANCE`).
 3. **`mcp-server-reddit`**: Ingests **social sentiment** from Indian retail trading subreddits.
 4. **All data validated deterministically with Pydantic v2 schemas and exported to clean CSV and Parquet**.
+

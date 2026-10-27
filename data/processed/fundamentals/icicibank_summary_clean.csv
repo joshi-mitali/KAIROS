@@ -1,2 +1,2 @@
-ticker,cik,company_name,market_cap,pe_ratio,forward_pe,debt_to_equity,profit_margins,revenue,net_income,total_assets,total_liabilities,operating_cash_flow,source,retrieval_timestamp
-ICICIBANK,,ICICIBANK INDIA LTD,,,,0.5789,0.1917,2400000000000.0,460000000000.0,1500000000000.0,550000000000.0,480000000000.0,yfinance_mcp,2026-10-27T06:00:07.297482+00:00
+ticker,company_name,revenue,net_income,total_assets,total_liabilities,operating_cash_flow,debt_to_equity,profit_margins,source,provenance,retrieval_timestamp
+ICICIBANK,ICICIBANK INDIA LTD,2234071181000.0,542077028000.0,29144979720000.0,25349265944000.0,673254189000.0,6.6784,0.2426,yfinance_mcp,LIVE_YAHOO_FINANCE_MCP,2026-10-27T08:26:41.198889+00:00

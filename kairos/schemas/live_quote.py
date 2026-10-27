@@ -22,6 +22,10 @@ class LiveQuote(BaseModel):
         default=QuoteDelayClassification.DELAYED_15_MIN,
         description="Whether the quote is real-time, 15-min delayed, or end-of-day"
     )
+    provenance: str = Field(
+        default="LIVE_MCP",
+        description="Data provenance (LIVE_MCP, REAL_TIME, SYNTHETIC_FIXTURE)"
+    )
     retrieval_timestamp: str = Field(
         default_factory=lambda: datetime.now(timezone.utc).isoformat(),
         description="ISO timestamp when ingested"
@@ -39,3 +43,4 @@ class LiveQuotePayload(BaseModel):
     symbol: str
     quote: LiveQuote
     is_market_open: Optional[bool] = None
+
