@@ -1,0 +1,2 @@
+ticker,cik,company_name,market_cap,pe_ratio,forward_pe,debt_to_equity,profit_margins,revenue,net_income,total_assets,total_liabilities,operating_cash_flow,source,retrieval_timestamp
+MSFT,0000789019,MSFT CORPORATION,3000000000000,54.8,31.5,0.4545,0.5503,96307000000.0,53000000000.0,112000000000.0,35000000000.0,28090000000.0,SEC-EDGAR,2026-10-27T05:23:17.726794+00:00

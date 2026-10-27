@@ -1,0 +1,43 @@
+{
+  "ticker": "AAPL",
+  "provider": "calibrated_market_sample",
+  "is_live_data": false,
+  "articles": [
+    {
+      "headline": "AAPL Announces Record Datacenter Revenue Driven by Accelerated Computing Demand",
+      "summary": "Financial disclosures highlight sustained enterprise investment in compute clusters and accelerated infrastructure.",
+      "source": "Reuters Financial",
+      "url": "https://www.reuters.com/business/aapl-datacenter-compute-milestone",
+      "datetime": "2026-10-27T10:00:00Z",
+      "article_id": "76217722fcf9cae2",
+      "ticker": "AAPL",
+      "provider": "calibrated_market_sample",
+      "retrieved_at": "2026-10-27T05:23:21.807275+00:00",
+      "language": "en"
+    },
+    {
+      "headline": "Wall Street Analysts Reiterate Overweight Rating on AAPL Following Technology Symposium",
+      "summary": "Equities research consensus points to robust forward free cash flow generation and margin defense.",
+      "source": "Bloomberg Markets",
+      "url": "https://www.bloomberg.com/news/articles/aapl-analyst-ratings-consensus",
+      "datetime": "2026-10-27T10:00:01Z",
+      "article_id": "9b0628bf948da1fb",
+      "ticker": "AAPL",
+      "provider": "calibrated_market_sample",
+      "retrieved_at": "2026-10-27T05:23:21.807275+00:00",
+      "language": "en"
+    },
+    {
+      "headline": "Supply Chain Partners Expand Fabrication Capacity for AAPL's Next-Generation Architectures",
+      "summary": "Semiconductor foundries confirm expanded packaging throughput to fulfill backlogged commercial commitments.",
+      "source": "Financial Times",
+      "url": "https://www.ft.com/content/aapl-semiconductor-packaging-capacity",
+      "datetime": "2026-10-27T10:00:02Z",
+      "article_id": "a9adc5923c2d04db",
+      "ticker": "AAPL",
+      "provider": "calibrated_market_sample",
+      "retrieved_at": "2026-10-27T05:23:21.807275+00:00",
+      "language": "en"
+    }
+  ]
+}

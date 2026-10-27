@@ -1,0 +1,27 @@
+# Environment and virtualenvs
+.env
+.env.local
+.venv/
+venv/
+ENV/
+env/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.pytest_cache/
+.coverage
+htmlcov/
+dist/
+build/
+*.egg-info/
+
+# IDE & OS
+.DS_Store
+.idea/
+.vscode/
+
+# Local data (preserve directory structure but ignore large local data dumps if needed)
+# raw and processed data can be tracked if sample fixtures
