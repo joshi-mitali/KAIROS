@@ -200,6 +200,12 @@ class MCPClientManager:
             import yfinance as yf
             ticker = yf.Ticker(sym)
             fi = ticker.fast_info
+            rmt = info.get("regularMarketTime")
+            if not rmt:
+                try:
+                    rmt = ticker.info.get("regularMarketTime")
+                except Exception:
+                    rmt = None
             return {
                 "symbol": sym,
                 "shortName": info.get("shortName", f"{sym} INDIA LTD"),
@@ -209,6 +215,7 @@ class MCPClientManager:
                 "regularMarketDayHigh": fi.day_high or info.get("dayHigh"),
                 "regularMarketDayLow": fi.day_low or info.get("dayLow"),
                 "regularMarketVolume": fi.last_volume or info.get("regularMarketVolume", 0),
+                "regularMarketTime": rmt,
                 "currency": fi.currency or "INR",
                 "exchange": "NSE",
                 "marketState": "REGULAR",

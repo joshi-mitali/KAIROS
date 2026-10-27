@@ -3,6 +3,19 @@
   "count": 10,
   "articles": [
     {
+      "article_id": "b3775ca35d03b2df",
+      "ticker": "INFY",
+      "headline": "Paytm shares rise 2% after Q2 results. What are Jefferies, Goldman Sachs, and others saying?",
+      "summary": "Disclosures and market reporting regarding INFY published by The Economic Times.",
+      "source": "The Economic Times",
+      "url": "https://economictimes.indiatimes.com/markets/stocks/news/paytm-shares-rise-2-after-q2-results-what-are-jefferies-goldman-sachs-and-others-saying/articleshow/135224018.cms",
+      "datetime": "Tue, 27 Oct 2026 09:32:03 +0530",
+      "provider": "verified_media_feed",
+      "provenance": "LIVE_MEDIA_FEED",
+      "http_status": 200,
+      "retrieved_at": "2026-10-27T14:27:43.028634+00:00"
+    },
+    {
       "article_id": "edc1513bf6cb4be5",
       "ticker": "INFY",
       "headline": "HAL, BEL, Paras Defence, other stocks rise up to 4% after DAC clears  proposals worth Rs 2.12 lakh crore",
@@ -13,7 +26,7 @@
       "provider": "verified_media_feed",
       "provenance": "LIVE_MEDIA_FEED",
       "http_status": 200,
-      "retrieved_at": "2026-10-27T14:06:26.935884+00:00"
+      "retrieved_at": "2026-10-27T14:27:43.028634+00:00"
     },
     {
       "article_id": "d845bc71eeb8c7ec",
@@ -26,7 +39,7 @@
       "provider": "verified_media_feed",
       "provenance": "LIVE_MEDIA_FEED",
       "http_status": 200,
-      "retrieved_at": "2026-10-27T14:06:26.935884+00:00"
+      "retrieved_at": "2026-10-27T14:27:43.028634+00:00"
     },
     {
       "article_id": "7f218e9e31386fd5",
@@ -39,7 +52,7 @@
       "provider": "verified_media_feed",
       "provenance": "LIVE_MEDIA_FEED",
       "http_status": 200,
-      "retrieved_at": "2026-10-27T14:06:26.935884+00:00"
+      "retrieved_at": "2026-10-27T14:27:43.028634+00:00"
     },
     {
       "article_id": "2663656454496b4b",
@@ -52,7 +65,7 @@
       "provider": "verified_media_feed",
       "provenance": "LIVE_MEDIA_FEED",
       "http_status": 200,
-      "retrieved_at": "2026-10-27T14:06:26.935884+00:00"
+      "retrieved_at": "2026-10-27T14:27:43.028634+00:00"
     },
     {
       "article_id": "65d855b2ff767813",
@@ -65,7 +78,7 @@
       "provider": "verified_media_feed",
       "provenance": "LIVE_MEDIA_FEED",
       "http_status": 200,
-      "retrieved_at": "2026-10-27T14:06:26.935884+00:00"
+      "retrieved_at": "2026-10-27T14:27:43.028634+00:00"
     },
     {
       "article_id": "20195bf2448b7348",
@@ -78,7 +91,7 @@
       "provider": "verified_media_feed",
       "provenance": "LIVE_MEDIA_FEED",
       "http_status": 200,
-      "retrieved_at": "2026-10-27T14:06:26.935884+00:00"
+      "retrieved_at": "2026-10-27T14:27:43.028634+00:00"
     },
     {
       "article_id": "da2341c18d3f1cdd",
@@ -91,7 +104,7 @@
       "provider": "verified_media_feed",
       "provenance": "LIVE_MEDIA_FEED",
       "http_status": 200,
-      "retrieved_at": "2026-10-27T14:06:26.935884+00:00"
+      "retrieved_at": "2026-10-27T14:27:43.028634+00:00"
     },
     {
       "article_id": "01ec50ab2dd8ce0a",
@@ -104,7 +117,7 @@
       "provider": "verified_media_feed",
       "provenance": "LIVE_MEDIA_FEED",
       "http_status": 200,
-      "retrieved_at": "2026-10-27T14:06:26.935884+00:00"
+      "retrieved_at": "2026-10-27T14:27:43.028634+00:00"
     },
     {
       "article_id": "b00d759a2d7a7ae5",
@@ -117,23 +130,10 @@
       "provider": "verified_media_feed",
       "provenance": "LIVE_MEDIA_FEED",
       "http_status": 200,
-      "retrieved_at": "2026-10-27T14:06:26.935884+00:00"
-    },
-    {
-      "article_id": "6002c88696a7ba29",
-      "ticker": "INFY",
-      "headline": "Govt seeks investor and expert views on LTCG and STT as it reviews capital market levies amid FPI exodus",
-      "summary": "Disclosures and market reporting regarding INFY published by The Economic Times.",
-      "source": "The Economic Times",
-      "url": "https://economictimes.indiatimes.com/markets/stocks/news/govt-seeks-investor-and-expert-views-on-ltcg-and-stt-as-it-reviews-capital-market-levies-amid-fpi-exodus/articleshow/135222361.cms",
-      "datetime": "Tue, 27 Oct 2026 05:30:00 +0530",
-      "provider": "verified_media_feed",
-      "provenance": "LIVE_MEDIA_FEED",
-      "http_status": 200,
-      "retrieved_at": "2026-10-27T14:06:26.935884+00:00"
+      "retrieved_at": "2026-10-27T14:27:43.028634+00:00"
     }
   ],
   "provenance": "LIVE_MEDIA_FEED",
   "url_verification": "100%_HTTP_200_CONFIRMED",
-  "retrieved_at": "2026-10-27T14:06:26.935884+00:00"
+  "retrieved_at": "2026-10-27T14:27:43.028634+00:00"
 }

@@ -3,6 +3,19 @@
   "count": 10,
   "articles": [
     {
+      "article_id": "5c8cededbf305f70",
+      "ticker": "TCS",
+      "headline": "Two Trades for Today: A defence tech company for a 9.4% gain, a large-cap auto components stock for an upmove of about 7%",
+      "summary": "Disclosures and market reporting regarding TCS published by The Economic Times.",
+      "source": "The Economic Times",
+      "url": "https://economictimes.indiatimes.com/markets/stocks/news/two-trades-for-today-a-defence-tech-company-for-a-9-4-gain-a-large-cap-auto-components-stock-for-an-upmove-of-about-7/articleshow/135236964.cms",
+      "datetime": "Tue, 27 Oct 2026 19:35:52 +0530",
+      "provider": "verified_media_feed",
+      "provenance": "LIVE_MEDIA_FEED",
+      "http_status": 200,
+      "retrieved_at": "2026-10-27T14:27:43.028634+00:00"
+    },
+    {
       "article_id": "ccb1aacfc2004ec3",
       "ticker": "TCS",
       "headline": "Market wrap: Bharti Airtel, Tata Consumer, Asian Paints, Coal India top gainers and losers on Nifty and Sensex on Tuesday",
@@ -13,7 +26,7 @@
       "provider": "verified_media_feed",
       "provenance": "LIVE_MEDIA_FEED",
       "http_status": 200,
-      "retrieved_at": "2026-10-27T14:06:26.935884+00:00"
+      "retrieved_at": "2026-10-27T14:27:43.028634+00:00"
     },
     {
       "article_id": "9e2272b27593b442",
@@ -26,7 +39,7 @@
       "provider": "verified_media_feed",
       "provenance": "LIVE_MEDIA_FEED",
       "http_status": 200,
-      "retrieved_at": "2026-10-27T14:06:26.935884+00:00"
+      "retrieved_at": "2026-10-27T14:27:43.028634+00:00"
     },
     {
       "article_id": "736660f6faa2002b",
@@ -39,7 +52,7 @@
       "provider": "verified_media_feed",
       "provenance": "LIVE_MEDIA_FEED",
       "http_status": 200,
-      "retrieved_at": "2026-10-27T14:06:26.935884+00:00"
+      "retrieved_at": "2026-10-27T14:27:43.028634+00:00"
     },
     {
       "article_id": "583f71e62af8bdde",
@@ -52,7 +65,7 @@
       "provider": "verified_media_feed",
       "provenance": "LIVE_MEDIA_FEED",
       "http_status": 200,
-      "retrieved_at": "2026-10-27T14:06:26.935884+00:00"
+      "retrieved_at": "2026-10-27T14:27:43.028634+00:00"
     },
     {
       "article_id": "5b6d390a2b97d7f5",
@@ -65,7 +78,7 @@
       "provider": "verified_media_feed",
       "provenance": "LIVE_MEDIA_FEED",
       "http_status": 200,
-      "retrieved_at": "2026-10-27T14:06:26.935884+00:00"
+      "retrieved_at": "2026-10-27T14:27:43.028634+00:00"
     },
     {
       "article_id": "a505170b8591da6b",
@@ -78,7 +91,7 @@
       "provider": "verified_media_feed",
       "provenance": "LIVE_MEDIA_FEED",
       "http_status": 200,
-      "retrieved_at": "2026-10-27T14:06:26.935884+00:00"
+      "retrieved_at": "2026-10-27T14:27:43.028634+00:00"
     },
     {
       "article_id": "0944a61d9e444f5d",
@@ -91,7 +104,7 @@
       "provider": "verified_media_feed",
       "provenance": "LIVE_MEDIA_FEED",
       "http_status": 200,
-      "retrieved_at": "2026-10-27T14:06:26.935884+00:00"
+      "retrieved_at": "2026-10-27T14:27:43.028634+00:00"
     },
     {
       "article_id": "11f91b835fb307b8",
@@ -104,7 +117,7 @@
       "provider": "verified_media_feed",
       "provenance": "LIVE_MEDIA_FEED",
       "http_status": 200,
-      "retrieved_at": "2026-10-27T14:06:26.935884+00:00"
+      "retrieved_at": "2026-10-27T14:27:43.028634+00:00"
     },
     {
       "article_id": "aa2b815694ec11e1",
@@ -117,23 +130,10 @@
       "provider": "verified_media_feed",
       "provenance": "LIVE_MEDIA_FEED",
       "http_status": 200,
-      "retrieved_at": "2026-10-27T14:06:26.935884+00:00"
-    },
-    {
-      "article_id": "b3775ca35d03b2df",
-      "ticker": "TCS",
-      "headline": "Paytm shares rise 2% after Q2 results. What are Jefferies, Goldman Sachs, and others saying?",
-      "summary": "Disclosures and market reporting regarding TCS published by The Economic Times.",
-      "source": "The Economic Times",
-      "url": "https://economictimes.indiatimes.com/markets/stocks/news/paytm-shares-rise-2-after-q2-results-what-are-jefferies-goldman-sachs-and-others-saying/articleshow/135224018.cms",
-      "datetime": "Tue, 27 Oct 2026 09:32:03 +0530",
-      "provider": "verified_media_feed",
-      "provenance": "LIVE_MEDIA_FEED",
-      "http_status": 200,
-      "retrieved_at": "2026-10-27T14:06:26.935884+00:00"
+      "retrieved_at": "2026-10-27T14:27:43.028634+00:00"
     }
   ],
   "provenance": "LIVE_MEDIA_FEED",
   "url_verification": "100%_HTTP_200_CONFIRMED",
-  "retrieved_at": "2026-10-27T14:06:26.935884+00:00"
+  "retrieved_at": "2026-10-27T14:27:43.028634+00:00"
 }

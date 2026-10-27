@@ -55,6 +55,15 @@ class LiveQuoteCollector:
             try:
                 raw_yf = self.yf_adapter.get_stock_info(clean_symbol)
                 if raw_yf and "currentPrice" in raw_yf:
+                    rmt = raw_yf.get("regularMarketTime")
+                    if rmt:
+                        try:
+                            exchange_ts = datetime.fromtimestamp(int(rmt), tz=timezone.utc).isoformat()
+                        except Exception:
+                            exchange_ts = str(raw_yf.get("timestamp", datetime.now(timezone.utc).isoformat()))
+                    else:
+                        exchange_ts = str(raw_yf.get("timestamp", datetime.now(timezone.utc).isoformat()))
+
                     quote_data = {
                         "symbol": clean_symbol,
                         "lastPrice": raw_yf.get("currentPrice"),
@@ -63,7 +72,7 @@ class LiveQuoteCollector:
                         "dayHigh": raw_yf.get("regularMarketDayHigh"),
                         "dayLow": raw_yf.get("regularMarketDayLow"),
                         "totalTradedVolume": raw_yf.get("regularMarketVolume"),
-                        "timestamp": datetime.now(timezone.utc).strftime("%d-%b-%Y %H:%M:%S"),
+                        "timestamp": exchange_ts,
                     }
                     provider_name = "yfinance_mcp"
                     delay_class = QuoteDelayClassification.DELAYED_15_MIN

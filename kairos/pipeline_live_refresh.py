@@ -161,6 +161,19 @@ def refresh_live_quotes(file_store: FileStore) -> List[Dict[str, Any]]:
         t = yf.Ticker(full_sym)
         fi = t.fast_info
 
+        # Extract genuine exchange market quote timestamp (regularMarketTime)
+        quote_ts = None
+        try:
+            inf = t.info
+            rmt = inf.get("regularMarketTime")
+            if rmt:
+                quote_ts = datetime.fromtimestamp(int(rmt), tz=timezone.utc).isoformat()
+        except Exception as e:
+            logger.warning(f"Could not extract regularMarketTime for {full_sym}: {e}")
+
+        if not quote_ts:
+            quote_ts = retrieval_ts
+
         last_price = round(float(fi.last_price or 0.0), 2)
         prev_close = round(float(fi.previous_close or last_price), 2)
         open_px = round(float(fi.open or last_price), 2)
@@ -171,7 +184,7 @@ def refresh_live_quotes(file_store: FileStore) -> List[Dict[str, Any]]:
         record = {
             "symbol": sym,
             "last_price": last_price,
-            "quote_timestamp": retrieval_ts,
+            "quote_timestamp": quote_ts,
             "volume": vol,
             "day_open": open_px,
             "open": open_px,
