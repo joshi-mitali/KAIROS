@@ -4,3 +4,4 @@ from kairos.collectors.reddit_collector import RedditCollector
 SentimentCollector = RedditCollector
 
 __all__ = ["SentimentCollector", "RedditCollector"]
+

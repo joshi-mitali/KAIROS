@@ -5,3 +5,4 @@ from kairos.validation.quality_checks import (
 )
 
 __all__ = ["DataQualityChecker", "DataQualityReport", "QuarantinedRecord"]
+

@@ -41,3 +41,4 @@ include = ["kairos*", "schemas*", "collectors*", "mcp_servers*"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 python_files = ["test_*.py"]
+

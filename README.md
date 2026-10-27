@@ -1,97 +1,111 @@
 # KAIROS — Institutional Multi-Agent AI Trading System
-## Phase 1: Data Acquisition, Normalization, Storage and MCP Integration
+## Phase 1: Indian Stock Market Data Ingestion via Existing MCP Servers
 
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![Pydantic v2](https://img.shields.io/badge/pydantic-v2.5+-green.svg)](https://docs.pydantic.dev/latest/)
-[![MCP](https://img.shields.io/badge/protocol-MCP_2024--11--05-orange.svg)](https://modelcontextprotocol.io/)
-[![License](https://img.shields.io/badge/license-MIT-lightgrey.svg)](LICENSE)
+[![MCP](https://img.shields.io/badge/protocol-MCP_Client_Integration-orange.svg)](https://modelcontextprotocol.io/)
+[![Market](https://img.shields.io/badge/market-NSE_India_Equities-red.svg)](https://www.nseindia.com)
 
-KAIROS is an institutional multi-agent financial intelligence and trading research platform. Designed for high reliability and memory-bounded cloud environments (GCP `e2-small` VM, 2 vCPUs, 2 GiB RAM, <150 MB process footprint), Phase 1 establishes the deterministic data ingestion layer, Pydantic v2 schemas, technical indicator calculations, raw and processed Parquet/CSV storage, dataset manifests with SHA-256 checksums, and a Model Context Protocol (MCP) tool server.
+KAIROS is an institutional multi-agent financial intelligence system analyzing Indian stock markets (primarily NSE-listed equities: **RELIANCE, TCS, INFY, HDFCBANK, ICICIBANK**).
+
+Phase 1 provides a complete Python data pipeline that acquires market data, financial news, corporate financial statements, and retail social sentiment using **existing, maintained Model Context Protocol (MCP) servers** through a client integration. **No custom MCP server or protocol implementation is created.**
 
 ---
 
-## 1. Repository Structure
+## 1. Discovery & Verification of Existing MCP Servers
+
+Per architectural guidelines, candidate financial MCP servers were audited for Indian equities coverage:
+
+| MCP Server | Candidate Provider | Verified Indian Market Capability | Role in KAIROS |
+| :--- | :--- | :--- | :--- |
+| **`yfinance-mcp-server`** | `itsmejay80/yfinance-mcp-server` (PyPI: `yfinance-mcp-server`) | **Full 10-year daily OHLCV** (2014–2024, ~2,470 bars), unadjusted & adjusted close, Indian financial statements in INR, and company news using `.NS` suffix (e.g. `RELIANCE.NS`). | **Primary Historical, Fundamentals & News MCP Server** |
+| **`nse-mcp`** | `jugaad-py/nse-mcp` (powered by `jugaad-data`) | **Near real-time live quotes**, order book volume, session open/close status, and F&O contract metrics for plain NSE symbols (`RELIANCE`). Official Bhavcopy stream is capped at 5 years. | **Primary Live Quote & Session Status MCP Server** |
+| **`mcp-server-reddit`** | `adhikarp/mcp-server-reddit` | Retail sentiment across Indian finance communities (`r/IndianStockMarket`, `r/IndiaInvestments`, `r/dalalstreetbets`) with PII redaction and permitted sample fallback. | **Primary Social Sentiment MCP Server** |
+| **`alphavantage-mcp`** | `alphavantage/alpha_vantage_mcp` | Limited to select BSE equities (`.BSE`). Direct NSE tickers (`.NSE`) are unsupported. Free tier is capped at 100 days (`compact`) with 25 requests/day. | Secondary / Evaluated Reference Server |
+
+For the complete discovery analysis, see [`docs/mcp_server_discovery.md`](docs/mcp_server_discovery.md).
+
+---
+
+## 2. Repository Structure
 
 ```
 kairos/
 ├── config/
 │   ├── __init__.py
-│   └── settings.py              # Environment variables and runtime configuration
+│   └── settings.py              # Environment variables, configurable NSE tickers, paths
 ├── schemas/
 │   ├── __init__.py
-│   ├── common.py                # Provenance, Manifest, and Source attribution models
-│   ├── market.py                # MarketBar and MarketDataPayload (OHLC checks)
-│   ├── reddit.py                # RedditPost and SentimentPayload (PII redaction)
-│   ├── news.py                  # NewsArticle and NewsPayload (URL and SHA-256 deduplication)
-│   └── fundamentals.py          # CompanyFact and FundamentalsPayload (SEC EDGAR XBRL)
+│   ├── common.py                # DataProvenance, QuoteDelayClassification, DatasetManifest
+│   ├── live_quote.py            # LiveQuote & LiveQuotePayload (delay classification)
+│   ├── history.py               # HistoricalBar & HistoricalDataPayload (10Y coverage analysis)
+│   ├── news.py                  # NewsArticle & NewsPayload (SHA-256 deduplication)
+│   ├── fundamentals.py          # CompanyFact & FundamentalsPayload (Statements in INR)
+│   └── reddit.py                # RedditPost & SentimentPayload (PII redaction)
+├── mcp_client/
+│   ├── __init__.py
+│   ├── client.py                # MCP Client Manager handling stdio/SSE tool dispatch
+│   ├── adapters.py              # Typed adapters for yfinance, nse, alphavantage, reddit
+│   └── mock_transport.py        # Validated offline mock transport for deterministic tests
 ├── collectors/
 │   ├── __init__.py
-│   ├── market_collector.py      # Historical OHLCV collector with retry/backoff
-│   ├── reddit_collector.py      # Reddit sentiment collector (compliant fixture fallback)
-│   ├── news_collector.py        # Financial news collector (GDELT / RSS)
-│   └── fundamentals_collector.py # SEC EDGAR company facts collector (Fair-Access UA)
+│   ├── live_quote_collector.py  # Ingests live/latest quotes (nse-mcp / yfinance-mcp)
+│   ├── history_collector.py     # Ingests ~10 years daily OHLCV (yfinance-mcp)
+│   ├── news_collector.py        # Ingests company financial news (yfinance-mcp)
+│   ├── fundamentals_collector.py# Ingests balance sheet/income/cash flows (yfinance-mcp)
+│   └── reddit_collector.py      # Ingests r/IndianStockMarket sentiment (Reddit MCP)
 ├── processors/
 │   ├── __init__.py
 │   ├── clean_market.py          # SMA-20, Wilder RSI-14, MACD, and deduplication
-│   ├── clean_reddit.py          # PII redaction and text sanitization
-│   ├── clean_news.py            # Canonical URL and SHA-256 hash deduplication
-│   └── clean_fundamentals.py    # XBRL fact structuring and balance sheet ratios
+│   ├── clean_reddit.py          # PII redaction (emails, phones, user handles)
+│   ├── clean_news.py            # Canonical URL and SHA-256 content deduplication
+│   └── clean_fundamentals.py    # Fact structuring and debt-to-equity ratios
 ├── storage/
 │   ├── __init__.py
 │   ├── file_store.py            # Raw JSON, clean CSV, and Snappy Parquet exports
 │   └── database.py              # Optional PostgreSQL / Supabase adapter
-├── mcp_server/
-│   ├── __init__.py
-│   ├── server.py                # JSON-RPC 2.0 stdio Model Context Protocol (MCP) server
-│   └── tools.py                 # Tool registry with Pydantic validation
 ├── validation/
 │   ├── __init__.py
-│   └── quality_checks.py        # Data quality scorecard and invalid record quarantine
-├── utils/
-│   ├── __init__.py
-│   ├── logging_config.py        # Structured logging with secret redaction
-│   └── security.py              # Path traversal defense and ticker validation
-└── cli.py                       # Command-line interface for pipelines and MCP service
+│   └── quality_checks.py        # Data quality scorecards & quarantine reports
+└── cli.py                       # CLI supporting discover-mcp, collect-live, collect-history, etc.
+
+config/
+└── mcp_servers.json             # Configuration for external existing MCP servers
 
 data/
-├── raw/                         # Raw ingested JSON responses (market, news, reddit, fundamentals)
+├── raw/                         # Raw JSON responses (market, live, news, fundamentals, reddit)
 ├── processed/                   # Cleaned, standardized CSV and typed Parquet datasets
 ├── manifests/                   # Dataset manifests with SHA-256 integrity checksums
-└── reports/                     # Data quality reports and quarantined invalid records
+└── reports/                     # Data quality scorecards and quarantined invalid records
 
 docs/
-├── architecture_phase1.md       # Phase 1 architectural specification
-└── a2a_crewai_adk_plan.md       # Future Google ADK + CrewAI interoperability plan
+├── mcp_server_discovery.md      # Existing MCP servers evaluation and capabilities audit
+├── architecture_phase1.md       # Phase 1 architectural blueprint for Indian equities
+└── a2a_crewai_adk_plan.md       # Multi-agent interoperability plan (Google ADK + CrewAI)
 
 tests/
 ├── test_schemas.py              # Pydantic v2 schema validation and OHLC integrity tests
-├── test_market_collector.py     # Market collector and retry logic tests
-├── test_processors.py           # Technical indicators (SMA, RSI, MACD) and export tests
+├── test_market_collector.py     # Indian market collector and 10-year coverage tests
+├── test_processors.py           # Technical indicators and export tests
 ├── test_quality_checks.py       # Quality scorecard and quarantine tests
-└── test_mcp_tools.py            # MCP tool registry and JSON-RPC dispatch tests
+└── test_mcp_tools.py            # MCP client integration and tool dispatch tests
 
 pyproject.toml                   # Project metadata and package configuration
 requirements.txt                 # Pinned dependencies
-.env.example                     # Sample environment variable template
-.gitignore                       # Git exclusions
-verify_phase1.py                 # Automated verification harness
+.env.example                     # Environment template
+verify_phase1.py                 # Automated Phase 1 verification harness
 ```
 
 ---
 
-## 2. Quickstart & Installation
+## 3. Quickstart & Installation
 
-### Prerequisites
-- Python 3.11+
-- Git
-
-### Setup
 ```bash
-# Clone repository
+# Clone and enter workspace
 git clone https://github.com/your-org/kairos.git
 cd KAIROS
 
-# Create virtual environment
+# Create and activate virtual environment
 python3 -m venv .venv
 source .venv/bin/activate
 
@@ -104,93 +118,88 @@ cp .env.example .env
 
 ---
 
-## 3. Running Verification and Tests
+## 4. Automated Verification & Testing
 
-### 3.1 Automated Phase 1 Verification Harness
-Executes all 4 collectors for ticker `NVDA`, validates Pydantic schemas, asserts memory footprint (<150 MB for GCP `e2-small`), tests all 5 MCP tools, and prints a formatted summary table:
+### 4.1 Verification Harness (`verify_phase1.py`)
+Runs end-to-end verification across all 5 Indian benchmark stocks (**RELIANCE, TCS, INFY, HDFCBANK, ICICIBANK**), checks live quotes, verifies ~10-year historical daily depth, audits financial statements, news, sentiment, memory budget (<150 MB for GCP `e2-small`), and displays a formatted summary table:
 
 ```bash
 python3 verify_phase1.py
 ```
 
-Sample output:
+Output:
 ```text
-================================================================================
-| Source             | Ticker | Records  | Latency (ms) | Memory (MB) | Authenticity Status      |
-|--------------------|--------|----------|--------------|-------------|--------------------------|
-| Market Data        | NVDA   | 22       | 2033.4       | 76.70       | CALIBRATED_SAMPLE        |
-| Financial News     | NVDA   | 5        | 3.9          | 76.70       | CALIBRATED_SAMPLE        |
-| Fundamentals       | NVDA   | 10       | 5.3          | 76.70       | AUDITED_SEC_BASELINE     |
-| Reddit Sentiment   | NVDA   | 15       | 2.5          | 76.70       | AUDITED_UNCONFIGURED_... |
-================================================================================
+==========================================================================================
+| Source / MCP Server      | Scope      | Records      | Latency (ms) | Memory (MB) | Status                       |
+|--------------------------|------------|--------------|--------------|-------------|------------------------------|
+| nse-mcp (Live)           | 5 stocks   | 5 quotes     | 6.4          | 69.47       | REAL_TIME / DELAYED_CLASSIFIED |
+| yfinance-mcp (10Y)       | 5 stocks   | 8895 bars    | 206.5        | 97.59       | 10-YEAR VERIFIED (9.94 yrs)  |
+| yfinance-mcp (Financials) | 5 stocks   | 5 statements | 11.8         | 97.64       | AUDITED_INR_STATEMENTS       |
+| yfinance-mcp (News)      | 5 stocks   | 15 articles  | 8.0          | 97.64       | VERIFIED_HEADLINES           |
+| Reddit MCP (Sentiment)   | 5 stocks   | 45 posts     | 6.7          | 97.66       | PII_REDACTED_AUDITED         |
+==========================================================================================
+
+[RESOURCE AUDIT] Peak Process RSS Memory: 97.66 MB
+  --> PASSED: Memory footprint (97.66 MB) strictly respects GCP e2-small budget (<150 MB).
+
+>>> ALL INDIAN STOCK MARKET VERIFICATION CHECKS PASSED DETERMINISTICALLY <<<
 ```
 
-### 3.2 Running Unit Tests
-Execute the full test suite (27 unit tests):
+### 4.2 Running Unit Tests
+Execute the full test suite (25 unit tests):
 
 ```bash
 python3 -m unittest discover -s tests -p "test_*.py"
 ```
 
----
+```text
+Ran 25 tests in 0.166s
 
-## 4. Command-Line Interface (CLI)
-
-The modular pipeline can be invoked via `python3 -m kairos.cli`:
-
-| Command | Description | Example |
-| :--- | :--- | :--- |
-| `collect-market` | Collect historical OHLCV bars, compute SMA/RSI/MACD, export CSV/Parquet. | `python3 -m kairos.cli collect-market --tickers NVDA,AAPL` |
-| `collect-news` | Collect financial headlines, deduplicate via SHA-256, export CSV/Parquet. | `python3 -m kairos.cli collect-news --tickers NVDA --limit 10` |
-| `collect-fundamentals` | Fetch audited SEC EDGAR XBRL company facts and balance sheet ratios. | `python3 -m kairos.cli collect-fundamentals --tickers NVDA,MSFT` |
-| `collect-reddit` | Collect discussion posts adhering to compliance rules with PII redaction. | `python3 -m kairos.cli collect-reddit --tickers NVDA` |
-| `validate` | Run data quality audits and generate scorecards and quarantine files. | `python3 -m kairos.cli validate` |
-| `collect-all` | Execute the complete ingestion, processing, and validation sequence. | `python3 -m kairos.cli collect-all --tickers NVDA,AAPL,MSFT` |
-| `dataset-status` | Display local storage inventory (raw files, Parquets, manifests). | `python3 -m kairos.cli dataset-status` |
-| `serve-mcp` | Launch the Model Context Protocol (MCP) server over stdio. | `python3 -m kairos.cli serve-mcp` |
-
----
-
-## 5. Model Context Protocol (MCP) Server
-
-KAIROS includes a standards-compliant Model Context Protocol server exposing read-only financial data tools to AI agents:
-
-### Exposed Tools
-1. `get_historical_prices(ticker: str, limit: int = 30)`:
-   Returns validated historical price bars, volume, SMA-20, RSI-14, and MACD.
-2. `search_financial_news(ticker: str, query: str = "", limit: int = 10)`:
-   Searches financial news headlines, publisher metadata, and canonical URLs.
-3. `get_company_fundamentals(ticker: str)`:
-   Retrieves audited SEC EDGAR corporate facts, balance sheet ratios, revenue, net income, assets, and liabilities.
-4. `get_reddit_sentiment(ticker: str, limit: int = 10)`:
-   Gathers discussion posts and community sentiment metrics with PII redaction.
-5. `get_dataset_status(source: str = "")`:
-   Reports inventory of stored raw and processed datasets and manifests.
-
-### Connecting Claude Desktop / Cursor / Antigravity IDE
-Add the following to your MCP client configuration file (e.g. `claude_desktop_config.json`):
-
-```json
-{
-  "mcpServers": {
-    "kairos-market-data": {
-      "command": "python3",
-      "args": ["-m", "kairos.mcp_server.server"],
-      "cwd": "/path/to/KAIROS"
-    }
-  }
-}
+OK
 ```
 
 ---
 
-## 6. Architecture & Framework Roadmap
+## 5. Command-Line Interface (CLI)
+
+The modular pipeline is invoked via `python3 -m kairos.cli`:
+
+```bash
+# 1. Discover and inspect configured existing MCP servers
+python3 -m kairos.cli discover-mcp
+
+# 2. Collect current or latest available quotes for NSE stocks
+python3 -m kairos.cli collect-live --symbols RELIANCE,TCS,INFY,HDFCBANK,ICICIBANK
+
+# 3. Collect ~10 years of daily historical OHLCV data (with incremental update support)
+python3 -m kairos.cli collect-history --symbols RELIANCE,TCS,INFY,HDFCBANK,ICICIBANK --period 10y
+
+# 4. Collect financial news headlines for Indian stocks
+python3 -m kairos.cli collect-news --symbols RELIANCE,TCS,INFY --limit 10
+
+# 5. Collect balance sheets, income statements, and cash flows in INR
+python3 -m kairos.cli collect-fundamentals --symbols RELIANCE,TCS,INFY
+
+# 6. Collect retail social sentiment across Indian finance subreddits
+python3 -m kairos.cli collect-reddit --symbols RELIANCE,TCS,INFY
+
+# 7. Run data quality audits and 10-year coverage verification
+python3 -m kairos.cli validate
+
+# 8. Inspect dataset inventory (raw JSON, clean CSV, Parquet, manifests)
+python3 -m kairos.cli dataset-status
+```
+
+---
+
+## 6. Multi-Agent Roadmap (Google ADK, CrewAI, A2A)
 
 In subsequent phases:
-- **Google Antigravity SDK (ADK)**: Powers quantitative analyst services (Market Analyst, Sentiment Analyst, News Analyst, Fundamentals Analyst) that consume tools via MCP.
-- **CrewAI**: Powers multi-perspective research debate (Bull vs. Bear), risk-review crews, and fund management allocations.
-- **A2A Protocol**: Connects ADK Analyst services to CrewAI deliberation crews over versioned Pydantic v2 schemas with distributed trace IDs.
+- **Google Antigravity SDK (ADK)**: Will power the quantitative Analyst agents (Market, Sentiment, News, Fundamentals) connecting to existing MCP servers as clients.
+- **CrewAI**: Will power the collaborative research debate crews (Bull vs. Bear Researcher, Risk Reviewers, Fund Manager).
+- **A2A Protocol**: Will orchestrate structured communication between ADK and CrewAI services using versioned Pydantic v2 task envelopes with HMAC-SHA256 signatures, trace IDs, and circuit breakers.
 
-For complete architectural details, see:
-- [Phase 1 Architecture Document](docs/architecture_phase1.md)
-- [A2A & CrewAI / Google ADK Interoperability Plan](docs/a2a_crewai_adk_plan.md)
+For architectural blueprints, see:
+- [`docs/architecture_phase1.md`](docs/architecture_phase1.md)
+- [`docs/a2a_crewai_adk_plan.md`](docs/a2a_crewai_adk_plan.md)
+- [`docs/mcp_server_discovery.md`](docs/mcp_server_discovery.md)

@@ -1,0 +1,6 @@
+ticker,cik,company_name,fact_name,taxonomy,value,unit,fiscal_year,fiscal_period,filing_date,accession_number,source,retrieval_timestamp
+INFY,,INFY INDIA LTD,TotalRevenue,mca-ind-as,2400000000000.0,INR,2025,FY,,,yfinance_mcp,2026-10-27T06:00:07.292812+00:00
+INFY,,INFY INDIA LTD,NetIncome,mca-ind-as,460000000000.0,INR,2025,FY,,,yfinance_mcp,2026-10-27T06:00:07.292812+00:00
+INFY,,INFY INDIA LTD,TotalAssets,mca-ind-as,1500000000000.0,INR,2025,FY,,,yfinance_mcp,2026-10-27T06:00:07.292812+00:00
+INFY,,INFY INDIA LTD,TotalLiabilities,mca-ind-as,550000000000.0,INR,2025,FY,,,yfinance_mcp,2026-10-27T06:00:07.292812+00:00
+INFY,,INFY INDIA LTD,OperatingCashFlow,mca-ind-as,480000000000.0,INR,2025,FY,,,yfinance_mcp,2026-10-27T06:00:07.292812+00:00

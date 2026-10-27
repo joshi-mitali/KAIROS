@@ -1,0 +1,13 @@
+{
+  "symbol": "INFY.NS",
+  "currency": "INR",
+  "statement": "income",
+  "quarterly": false,
+  "financials": {
+    "TotalRevenue": 2400000000000,
+    "NetIncome": 460000000000,
+    "TotalAssets": 1500000000000,
+    "TotalLiabilities": 550000000000,
+    "OperatingCashFlow": 480000000000
+  }
+}

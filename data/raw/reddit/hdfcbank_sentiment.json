@@ -1,0 +1,128 @@
+{
+  "symbol": "HDFCBANK",
+  "subreddits": [
+    "IndianStockMarket",
+    "IndiaInvestments",
+    "dalalstreetbets"
+  ],
+  "permission_status": "PERMITTED_SAMPLE_FIXTURE",
+  "posts": [
+    {
+      "id": "ind_post_001",
+      "title": "Institutional buying in HDFCBANK ahead of quarterly board meeting",
+      "snippet": "Delivery percentages for HDFCBANK spiked above 65% on NSE today.",
+      "score": 185,
+      "num_comments": 42,
+      "subreddit": "IndianStockMarket",
+      "permalink": "/r/IndianStockMarket/comments/ind_post_001/hdfcbank_analysis/",
+      "created_utc": 1793077207.311908,
+      "retrieval_timestamp": "2026-10-27T06:00:07.311905+00:00",
+      "is_synthetic": true,
+      "source_status": "PERMITTED_SAMPLE_FIXTURE"
+    },
+    {
+      "id": "ind_post_002",
+      "title": "Technical breakout setup on HDFCBANK weekly chart",
+      "snippet": "Consolidating near all-time high with expanding volumes.",
+      "score": 94,
+      "num_comments": 18,
+      "subreddit": "IndianStockMarket",
+      "permalink": "/r/IndianStockMarket/comments/ind_post_002/hdfcbank_breakout/",
+      "created_utc": 1793073607.311908,
+      "retrieval_timestamp": "2026-10-27T06:00:07.311905+00:00",
+      "is_synthetic": true,
+      "source_status": "PERMITTED_SAMPLE_FIXTURE"
+    },
+    {
+      "id": "ind_post_003",
+      "title": "Long-term SIP review: Weightage of HDFCBANK in large cap portfolio",
+      "snippet": "Evaluating dividend yield and ROCE compared to peers.",
+      "score": 240,
+      "num_comments": 65,
+      "subreddit": "IndianStockMarket",
+      "permalink": "/r/IndianStockMarket/comments/ind_post_003/hdfcbank_sip_discussion/",
+      "created_utc": 1793066407.311908,
+      "retrieval_timestamp": "2026-10-27T06:00:07.311905+00:00",
+      "is_synthetic": true,
+      "source_status": "PERMITTED_SAMPLE_FIXTURE"
+    },
+    {
+      "id": "ind_post_001",
+      "title": "Institutional buying in HDFCBANK ahead of quarterly board meeting",
+      "snippet": "Delivery percentages for HDFCBANK spiked above 65% on NSE today.",
+      "score": 185,
+      "num_comments": 42,
+      "subreddit": "IndiaInvestments",
+      "permalink": "/r/IndiaInvestments/comments/ind_post_001/hdfcbank_analysis/",
+      "created_utc": 1793077207.311918,
+      "retrieval_timestamp": "2026-10-27T06:00:07.311905+00:00",
+      "is_synthetic": true,
+      "source_status": "PERMITTED_SAMPLE_FIXTURE"
+    },
+    {
+      "id": "ind_post_002",
+      "title": "Technical breakout setup on HDFCBANK weekly chart",
+      "snippet": "Consolidating near all-time high with expanding volumes.",
+      "score": 94,
+      "num_comments": 18,
+      "subreddit": "IndiaInvestments",
+      "permalink": "/r/IndiaInvestments/comments/ind_post_002/hdfcbank_breakout/",
+      "created_utc": 1793073607.311918,
+      "retrieval_timestamp": "2026-10-27T06:00:07.311905+00:00",
+      "is_synthetic": true,
+      "source_status": "PERMITTED_SAMPLE_FIXTURE"
+    },
+    {
+      "id": "ind_post_003",
+      "title": "Long-term SIP review: Weightage of HDFCBANK in large cap portfolio",
+      "snippet": "Evaluating dividend yield and ROCE compared to peers.",
+      "score": 240,
+      "num_comments": 65,
+      "subreddit": "IndiaInvestments",
+      "permalink": "/r/IndiaInvestments/comments/ind_post_003/hdfcbank_sip_discussion/",
+      "created_utc": 1793066407.311918,
+      "retrieval_timestamp": "2026-10-27T06:00:07.311905+00:00",
+      "is_synthetic": true,
+      "source_status": "PERMITTED_SAMPLE_FIXTURE"
+    },
+    {
+      "id": "ind_post_001",
+      "title": "Institutional buying in HDFCBANK ahead of quarterly board meeting",
+      "snippet": "Delivery percentages for HDFCBANK spiked above 65% on NSE today.",
+      "score": 185,
+      "num_comments": 42,
+      "subreddit": "dalalstreetbets",
+      "permalink": "/r/dalalstreetbets/comments/ind_post_001/hdfcbank_analysis/",
+      "created_utc": 1793077207.311924,
+      "retrieval_timestamp": "2026-10-27T06:00:07.311905+00:00",
+      "is_synthetic": true,
+      "source_status": "PERMITTED_SAMPLE_FIXTURE"
+    },
+    {
+      "id": "ind_post_002",
+      "title": "Technical breakout setup on HDFCBANK weekly chart",
+      "snippet": "Consolidating near all-time high with expanding volumes.",
+      "score": 94,
+      "num_comments": 18,
+      "subreddit": "dalalstreetbets",
+      "permalink": "/r/dalalstreetbets/comments/ind_post_002/hdfcbank_breakout/",
+      "created_utc": 1793073607.311924,
+      "retrieval_timestamp": "2026-10-27T06:00:07.311905+00:00",
+      "is_synthetic": true,
+      "source_status": "PERMITTED_SAMPLE_FIXTURE"
+    },
+    {
+      "id": "ind_post_003",
+      "title": "Long-term SIP review: Weightage of HDFCBANK in large cap portfolio",
+      "snippet": "Evaluating dividend yield and ROCE compared to peers.",
+      "score": 240,
+      "num_comments": 65,
+      "subreddit": "dalalstreetbets",
+      "permalink": "/r/dalalstreetbets/comments/ind_post_003/hdfcbank_sip_discussion/",
+      "created_utc": 1793066407.311924,
+      "retrieval_timestamp": "2026-10-27T06:00:07.311905+00:00",
+      "is_synthetic": true,
+      "source_status": "PERMITTED_SAMPLE_FIXTURE"
+    }
+  ]
+}

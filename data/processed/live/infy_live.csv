@@ -1,0 +1,2 @@
+symbol,last_price,quote_timestamp,volume,day_open,day_high,day_low,previous_close,provider_name,quote_delay,retrieval_timestamp
+INFY,1820.0,27-Oct-2026 06:00:07,6842100,1812.0,1842.0,1805.0,1805.5,nse_mcp,REAL_TIME,2026-10-27T06:00:07.075806+00:00

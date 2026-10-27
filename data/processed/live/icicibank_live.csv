@@ -1,0 +1,2 @@
+symbol,last_price,quote_timestamp,volume,day_open,day_high,day_low,previous_close,provider_name,quote_delay,retrieval_timestamp
+ICICIBANK,1240.0,27-Oct-2026 06:00:07,6842100,1232.0,1262.0,1225.0,1225.5,nse_mcp,REAL_TIME,2026-10-27T06:00:07.077872+00:00

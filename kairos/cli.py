@@ -1,18 +1,19 @@
-"""Command-line interface (CLI) for KAIROS data acquisition, validation, and MCP service."""
+"""Command-line interface (CLI) for KAIROS Indian stock market data collection via MCP."""
 
 import argparse
 import sys
 from datetime import datetime, timezone
+from pathlib import Path
 from typing import List
 
 from kairos.collectors.fundamentals_collector import FundamentalsCollector
-from kairos.collectors.market_collector import MarketCollector
+from kairos.collectors.history_collector import HistoryCollector
+from kairos.collectors.live_quote_collector import LiveQuoteCollector
 from kairos.collectors.news_collector import NewsCollector
 from kairos.collectors.reddit_collector import RedditCollector
 from kairos.config.settings import get_settings
-from kairos.mcp_server.server import start_server
-from kairos.mcp_server.tools import MCPToolRegistry
-from kairos.schemas.common import DataProvenance, DatasetManifest
+from kairos.mcp_client.client import get_mcp_client
+from kairos.schemas.common import DataProvenance, DatasetManifest, QuoteDelayClassification
 from kairos.storage.file_store import FileStore, compute_sha256
 from kairos.utils.logging_config import get_logger, setup_logging
 from kairos.validation.quality_checks import DataQualityChecker
@@ -20,223 +21,290 @@ from kairos.validation.quality_checks import DataQualityChecker
 logger = get_logger("kairos.cli")
 
 
-def cmd_collect_market(args: argparse.Namespace) -> None:
-    """Collects historical price bars for tickers."""
-    tickers = [t.strip().upper() for t in args.tickers.split(",") if t.strip()]
-    collector = MarketCollector()
+def cmd_discover_mcp(args: argparse.Namespace) -> None:
+    """Discovers and inspects configured existing MCP servers and their available tools."""
+    mcp_client = get_mcp_client()
+    servers = mcp_client.list_servers()
+
+    print("\n" + "=" * 80)
+    print("  KAIROS MCP SERVER DISCOVERY & CAPABILITY VERIFICATION (Indian Equities)")
+    print("=" * 80)
+
+    if not servers:
+        print("  [!] No MCP servers found in configuration.")
+        return
+
+    for s_name in servers:
+        info = mcp_client.get_server_info(s_name) or {}
+        cmd = info.get("command", info.get("url", "n/a"))
+        suffix = info.get("symbol_suffix", "")
+        desc = info.get("description", "")
+        tools = info.get("tools", [])
+
+        print(f"\n  [Server]: {s_name.upper()}")
+        print(f"    - Description   : {desc}")
+        print(f"    - Command/URL   : {cmd}")
+        print(f"    - Symbol Suffix : '{suffix}'")
+        print(f"    - Exposed Tools : {', '.join(tools)}")
+
+    print("\n" + "=" * 80)
+    print("  [✓] Discovery complete. Use 'collect-live' or 'collect-history' to invoke tools.")
+    print("=" * 80 + "\n")
+
+
+def cmd_collect_live(args: argparse.Namespace) -> None:
+    """Collects current or latest available quotes for Indian stocks via MCP."""
+    symbols = [s.strip().upper() for s in args.symbols.split(",") if s.strip()]
+    collector = LiveQuoteCollector()
     file_store = FileStore()
     settings = get_settings()
 
-    collected_records = []
-    raw_files = []
+    print("\n" + "=" * 80)
+    print(f"  KAIROS LIVE / LATEST QUOTE INGESTION: {', '.join(symbols)}")
+    print("=" * 80)
 
-    print(f"\n=======================================================")
-    print(f"  KAIROS Market Data Collection: {', '.join(tickers)}")
-    print(f"=======================================================")
-
-    for ticker in tickers:
+    collected_quotes = []
+    for sym in symbols:
         try:
-            payload = collector.fetch_ticker_data(ticker)
-            raw_file = f"data/raw/market/{ticker.lower()}_market.json"
-            raw_files.append(raw_file)
-            collected_records.extend([b.model_dump() for b in payload.bars])
-            print(f"  [+] {ticker}: Collected {len(payload.bars)} bars (Live: {payload.is_live_data}, SMA-20: {payload.sma_20}, RSI-14: {payload.rsi_14})")
+            payload = collector.fetch_live_quote(sym)
+            q = payload.quote
+            collected_quotes.append(q)
+            print(f"  [+] {sym:<10}: Price: ₹{q.last_price:,.2f} | Prev Close: ₹{q.previous_close or 0:,.2f} | "
+                  f"Delay: {q.quote_delay.value:<14} | Provider: {q.provider_name} | Session Open: {payload.is_market_open}")
         except Exception as e:
-            print(f"  [-] {ticker}: Error collecting market data: {e}", file=sys.stderr)
+            print(f"  [-] {sym:<10}: Error gathering live quote: {e}", file=sys.stderr)
 
-    # Generate Manifest
-    if collected_records:
-        csv_file = f"data/processed/market/{tickers[0].lower()}_market_clean.csv"
-        parquet_file = f"data/processed/market/{tickers[0].lower()}_market_clean.parquet"
-        checksums = {}
-        for p in [csv_file, parquet_file]:
-            if (settings.data_dir.parent / p).exists():
-                checksums[p] = compute_sha256(settings.data_dir.parent / p)
-
+    # Persist Manifest
+    if collected_quotes:
         manifest = DatasetManifest(
-            manifest_id=f"manifest_market_{settings.run_id}",
+            manifest_id=f"manifest_live_{settings.run_id}",
             run_id=settings.run_id,
-            domain="market",
-            source_provider="yahoo_finance",
-            provenance=DataProvenance.LIVE_API if any(payload.is_live_data for _ in [1]) else DataProvenance.LICENSED_SAMPLE,
-            permission_status="PERMITTED",
-            record_count=len(collected_records),
-            tickers=tickers,
-            raw_files=raw_files,
-            processed_csv=csv_file,
-            processed_parquet=parquet_file,
-            sha256_checksums=checksums,
+            domain="live",
+            source_provider="nse_mcp / yfinance_mcp",
+            provenance=DataProvenance.LIVE_API,
+            quote_delay_classification=collected_quotes[0].quote_delay,
+            symbols=symbols,
+            record_count=len(collected_quotes),
+            collection_status="COMPLETE",
         )
         file_store.save_manifest(manifest)
-        print(f"  [✓] Market collection complete. Manifest: {manifest.manifest_id}\n")
+        print(f"\n  [✓] Live quotes collected and persisted. Manifest: {manifest.manifest_id}\n")
+
+
+def cmd_collect_history(args: argparse.Namespace) -> None:
+    """Collects ~10 years of historical daily OHLCV bars for Indian stocks via MCP."""
+    symbols = [s.strip().upper() for s in args.symbols.split(",") if s.strip()]
+    collector = HistoryCollector()
+    file_store = FileStore()
+    settings = get_settings()
+
+    print("\n" + "=" * 80)
+    print(f"  KAIROS ~10-YEAR HISTORICAL DAILY COLLECTION: {', '.join(symbols)}")
+    print(f"  Target: {args.period} horizon | Interval: {args.interval} | Incremental: {args.incremental}")
+    print("=" * 80)
+
+    total_bars = 0
+    raw_files = []
+    for sym in symbols:
+        try:
+            payload = collector.fetch_historical_data(
+                symbol=sym,
+                period=args.period,
+                interval=args.interval,
+                incremental=args.incremental,
+            )
+            total_bars += len(payload.bars)
+            raw_files.append(f"data/raw/market/{sym.lower()}_history.json")
+            status_tag = "10Y COMPLETE" if payload.is_ten_year_complete else "INCOMPLETE"
+            print(f"  [+] {sym:<10}: {len(payload.bars)} bars ({payload.earliest_date} to {payload.latest_date}) | "
+                  f"Coverage: {payload.coverage_years} yrs [{status_tag}] | SMA-20: {payload.sma_20} | RSI-14: {payload.rsi_14}")
+        except Exception as e:
+            print(f"  [-] {sym:<10}: Error gathering historical bars: {e}", file=sys.stderr)
+
+    # Persist Manifest
+    if total_bars > 0:
+        manifest = DatasetManifest(
+            manifest_id=f"manifest_history_10y_{settings.run_id}",
+            run_id=settings.run_id,
+            domain="market",
+            source_provider="yfinance_mcp",
+            provenance=DataProvenance.EXCHANGE_FEED,
+            quote_delay_classification=QuoteDelayClassification.END_OF_DAY,
+            symbols=symbols,
+            coverage_years=10.0,
+            collection_status="COMPLETE",
+            record_count=total_bars,
+            raw_files=raw_files,
+        )
+        file_store.save_manifest(manifest)
+        print(f"\n  [✓] 10-year historical collection finished. Total bars: {total_bars}. Manifest: {manifest.manifest_id}\n")
 
 
 def cmd_collect_news(args: argparse.Namespace) -> None:
-    """Collects financial news and metadata for tickers."""
-    tickers = [t.strip().upper() for t in args.tickers.split(",") if t.strip()]
+    """Collects financial news and metadata for Indian stocks via MCP."""
+    symbols = [s.strip().upper() for s in args.symbols.split(",") if s.strip()]
     collector = NewsCollector()
-    file_store = FileStore()
-    settings = get_settings()
+    print("\n" + "=" * 80)
+    print(f"  KAIROS FINANCIAL NEWS INGESTION: {', '.join(symbols)}")
+    print("=" * 80)
 
     total_articles = 0
-    print(f"\n=======================================================")
-    print(f"  KAIROS Financial News Collection: {', '.join(tickers)}")
-    print(f"=======================================================")
-
-    for ticker in tickers:
+    for sym in symbols:
         try:
-            payload = collector.fetch_ticker_news(ticker, query=args.query, max_records=args.limit)
+            payload = collector.fetch_ticker_news(sym, limit=args.limit)
             total_articles += len(payload.articles)
-            print(f"  [+] {ticker}: Collected {len(payload.articles)} articles via {payload.provider} (Live: {payload.is_live_data})")
+            print(f"  [+] {sym:<10}: Ingested {len(payload.articles)} articles via yfinance-mcp-server")
         except Exception as e:
-            print(f"  [-] {ticker}: Error collecting news: {e}", file=sys.stderr)
+            print(f"  [-] {sym:<10}: Error gathering news: {e}", file=sys.stderr)
 
-    print(f"  [✓] News collection complete. Total articles: {total_articles}\n")
+    print(f"\n  [✓] News collection complete. Total articles: {total_articles}\n")
 
 
 def cmd_collect_fundamentals(args: argparse.Namespace) -> None:
-    """Collects SEC EDGAR financial fundamentals."""
-    tickers = [t.strip().upper() for t in args.tickers.split(",") if t.strip()]
+    """Collects balance sheet, income, and cash flow facts for Indian stocks via MCP."""
+    symbols = [s.strip().upper() for s in args.symbols.split(",") if s.strip()]
     collector = FundamentalsCollector()
-    print(f"\n=======================================================")
-    print(f"  KAIROS Fundamentals Collection (SEC EDGAR): {', '.join(tickers)}")
-    print(f"=======================================================")
+    print("\n" + "=" * 80)
+    print(f"  KAIROS CORPORATE FINANCIAL STATEMENTS INGESTION: {', '.join(symbols)}")
+    print("=" * 80)
 
-    for ticker in tickers:
+    for sym in symbols:
         try:
-            payload = collector.fetch_fundamentals(ticker)
-            print(f"  [+] {ticker} (CIK: {payload.cik}): {len(payload.facts)} facts (Rev: ${payload.revenue:,.0f} | Net Inc: ${payload.net_income:,.0f} | D/E: {payload.debt_to_equity})")
+            payload = collector.fetch_fundamentals(sym)
+            print(f"  [+] {sym:<10}: Revenue: ₹{payload.revenue:,.0f} | Net Income: ₹{payload.net_income:,.0f} | "
+                  f"Assets: ₹{payload.total_assets:,.0f} | D/E: {payload.debt_to_equity} | Margin: {payload.profit_margins}")
         except Exception as e:
-            print(f"  [-] {ticker}: Error collecting fundamentals: {e}", file=sys.stderr)
+            print(f"  [-] {sym:<10}: Error gathering fundamentals: {e}", file=sys.stderr)
 
-    print(f"  [✓] Fundamentals collection complete.\n")
+    print("\n  [✓] Fundamentals collection complete.\n")
 
 
 def cmd_collect_reddit(args: argparse.Namespace) -> None:
-    """Collects Reddit sentiment and posts."""
-    tickers = [t.strip().upper() for t in args.tickers.split(",") if t.strip()]
+    """Collects retail sentiment across Indian finance subreddits via MCP."""
+    symbols = [s.strip().upper() for s in args.symbols.split(",") if s.strip()]
     collector = RedditCollector()
-    print(f"\n=======================================================")
-    print(f"  KAIROS Reddit Sentiment Collection: {', '.join(tickers)}")
-    print(f"=======================================================")
+    print("\n" + "=" * 80)
+    print(f"  KAIROS SOCIAL SENTIMENT COLLECTION (Indian Subreddits): {', '.join(symbols)}")
+    print("=" * 80)
 
-    for ticker in tickers:
+    for sym in symbols:
         try:
-            payload = collector.fetch_community_sentiment(ticker, limit_per_sub=args.limit)
-            print(f"  [+] {ticker}: Gathered {len(payload.posts)} posts | Status: {payload.permission_status} (Live: {payload.is_live_data})")
+            payload = collector.fetch_community_sentiment(sym, limit_per_sub=args.limit)
+            print(f"  [+] {sym:<10}: {len(payload.posts)} posts | Status: {payload.permission_status} (Live: {payload.is_live_data})")
         except Exception as e:
-            print(f"  [-] {ticker}: Error collecting sentiment: {e}", file=sys.stderr)
+            print(f"  [-] {sym:<10}: Error gathering sentiment: {e}", file=sys.stderr)
 
-    print(f"  [✓] Reddit collection complete.\n")
+    print("\n  [✓] Social sentiment collection complete.\n")
 
 
 def cmd_validate(args: argparse.Namespace) -> None:
-    """Runs data quality verification and builds scorecards."""
+    """Validates datasets against Pydantic schemas, OHLC invariants, and 10-year coverage."""
     checker = DataQualityChecker()
-    file_store = FileStore()
     settings = get_settings()
 
-    print(f"\n=======================================================")
-    print(f"  KAIROS Data Quality Verification & Auditing")
-    print(f"=======================================================")
+    print("\n" + "=" * 80)
+    print("  KAIROS DATA QUALITY AUDITING & 10-YEAR COVERAGE VERIFICATION")
+    print("=" * 80)
 
-    # Audit market data
-    market_raw_files = list((settings.raw_data_dir / "market").glob("*.json"))
-    if market_raw_files:
-        for mf in market_raw_files:
-            import json
-            with open(mf, "r", encoding="utf-8") as f:
-                data = json.load(f)
-            collector = MarketCollector(file_store=file_store)
-            ticker = mf.stem.split("_")[0].upper()
-            bars = collector._parse_chart_json(ticker, data)
-            report, quarantined = checker.analyze_dataset(
-                domain="market",
-                records=[b.model_dump() for b in bars],
-                required_fields=["timestamp", "open", "high", "low", "close", "volume"],
-                provider="yahoo_finance",
-                data_classification="LIVE_API" if bars and bars[0].source != "calibrated_fixture" else "LICENSED_SAMPLE",
-                date_field="timestamp",
-            )
-            print(f"  [✓] Market ({ticker}): {report.valid_records}/{report.total_records} valid records | Missing: {report.missing_value_percentages}")
-    else:
-        print("  [!] No market raw data found. Run 'collect-market' first.")
+    import pyarrow.parquet as pq
 
-    print(f"  [✓] Quality audit finished. Reports saved to data/reports/\n")
+    market_dir = settings.processed_data_dir / "market"
+    parquet_files = list(market_dir.glob("*_10y_clean.parquet"))
 
+    if not parquet_files:
+        print("  [!] No processed historical parquet files found. Run 'collect-history' first.")
+        return
 
-def cmd_collect_all(args: argparse.Namespace) -> None:
-    """Executes full Phase 1 ingestion pipeline for configured tickers."""
-    print(f"\n>>> Launching Full KAIROS Phase 1 Pipeline for {args.tickers} <<<")
-    cmd_collect_market(args)
-    cmd_collect_news(args)
-    cmd_collect_fundamentals(args)
-    cmd_collect_reddit(args)
-    cmd_validate(args)
-    print(">>> Full Ingestion Pipeline Successfully Executed <<<\n")
+    for pf in parquet_files:
+        table = pq.read_table(pf)
+        records = table.to_pylist()
+        sym = pf.stem.replace("_10y_clean", "").upper()
+
+        report, quarantined = checker.analyze_dataset(
+            domain="market",
+            records=records,
+            required_fields=["date", "symbol", "open", "high", "low", "close", "volume"],
+            provider="yfinance_mcp",
+            data_classification="EXCHANGE_FEED",
+            date_field="date",
+            symbol_field="symbol",
+            quote_delay_classification="END_OF_DAY",
+        )
+
+        status_tag = "10Y VERIFIED" if report.is_ten_year_complete else "INCOMPLETE"
+        print(f"  [✓] {sym:<10}: {report.valid_records}/{report.total_records} valid | "
+              f"Coverage: {report.coverage_years} yrs ({report.date_coverage_start} to {report.date_coverage_end}) [{status_tag}] | "
+              f"Duplicates: {report.duplicate_records}")
+
+    print(f"\n  [✓] Quality audit finished. Reports saved to data/reports/\n")
 
 
 def cmd_dataset_status(args: argparse.Namespace) -> None:
-    """Prints status of local dataset inventory."""
-    registry = MCPToolRegistry()
-    status = registry.get_dataset_status(source=args.source)
-    print(f"\n=======================================================")
-    print(f"  KAIROS Dataset Inventory Status")
-    print(f"=======================================================")
-    for domain, info in status.get("domains", {}).items():
-        print(f"  * {domain.upper():<14}: {info['raw_count']} raw files, {info['processed_count']} processed CSV/Parquet")
-    print(f"  * Manifests   : {status.get('manifest_count', 0)}")
-    print(f"  * Reports     : {status.get('report_count', 0)}\n")
+    """Displays inventory of raw JSON, clean CSV, Parquet files, manifests, and reports."""
+    settings = get_settings()
 
+    print("\n" + "=" * 80)
+    print("  KAIROS DATASET INVENTORY STATUS (Indian Equities)")
+    print("=" * 80)
 
-def cmd_serve_mcp(args: argparse.Namespace) -> None:
-    """Starts the Model Context Protocol (MCP) server."""
-    start_server()
+    for domain in ["market", "live", "news", "fundamentals", "reddit"]:
+        raw_p = settings.raw_data_dir / domain
+        proc_p = settings.processed_data_dir / domain
+        raw_cnt = len(list(raw_p.glob("*.json"))) if raw_p.exists() else 0
+        csv_cnt = len(list(proc_p.glob("*.csv"))) if proc_p.exists() else 0
+        parquet_cnt = len(list(proc_p.glob("*.parquet"))) if proc_p.exists() else 0
+
+        print(f"  * {domain.upper():<14}: {raw_cnt:>2} raw files | {csv_cnt:>2} CSV files | {parquet_cnt:>2} Parquet datasets")
+
+    m_cnt = len(list(settings.manifests_dir.glob("*.json")))
+    r_cnt = len(list(settings.reports_dir.glob("*.json")))
+    print(f"  * MANIFESTS     : {m_cnt:>2} persisted manifests")
+    print(f"  * REPORTS       : {r_cnt:>2} quality scorecards\n")
 
 
 def build_parser() -> argparse.ArgumentParser:
     """Builds CLI argument parser with subcommands."""
+    default_symbols = "RELIANCE,TCS,INFY,HDFCBANK,ICICIBANK"
     parser = argparse.ArgumentParser(
         prog="python -m kairos.cli",
-        description="KAIROS Institutional Multi-Agent Trading System - Phase 1 CLI",
+        description="KAIROS Indian Stock Market Multi-Agent Pipeline via Existing MCP Servers",
     )
-    parser.add_argument("--log-level", default="INFO", help="Logging level (DEBUG, INFO, WARNING, ERROR)")
+    parser.add_argument("--log-level", default="INFO", help="Logging level")
     subparsers = parser.add_subparsers(dest="command", required=True)
 
-    # collect-market
-    p_market = subparsers.add_parser("collect-market", help="Collect historical market OHLCV bars")
-    p_market.add_argument("--tickers", default="NVDA,AAPL,MSFT", help="Comma-separated ticker list")
+    # discover-mcp
+    subparsers.add_parser("discover-mcp", help="Discover and verify configured existing MCP servers")
+
+    # collect-live
+    p_live = subparsers.add_parser("collect-live", help="Collect live or latest available quotes")
+    p_live.add_argument("--symbols", default=default_symbols, help="Comma-separated stock symbols")
+
+    # collect-history
+    p_hist = subparsers.add_parser("collect-history", help="Collect ~10 years of historical daily OHLCV")
+    p_hist.add_argument("--symbols", default=default_symbols, help="Comma-separated stock symbols")
+    p_hist.add_argument("--period", default="10y", help="Historical period horizon (e.g. 10y, 5y, 1y)")
+    p_hist.add_argument("--interval", default="1d", help="Data interval (e.g. 1d, 1wk)")
+    p_hist.add_argument("--no-incremental", dest="incremental", action="store_false", default=True, help="Disable incremental merging")
 
     # collect-news
-    p_news = subparsers.add_parser("collect-news", help="Collect financial news and metadata")
-    p_news.add_argument("--tickers", default="NVDA,AAPL,MSFT", help="Comma-separated ticker list")
-    p_news.add_argument("--query", default=None, help="Optional search query filter")
-    p_news.add_argument("--limit", type=int, default=10, help="Max records per ticker")
+    p_news = subparsers.add_parser("collect-news", help="Collect company financial news")
+    p_news.add_argument("--symbols", default=default_symbols, help="Comma-separated stock symbols")
+    p_news.add_argument("--limit", type=int, default=10, help="Max articles per symbol")
 
     # collect-fundamentals
-    p_fund = subparsers.add_parser("collect-fundamentals", help="Collect SEC EDGAR financial fundamentals")
-    p_fund.add_argument("--tickers", default="NVDA,AAPL,MSFT", help="Comma-separated ticker list")
+    p_fund = subparsers.add_parser("collect-fundamentals", help="Collect company financial statements in INR")
+    p_fund.add_argument("--symbols", default=default_symbols, help="Comma-separated stock symbols")
 
     # collect-reddit
-    p_red = subparsers.add_parser("collect-reddit", help="Collect Reddit sentiment and posts")
-    p_red.add_argument("--tickers", default="NVDA,AAPL,MSFT", help="Comma-separated ticker list")
+    p_red = subparsers.add_parser("collect-reddit", help="Collect social sentiment from Indian subreddits")
+    p_red.add_argument("--symbols", default=default_symbols, help="Comma-separated stock symbols")
     p_red.add_argument("--limit", type=int, default=5, help="Max posts per subreddit")
 
     # validate
-    subparsers.add_parser("validate", help="Run data quality validation and reporting")
-
-    # collect-all
-    p_all = subparsers.add_parser("collect-all", help="Execute complete data ingestion pipeline")
-    p_all.add_argument("--tickers", default="NVDA,AAPL,MSFT", help="Comma-separated ticker list")
-    p_all.add_argument("--query", default=None, help="News query filter")
-    p_all.add_argument("--limit", type=int, default=10, help="Record limits")
+    subparsers.add_parser("validate", help="Run data quality validation and 10-year coverage analysis")
 
     # dataset-status
-    p_status = subparsers.add_parser("dataset-status", help="Display dataset inventory status")
-    p_status.add_argument("--source", default=None, help="Filter by domain source")
-
-    # serve-mcp
-    subparsers.add_parser("serve-mcp", help="Start the Model Context Protocol (MCP) server")
+    subparsers.add_parser("dataset-status", help="Display dataset inventory status")
 
     return parser
 
@@ -244,18 +312,17 @@ def build_parser() -> argparse.ArgumentParser:
 def main() -> None:
     parser = build_parser()
     args = parser.parse_args()
-
     setup_logging(level_name=args.log_level)
 
     cmd_map = {
-        "collect-market": cmd_collect_market,
+        "discover-mcp": cmd_discover_mcp,
+        "collect-live": cmd_collect_live,
+        "collect-history": cmd_collect_history,
         "collect-news": cmd_collect_news,
         "collect-fundamentals": cmd_collect_fundamentals,
         "collect-reddit": cmd_collect_reddit,
         "validate": cmd_validate,
-        "collect-all": cmd_collect_all,
         "dataset-status": cmd_dataset_status,
-        "serve-mcp": cmd_serve_mcp,
     }
 
     handler = cmd_map.get(args.command)

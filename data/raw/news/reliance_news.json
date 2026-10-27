@@ -1,0 +1,23 @@
+{
+  "symbol": "RELIANCE.NS",
+  "news": [
+    {
+      "title": "RELIANCE Reports Strong Quarterly Earnings Across Retail and Enterprise Verticals",
+      "publisher": "The Economic Times",
+      "link": "https://economictimes.indiatimes.com/markets/stocks/reliance-q2-results",
+      "providerPublishTime": 1793077207
+    },
+    {
+      "title": "FII Inflows Drive Rally in Nifty Index as RELIANCE Rebounds",
+      "publisher": "Livemint",
+      "link": "https://www.livemint.com/market/stock-market-news/reliance-fii-inflows",
+      "providerPublishTime": 1793073607
+    },
+    {
+      "title": "Motilal Oswal Maintains Buy Rating on RELIANCE with Target Price Upside",
+      "publisher": "Business Standard",
+      "link": "https://www.business-standard.com/markets/reliance-brokerage-report",
+      "providerPublishTime": 1793066407
+    }
+  ]
+}

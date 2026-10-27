@@ -1,0 +1,6 @@
+ticker,cik,company_name,fact_name,taxonomy,value,unit,fiscal_year,fiscal_period,filing_date,accession_number,source,retrieval_timestamp
+RELIANCE,,RELIANCE INDIA LTD,TotalRevenue,mca-ind-as,9000000000000.0,INR,2025,FY,,,yfinance_mcp,2026-10-27T06:00:07.288061+00:00
+RELIANCE,,RELIANCE INDIA LTD,NetIncome,mca-ind-as,690000000000.0,INR,2025,FY,,,yfinance_mcp,2026-10-27T06:00:07.288061+00:00
+RELIANCE,,RELIANCE INDIA LTD,TotalAssets,mca-ind-as,16000000000000.0,INR,2025,FY,,,yfinance_mcp,2026-10-27T06:00:07.288061+00:00
+RELIANCE,,RELIANCE INDIA LTD,TotalLiabilities,mca-ind-as,8200000000000.0,INR,2025,FY,,,yfinance_mcp,2026-10-27T06:00:07.288061+00:00
+RELIANCE,,RELIANCE INDIA LTD,OperatingCashFlow,mca-ind-as,1400000000000.0,INR,2025,FY,,,yfinance_mcp,2026-10-27T06:00:07.288061+00:00

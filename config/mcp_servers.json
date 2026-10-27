@@ -1,0 +1,53 @@
+{
+  "mcpServers": {
+    "yfinance": {
+      "command": "uvx",
+      "args": ["yfinance-mcp-server"],
+      "env": {},
+      "tools": [
+        "get_historical_stock_prices",
+        "get_stock_info",
+        "get_financial_statement",
+        "get_news"
+      ],
+      "symbol_suffix": ".NS",
+      "description": "Primary MCP server for 10-year Indian equities historical OHLCV, financial statements, and company news."
+    },
+    "nse": {
+      "command": "nse-mcp",
+      "args": [],
+      "env": {},
+      "tools": [
+        "stock_quote",
+        "market_status",
+        "chart_data"
+      ],
+      "symbol_suffix": "",
+      "description": "National Stock Exchange of India MCP server for near real-time live quotes and session status."
+    },
+    "alphavantage": {
+      "type": "http",
+      "url": "https://mcp.alphavantage.co/mcp?apikey={ALPHAVANTAGE_API_KEY}",
+      "tools": [
+        "TIME_SERIES_DAILY",
+        "GLOBAL_QUOTE",
+        "NEWS_SENTIMENT"
+      ],
+      "symbol_suffix": ".BSE",
+      "description": "Alpha Vantage MCP server (evaluated; restricted to BSE symbols, 100-day limit on free tier)."
+    },
+    "reddit": {
+      "command": "mcp-server-reddit",
+      "args": [],
+      "env": {
+        "REDDIT_CLIENT_ID": "{REDDIT_CLIENT_ID}",
+        "REDDIT_CLIENT_SECRET": "{REDDIT_CLIENT_SECRET}"
+      },
+      "tools": [
+        "get_subreddit_posts",
+        "search_reddit"
+      ],
+      "description": "Reddit MCP server for retail trading community sentiment (r/IndianStockMarket, r/IndiaInvestments)."
+    }
+  }
+}

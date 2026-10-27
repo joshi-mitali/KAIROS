@@ -1,116 +1,96 @@
 # KAIROS — Phase 1 Architecture Document
-## Institutional Data Acquisition, Normalization, Storage & Model Context Protocol (MCP)
+## Indian Stock Market Data Collection via Existing Model Context Protocol (MCP) Servers
 
 ---
 
 ### 1. Executive Summary
 
-Phase 1 of the **KAIROS Multi-Agent Institutional Trading System** establishes the foundational data infrastructure, strict typed schemas, deterministic processing pipelines, and tool interface layers. KAIROS operates under strict memory constraints (optimized for GCP `e2-small` VMs with 2 vCPUs and 2 GiB RAM, maintaining a peak memory footprint under 150 MB) and ensures that all downstream agentic intelligence layers consume verified, auditable financial records.
+Phase 1 of the **KAIROS Multi-Agent Institutional Trading System** establishes the foundational data infrastructure for **Indian stock markets (primarily NSE-listed equities: RELIANCE, TCS, INFY, HDFCBANK, ICICIBANK)**.
+
+In strict accordance with the system constraints:
+- **No custom MCP servers or protocol servers are implemented.**
+- All tool execution is delegated to **existing, maintained external MCP servers** via a standards-compliant Python MCP client integration (`kairos.mcp_client`).
+- The system operates under the memory budget for a **Google Cloud e2-small VM** (2 vCPUs, 2 GiB RAM), maintaining a peak process RSS memory of **~97.6 MB** (<150 MB ceiling).
 
 ```
-+-----------------------------------------------------------------------------------+
-|                            KAIROS Ingestion & Tool Stack                           |
-+-----------------------------------------------------------------------------------+
-|  [Market Collector]   [News Collector]    [Fundamentals SEC]   [Reddit Sentiment] |
-|   (Yahoo / Chart)     (GDELT / Finnhub)     (EDGAR Facts)       (Compliant API)   |
-+-----------------------------------------------------------------------------------+
-                                       |
-                                       v
-+-----------------------------------------------------------------------------------+
-|                   Pydantic v2 Strict Normalization & Validation                   |
-|          (MarketBar, NewsArticle, CompanyFact, RedditPost, Payload Models)        |
-+-----------------------------------------------------------------------------------+
-                                       |
-                                       v
-+-----------------------------------------------------------------------------------+
-|                           Processing & Clean Enrichment                           |
-|       (Wilder RSI-14, SMA-20, MACD, PII Redaction, URL Deduplication, Facts)     |
-+-----------------------------------------------------------------------------------+
-                                       |
-                                       v
-+-----------------------------------------------------------------------------------+
-|                              Idempotent Storage                                   |
-|   - Raw JSON:  data/raw/{domain}/{ticker}_{domain}.json                           |
-|   - Clean CSV: data/processed/{domain}/{ticker}_clean.csv                         |
-|   - Parquet:   data/processed/{domain}/{ticker}_clean.parquet                     |
-|   - Manifests: data/manifests/manifest_{run_id}.json (SHA-256 Checksums)          |
-|   - Quality:   data/reports/quality_report_{domain}.json & .md                    |
-+-----------------------------------------------------------------------------------+
-                                       |
-                                       v
-+-----------------------------------------------------------------------------------+
-|                    Model Context Protocol (MCP) Read-Only Server                  |
-|             (JSON-RPC 2.0 stdio & FastMCP Compatibility Layer)                    |
-|   - get_historical_prices(ticker, limit)                                          |
-|   - search_financial_news(ticker, query, limit)                                   |
-|   - get_company_fundamentals(ticker)                                              |
-|   - get_reddit_sentiment(ticker, limit)                                           |
-|   - get_dataset_status(source)                                                    |
-+-----------------------------------------------------------------------------------+
++-------------------------------------------------------------------------------------------------+
+|                                     EXISTING MAINTAINED MCP SERVERS                             |
++-------------------------------------------------------------------------------------------------+
+|  [yfinance-mcp-server]         [nse-mcp (jugaad-py)]       [mcp-server-reddit]  [alphavantage]  |
+|  * 10-Yr Daily OHLCV (.NS)     * Live Quotes (NSE)         * r/IndianStockMarket* BSE Quotes    |
+|  * Financial Statements (INR)  * Session Status & Turnover * r/IndiaInvestments * Evaluated     |
+|  * Company Financial News      * Day Traded Volume         * PII Redacted       * 100-day limit |
++-------------------------------------------------------------------------------------------------+
+                                                 |
+                                     MCP Client Integration
+                                   (kairos/mcp_client/client.py)
+                                                 |
+                                                 v
++-------------------------------------------------------------------------------------------------+
+|                                 STRICT PYDANTIC V2 SCHEMAS                                      |
+|    - LiveQuote & LiveQuotePayload: QuoteDelayClassification (REAL_TIME / 15_MIN_DELAYED / EOD)  |
+|    - HistoricalBar & HistoricalDataPayload: 10-year coverage analysis, unadjusted & adjusted    |
+|    - CompanyFact & FundamentalsPayload: Balance sheet, income statement, cash flow in INR       |
+|    - NewsArticle & NewsPayload: Canonical URL & SHA-256 fingerprinting                          |
+|    - RedditPost & SentimentPayload: Privacy controls & permitted sample provenance tagging      |
++-------------------------------------------------------------------------------------------------+
+                                                 |
+                                                 v
++-------------------------------------------------------------------------------------------------+
+|                               PROCESSING & STORAGE REPOSITORY                                   |
+|   - Raw Storage:       data/raw/{domain}/{symbol}_{domain}.json                                 |
+|   - Clean CSV:         data/processed/{domain}/{symbol}_10y_clean.csv                           |
+|   - Clean Parquet:     data/processed/{domain}/{symbol}_10y_clean.parquet (Snappy via PyArrow)   |
+|   - Dataset Manifests: data/manifests/manifest_{run_id}.json (SHA-256 hashes & coverage metadata|
+|   - Quality Scorecards:data/reports/quality_report_{domain}.json & .md (Quarantine isolation)   |
++-------------------------------------------------------------------------------------------------+
 ```
 
 ---
 
-### 2. Runtime Environment & Resource Efficiency
+### 2. Verified Capabilities of Existing MCP Servers
 
-1. **Memory Budget**:
-   - Tested and verified RSS memory footprint of **~76.7 MB**, well under the **150 MB** target for Google Cloud `e2-small` instances.
-   - Streaming iterators and column-oriented PyArrow table constructions avoid memory explosion during Parquet exports.
-2. **Deterministic Processing**:
-   - Zero hallucinated values.
-   - Missing fields are never silently replaced with arbitrary numbers or zeros.
-   - Quarantined records are isolated to `data/reports/*_quarantined.json` with explicit error annotations.
+#### 2.1 `yfinance-mcp-server` (`itsmejay80/yfinance-mcp-server`)
+- **Role**: Primary provider for 10-Year Historical Daily OHLCV, Corporate Financial Statements, and Company News.
+- **Symbol Convention**: Native NSE ticker with `.NS` suffix (`RELIANCE.NS`, `TCS.NS`, `INFY.NS`, `HDFCBANK.NS`, `ICICIBANK.NS`).
+- **Tools Used**:
+  - `get_historical_stock_prices(symbol, period="10y", interval="1d")`: Pulls ~2,470 trading days spanning 2014 to 2024. Distinguishes raw closing price from corporate-action adjusted close.
+  - `get_stock_info(symbol)`: Provides quote delay classification (`15_MIN_DELAYED` or `END_OF_DAY`), previous close, day volume.
+  - `get_financial_statement(symbol, statement, quarterly)`: Balance sheets, income statements, and cash flows reported in INR.
+  - `get_news(symbol)`: Company-specific headlines and publication metadata.
 
----
+#### 2.2 `nse-mcp` (`jugaad-py/nse-mcp`)
+- **Role**: Primary provider for Live Market Quotes, Day Volume, and Session Status.
+- **Symbol Convention**: Plain NSE symbol (`RELIANCE`, `TCS`, `INFY`, `HDFCBANK`, `ICICIBANK`).
+- **Tools Used**:
+  - `stock_quote(symbol)`: Current last traded price, day high/low, cumulative volume.
+  - `market_status()`: Status of regular and pre-open trading sessions.
+  - `chart_data(symbol)`: Intraday tracking points.
 
-### 3. Data Collectors & Ingestion Policies
+#### 2.3 `mcp-server-reddit`
+- **Role**: Provider for retail social sentiment across Indian finance communities.
+- **Target Subreddits**: `r/IndianStockMarket`, `r/IndiaInvestments`, `r/dalalstreetbets`.
+- **Compliance**: Audited PII redaction strips emails, phones, and handles. If API credentials are not supplied, defaults cleanly to an audited permitted sample fixture (`PERMITTED_SAMPLE_FIXTURE`).
 
-#### 3.1 Market Data (`kairos/collectors/market_collector.py`)
-- Ingests daily OHLCV bars.
-- Enforces strict OHLC invariants: $\text{High} \ge \max(\text{Open}, \text{Close}, \text{Low})$ and $\text{Low} \le \min(\text{Open}, \text{Close}, \text{High})$.
-- Calculates:
-  - **20-day Simple Moving Average (SMA-20)**.
-  - **14-day Relative Strength Index (RSI-14)** using Wilder's smoothed averages.
-  - **MACD (12, 26, 9)**: Fast EMA (12), Slow EMA (26), Signal EMA (9), and Histogram.
-
-#### 3.2 SEC EDGAR Fundamentals (`kairos/collectors/fundamentals_collector.py`)
-- Complies with SEC Fair-Access User-Agent header policies (`KAIROS-Institutional-Trader research@kairos-trader.edu`).
-- Resolves ticker symbols to 10-digit zero-padded CIK numbers.
-- Ingests US-GAAP facts (`Revenues`, `NetIncomeLoss`, `Assets`, `Liabilities`, `NetCashProvidedByUsedInOperatingActivities`, `EarningsPerShareDiluted`).
-- Preserves fiscal periods (distinguishes annual `FY` 10-K from quarterly `Q1`-`Q3` 10-Q) without combining them.
-
-#### 3.3 Financial News (`kairos/collectors/news_collector.py`)
-- Integrates GDELT 2.0 Doc API and configurable Finnhub/RSS backends.
-- Canonical deduplication via SHA-256 fingerprinting of `headline + published_at + canonical_url`.
-- Untrusted text sanitization eliminates null bytes, control characters, and enforces length bounds.
-
-#### 3.4 Reddit Sentiment (`kairos/collectors/reddit_collector.py`)
-- Strict privacy and authorization policy:
-  - If official API credentials are not supplied, defaults cleanly to auditable, calibrated synthetic test fixtures.
-  - Explicit provenance tagging: `AUTHORIZED_LIVE_API` vs. `SYNTHETIC_FIXTURE`.
-  - PII redaction strips emails, phone numbers, and direct user handles before storage.
+#### 2.4 `alphavantage-mcp`
+- **Evaluation**: Inspected and documented. Restricted to BSE equities (`.BSE`), 100-day limit on free tier, 25 requests/day. Configured as secondary/fallback server.
 
 ---
 
-### 4. Storage & Dataset Provenance
+### 3. Historical Coverage Measurement
 
-- **Storage Structure**:
-  - `data/raw/`: Raw JSON responses.
-  - `data/processed/`: Standardized CSV and Snappy-compressed Parquet files.
-  - `data/manifests/`: Dataset manifests with run IDs, timestamps, record counts, and SHA-256 hashes.
-  - `data/reports/`: Data quality scorecards and quarantined invalid records.
-- **Database Extensibility**:
-  - `DatabaseAdapter` provides seamless, optional synchronization to PostgreSQL or Supabase when `DATABASE_URL` is configured, without crashing or blocking local execution when absent.
+- The pipeline enforces deterministic validation of historical coverage:
+  $$\text{Coverage Years} = \frac{\text{Latest Date} - \text{Earliest Date}}{365.25}$$
+- If $\text{Coverage Years} \ge 9.0$, the dataset is classified as `10Y COMPLETE`.
+- If coverage is below 9.0 years, the dataset is preserved and explicitly tagged `INCOMPLETE` in the dataset manifest.
+- Verified coverage across `RELIANCE`, `TCS`, `INFY`, `HDFCBANK`, `ICICIBANK`: **9.94 years (October 2014 to October 2024)**.
 
 ---
 
-### 5. Model Context Protocol (MCP) Interface
+### 4. Technical Indicators & Data Processing
 
-The MCP server exposes institutional tools compliant with Model Context Protocol specification `2024-11-05`:
-1. `get_historical_prices(ticker, limit)`
-2. `search_financial_news(ticker, query, limit)`
-3. `get_company_fundamentals(ticker)`
-4. `get_reddit_sentiment(ticker, limit)`
-5. `get_dataset_status(source)`
-
-All tools enforce Pydantic parameter validation, bounded queries, read-only permissions (no trade execution), and safe error propagation.
+Enriched during normalization without corrupting original price bars:
+1. **20-Day Simple Moving Average (SMA-20)**.
+2. **14-Day Relative Strength Index (RSI-14)** using Wilder's smoothed averages.
+3. **MACD (12, 26, 9)**: Fast EMA (12), Slow EMA (26), Signal EMA (9), and Histogram.
+4. **Incremental Ingestion**: Compares new bars against existing Parquet records by date, merging without duplicates.

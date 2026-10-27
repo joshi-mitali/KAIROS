@@ -123,26 +123,26 @@ class CleanMarketProcessor:
     def __init__(self, file_store: Optional[FileStore] = None):
         self.file_store = file_store or FileStore()
 
-    def process_and_export(self, payload: MarketDataPayload) -> Dict[str, Any]:
+    def process_and_export(self, payload: Any) -> Dict[str, Any]:
         """
-        Processes a MarketDataPayload:
+        Processes a MarketDataPayload / HistoricalDataPayload:
         - Deduplicates and sorts chronologically
         - Calculates SMA-20, RSI-14, and MACD
         - Exports to CSV and Parquet
         """
-        ticker = payload.ticker.upper()
+        ticker = getattr(payload, "symbol", getattr(payload, "ticker", "MARKET")).upper()
         raw_bars = payload.bars
 
-        # 1. Deduplicate by timestamp (retain latest entry)
+        # 1. Deduplicate by date/timestamp (retain latest entry)
         seen_timestamps = set()
-        deduped_bars: List[MarketBar] = []
+        deduped_bars: List[Any] = []
         duplicate_count = 0
 
         # Sort chronologically
-        sorted_bars = sorted(raw_bars, key=lambda b: str(b.timestamp))
+        sorted_bars = sorted(raw_bars, key=lambda b: str(getattr(b, "date", getattr(b, "timestamp", ""))))
 
         for bar in sorted_bars:
-            ts_key = str(bar.timestamp)
+            ts_key = str(getattr(bar, "date", getattr(bar, "timestamp", "")))
             if ts_key in seen_timestamps:
                 duplicate_count += 1
                 continue
@@ -162,9 +162,12 @@ class CleanMarketProcessor:
         # 3. Build enriched records
         enriched_records: List[Dict[str, Any]] = []
         for i, bar in enumerate(deduped_bars):
+            bar_date = str(getattr(bar, "date", getattr(bar, "timestamp", "")))
             enriched_records.append({
                 "ticker": ticker,
-                "timestamp": str(bar.timestamp),
+                "symbol": getattr(bar, "symbol", getattr(bar, "ticker", ticker)),
+                "date": bar_date,
+                "timestamp": bar_date,
                 "open": bar.open,
                 "high": bar.high,
                 "low": bar.low,
@@ -208,3 +211,4 @@ class CleanMarketProcessor:
             "parquet_path": str(parquet_path),
             "records": enriched_records,
         }
+

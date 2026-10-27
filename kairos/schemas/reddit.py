@@ -43,3 +43,4 @@ class SentimentPayload(BaseModel):
 
 # Alias for compatibility with varying nomenclature
 RedditPayload = SentimentPayload
+

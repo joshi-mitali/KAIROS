@@ -1,10 +1,10 @@
-"""Centralized configuration and environment settings for KAIROS."""
+"""Centralized configuration and environment settings for KAIROS Indian stock market pipeline."""
 
 import os
 import uuid
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Optional
+from typing import List, Optional
 
 
 def _load_env_file(filepath: Path) -> None:
@@ -27,17 +27,16 @@ def _load_env_file(filepath: Path) -> None:
 
 
 class Settings:
-    """Application settings with immutable defaults and runtime environment overrides."""
+    """Application settings for Indian equities ingestion via existing MCP servers."""
 
     def __init__(self) -> None:
-        # Load .env if present in root
         root_env = Path(".env")
         if root_env.exists():
             _load_env_file(root_env)
 
         self.env: str = os.environ.get("KAIROS_ENV", "development")
         self.log_level: str = os.environ.get("LOG_LEVEL", "INFO")
-        
+
         # Paths
         base_data = Path(os.environ.get("KAIROS_DATA_DIR", "data"))
         self.data_dir: Path = base_data
@@ -50,31 +49,28 @@ class Settings:
         ts = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
         self.run_id: str = os.environ.get("KAIROS_RUN_ID", f"run_{ts}_{uuid.uuid4().hex[:6]}")
 
-        # SEC EDGAR Requirements
-        self.sec_user_agent: str = os.environ.get(
-            "SEC_EDGAR_USER_AGENT",
-            "KAIROS-Institutional-Trader research@kairos-trader.edu"
-        )
+        # Target Equities Scope (Configurable NSE tickers)
+        default_tickers = "RELIANCE,TCS,INFY,HDFCBANK,ICICIBANK"
+        raw_tickers = os.environ.get("KAIROS_TARGET_TICKERS", default_tickers)
+        self.target_tickers: List[str] = [t.strip().upper() for t in raw_tickers.split(",") if t.strip()]
 
-        # Reddit Connector Settings
-        self.reddit_authorized: bool = os.environ.get("REDDIT_AUTHORIZED", "false").lower() in ("true", "1", "yes")
+        # Target Historical Years (10 years default)
+        self.historical_years_target: int = int(os.environ.get("KAIROS_HISTORY_YEARS", "10"))
+
+        # MCP Configuration Path
+        self.mcp_config_path: Path = Path(os.environ.get("KAIROS_MCP_CONFIG", "config/mcp_servers.json"))
+
+        # Alpha Vantage Credentials
+        self.alphavantage_api_key: Optional[str] = os.environ.get("ALPHAVANTAGE_API_KEY") or None
+
+        # Reddit Credentials & Configuration
         self.reddit_client_id: Optional[str] = os.environ.get("REDDIT_CLIENT_ID") or None
         self.reddit_client_secret: Optional[str] = os.environ.get("REDDIT_CLIENT_SECRET") or None
-        self.reddit_user_agent: str = os.environ.get(
-            "REDDIT_USER_AGENT",
-            "Mozilla/5.0 (compatible; KAIROS-Trader-Audit/1.0)"
-        )
-
-        # News Providers
-        self.news_provider: str = os.environ.get("NEWS_PROVIDER", "gdelt").lower()
-        self.finnhub_api_key: Optional[str] = os.environ.get("FINNHUB_API_KEY") or None
+        self.reddit_authorized: bool = bool(self.reddit_client_id and self.reddit_client_secret)
+        self.reddit_subreddits: List[str] = ["IndianStockMarket", "IndiaInvestments", "dalalstreetbets"]
 
         # Storage & Database (Optional Supabase / Postgres)
         self.database_url: Optional[str] = os.environ.get("DATABASE_URL") or None
-
-        # MCP Server Defaults
-        self.mcp_server_name: str = os.environ.get("MCP_SERVER_NAME", "KAIROS-Market-Data-MCP")
-        self.mcp_server_version: str = os.environ.get("MCP_SERVER_VERSION", "1.0.0")
 
         # Request Timeouts & Bounds
         self.request_timeout_seconds: int = int(os.environ.get("REQUEST_TIMEOUT_SECONDS", "15"))
@@ -84,10 +80,12 @@ class Settings:
         """Ensures all standard data directories exist on disk."""
         for d in [
             self.raw_data_dir / "market",
+            self.raw_data_dir / "live",
             self.raw_data_dir / "reddit",
             self.raw_data_dir / "news",
             self.raw_data_dir / "fundamentals",
             self.processed_data_dir / "market",
+            self.processed_data_dir / "live",
             self.processed_data_dir / "reddit",
             self.processed_data_dir / "news",
             self.processed_data_dir / "fundamentals",
@@ -101,7 +99,7 @@ _SETTINGS_INSTANCE: Optional[Settings] = None
 
 
 def get_settings() -> Settings:
-    """Provides a singleton instance of application settings."""
+    """Provides singleton access to application settings."""
     global _SETTINGS_INSTANCE
     if _SETTINGS_INSTANCE is None:
         _SETTINGS_INSTANCE = Settings()

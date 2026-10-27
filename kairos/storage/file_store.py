@@ -128,3 +128,4 @@ class FileStore:
 
         logger.info(f"Persisted dataset manifest: {safe_path.name}")
         return safe_path
+

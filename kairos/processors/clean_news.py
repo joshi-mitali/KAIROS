@@ -72,3 +72,4 @@ class CleanNewsProcessor:
             "parquet_path": str(parquet_path),
             "records": clean_records,
         }
+

@@ -37,3 +37,4 @@ class FundamentalsPayload(BaseModel):
     retrieval_timestamp: Optional[str] = Field(default=None, description="ISO timestamp when retrieved")
     source: Optional[str] = Field(default="SEC-EDGAR", description="Authoritative data source")
     is_live_data: bool = Field(default=True, description="True if retrieved from live regulatory or API endpoint")
+

@@ -1,4 +1,4 @@
-"""Common data schema definitions and metadata models."""
+"""Common data schema definitions, provenance types, and manifest models."""
 
 from datetime import datetime, timezone
 from enum import Enum
@@ -8,28 +8,19 @@ from pydantic import BaseModel, Field
 
 class DataProvenance(str, Enum):
     LIVE_API = "LIVE_API"
-    SEC_EDGAR = "SEC_EDGAR"
+    EXCHANGE_FEED = "EXCHANGE_FEED"
     LICENSED_SAMPLE = "LICENSED_SAMPLE"
     SYNTHETIC_FIXTURE = "SYNTHETIC_FIXTURE"
 
 
-class SourceAttribution(BaseModel):
-    """Metadata detailing source, licensing, run context and reproducibility."""
-
-    provider: str
-    license_or_permission: str
-    provenance: DataProvenance
-    is_live_data: bool = True
-    is_synthetic: bool = False
-    retrieval_timestamp: str = Field(
-        default_factory=lambda: datetime.now(timezone.utc).isoformat()
-    )
-    run_id: str = "default_run"
-    additional_metadata: Dict[str, Any] = Field(default_factory=dict)
+class QuoteDelayClassification(str, Enum):
+    REAL_TIME = "REAL_TIME"
+    DELAYED_15_MIN = "15_MIN_DELAYED"
+    END_OF_DAY = "END_OF_DAY"
 
 
 class DatasetManifest(BaseModel):
-    """Comprehensive manifest describing a collected or processed dataset."""
+    """Manifest describing a collected or processed dataset for reproducibility."""
 
     manifest_id: str
     run_id: str
@@ -39,9 +30,13 @@ class DatasetManifest(BaseModel):
     )
     source_provider: str
     provenance: DataProvenance
-    permission_status: str
+    quote_delay_classification: QuoteDelayClassification
+    symbols: List[str] = Field(default_factory=list)
+    earliest_date: Optional[str] = None
+    latest_date: Optional[str] = None
+    coverage_years: Optional[float] = None
+    collection_status: str = "COMPLETE"  # "COMPLETE" or "INCOMPLETE"
     record_count: int
-    tickers: List[str] = Field(default_factory=list)
     raw_files: List[str] = Field(default_factory=list)
     processed_csv: Optional[str] = None
     processed_parquet: Optional[str] = None

@@ -37,3 +37,4 @@ class NewsPayload(BaseModel):
     articles: List[NewsArticle] = Field(default_factory=list, description="Validated news articles")
     is_live_data: bool = Field(default=True, description="True if collected from live provider")
     provider: Optional[str] = Field(default="gdelt", description="Configured provider name")
+

@@ -57,3 +57,4 @@ class DatabaseAdapter:
         except Exception as e:
             logger.error(f"Failed to sync records to {table_name}: {e}")
             return 0
+

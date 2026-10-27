@@ -75,3 +75,4 @@ class CleanFundamentalsProcessor:
             "facts_records": clean_fact_records,
             "summary_record": summary_record[0],
         }
+

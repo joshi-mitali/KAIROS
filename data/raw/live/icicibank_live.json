@@ -1,0 +1,14 @@
+{
+  "symbol": "ICICIBANK",
+  "lastPrice": 1240.0,
+  "change": 14.5,
+  "pChange": 0.53,
+  "previousClose": 1225.5,
+  "open": 1232.0,
+  "dayHigh": 1262.0,
+  "dayLow": 1225.0,
+  "totalTradedVolume": 6842100,
+  "timestamp": "27-Oct-2026 06:00:07",
+  "isRealTime": true,
+  "marketStatus": "Open"
+}

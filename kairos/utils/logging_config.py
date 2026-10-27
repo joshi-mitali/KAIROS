@@ -73,3 +73,4 @@ def setup_logging(level_name: str = "INFO", run_id: Optional[str] = None, json_f
 def get_logger(name: str) -> logging.Logger:
     """Returns a module logger with convenience wrappers."""
     return logging.getLogger(name)
+

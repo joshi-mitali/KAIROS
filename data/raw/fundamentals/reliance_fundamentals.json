@@ -1,0 +1,13 @@
+{
+  "symbol": "RELIANCE.NS",
+  "currency": "INR",
+  "statement": "income",
+  "quarterly": false,
+  "financials": {
+    "TotalRevenue": 9000000000000,
+    "NetIncome": 690000000000,
+    "TotalAssets": 16000000000000,
+    "TotalLiabilities": 8200000000000,
+    "OperatingCashFlow": 1400000000000
+  }
+}

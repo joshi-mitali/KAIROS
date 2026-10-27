@@ -19,3 +19,4 @@ __all__ = [
     "compute_ema",
     "compute_macd",
 ]
+

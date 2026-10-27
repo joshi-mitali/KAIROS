@@ -63,3 +63,4 @@ def sanitize_untrusted_text(text: str, max_length: int = 50000) -> str:
         sanitized = sanitized[:max_length] + " [TRUNCATED]"
         
     return sanitized.strip()
+
