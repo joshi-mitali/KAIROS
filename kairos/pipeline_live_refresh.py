@@ -249,6 +249,21 @@ def refresh_fundamentals(file_store: FileStore) -> List[Dict[str, Any]]:
             if "Operating Cash Flow" in cf.index:
                 ocf = float(cf.loc["Operating Cash Flow"].iloc[0])
 
+        inf = {}
+        try:
+            inf = t.info or {}
+        except Exception as e:
+            logger.warning(f"Could not fetch info for {full_sym}: {e}")
+
+        filing_currency = inf.get("financialCurrency", "INR")
+        taxonomy = "sec-form-20f" if filing_currency == "USD" else "mca-ind-as"
+
+        fiscal_date_str = str(inc.columns[0])[:10] if inc is not None and len(inc.columns) > 0 else f"{current_year}-03-31"
+        try:
+            fy = int(fiscal_date_str[:4])
+        except Exception:
+            fy = current_year
+
         facts = []
         fact_pairs = [
             ("TotalRevenue", rev),
@@ -261,10 +276,10 @@ def refresh_fundamentals(file_store: FileStore) -> List[Dict[str, Any]]:
             facts.append({
                 "ticker": sym,
                 "fact_name": tag,
-                "taxonomy": "mca-ind-as",
+                "taxonomy": taxonomy,
                 "value": val,
-                "unit": "INR",
-                "fiscal_year": current_year - 1,
+                "unit": filing_currency,
+                "fiscal_year": fy,
                 "fiscal_period": "FY",
                 "source": "yfinance_mcp",
                 "provenance": "LIVE_YAHOO_FINANCE_MCP",
@@ -276,7 +291,7 @@ def refresh_fundamentals(file_store: FileStore) -> List[Dict[str, Any]]:
 
         summary_row = {
             "ticker": sym,
-            "company_name": f"{sym} INDIA LTD",
+            "company_name": inf.get("shortName", f"{sym} INDIA LTD"),
             "revenue": rev,
             "net_income": ni,
             "total_assets": assets,
@@ -284,6 +299,9 @@ def refresh_fundamentals(file_store: FileStore) -> List[Dict[str, Any]]:
             "operating_cash_flow": ocf,
             "debt_to_equity": de_ratio,
             "profit_margins": p_margin,
+            "currency": filing_currency,
+            "fiscal_period_end": fiscal_date_str,
+            "filing_standard": taxonomy,
             "source": "yfinance_mcp",
             "provenance": "LIVE_YAHOO_FINANCE_MCP",
             "retrieval_timestamp": retrieval_ts,

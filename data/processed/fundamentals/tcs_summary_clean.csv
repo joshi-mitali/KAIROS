@@ -1,2 +1,2 @@
-ticker,company_name,revenue,net_income,total_assets,total_liabilities,operating_cash_flow,debt_to_equity,profit_margins,source,provenance,retrieval_timestamp
-TCS,TCS INDIA LTD,2670210000000.0,492100000000.0,1823720000000.0,738940000000.0,520940000000.0,0.6812,0.1843,yfinance_mcp,LIVE_YAHOO_FINANCE_MCP,2026-10-27T14:27:39.197249+00:00
+ticker,company_name,revenue,net_income,total_assets,total_liabilities,operating_cash_flow,debt_to_equity,profit_margins,currency,fiscal_period_end,filing_standard,source,provenance,retrieval_timestamp
+TCS,TATA CONSULTANCY SERV LT,2670210000000.0,492100000000.0,1823720000000.0,738940000000.0,520940000000.0,0.6812,0.1843,INR,2026-03-31,mca-ind-as,yfinance_mcp,LIVE_YAHOO_FINANCE_MCP,2026-10-27T14:47:17.969584+00:00

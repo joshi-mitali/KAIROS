@@ -1,2 +1,2 @@
-ticker,company_name,revenue,net_income,total_assets,total_liabilities,operating_cash_flow,debt_to_equity,profit_margins,source,provenance,retrieval_timestamp
-RELIANCE,RELIANCE INDIA LTD,10572190000000.0,807750000000.0,21781400000000.0,10922740000000.0,1921130000000.0,1.0059,0.0764,yfinance_mcp,LIVE_YAHOO_FINANCE_MCP,2026-10-27T14:27:39.197249+00:00
+ticker,company_name,revenue,net_income,total_assets,total_liabilities,operating_cash_flow,debt_to_equity,profit_margins,currency,fiscal_period_end,filing_standard,source,provenance,retrieval_timestamp
+RELIANCE,RELIANCE INDUSTRIES LTD,10572190000000.0,807750000000.0,21781400000000.0,10922740000000.0,1921130000000.0,1.0059,0.0764,INR,2026-03-31,mca-ind-as,yfinance_mcp,LIVE_YAHOO_FINANCE_MCP,2026-10-27T14:47:17.969584+00:00

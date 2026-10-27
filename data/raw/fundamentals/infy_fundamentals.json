@@ -2,7 +2,7 @@
   "ticker": "INFY",
   "summary": {
     "ticker": "INFY",
-    "company_name": "INFY INDIA LTD",
+    "company_name": "INFOSYS LIMITED",
     "revenue": 20158000000.0,
     "net_income": 3313000000.0,
     "total_assets": 16446000000.0,
@@ -10,70 +10,73 @@
     "operating_cash_flow": 4039000000.0,
     "debt_to_equity": 0.6713,
     "profit_margins": 0.1644,
+    "currency": "USD",
+    "fiscal_period_end": "2026-03-31",
+    "filing_standard": "sec-form-20f",
     "source": "yfinance_mcp",
     "provenance": "LIVE_YAHOO_FINANCE_MCP",
-    "retrieval_timestamp": "2026-10-27T14:27:39.197249+00:00"
+    "retrieval_timestamp": "2026-10-27T14:47:17.969584+00:00"
   },
   "facts": [
     {
       "ticker": "INFY",
       "fact_name": "TotalRevenue",
-      "taxonomy": "mca-ind-as",
+      "taxonomy": "sec-form-20f",
       "value": 20158000000.0,
-      "unit": "INR",
-      "fiscal_year": 2025,
+      "unit": "USD",
+      "fiscal_year": 2026,
       "fiscal_period": "FY",
       "source": "yfinance_mcp",
       "provenance": "LIVE_YAHOO_FINANCE_MCP",
-      "retrieval_timestamp": "2026-10-27T14:27:39.197249+00:00"
+      "retrieval_timestamp": "2026-10-27T14:47:17.969584+00:00"
     },
     {
       "ticker": "INFY",
       "fact_name": "NetIncome",
-      "taxonomy": "mca-ind-as",
+      "taxonomy": "sec-form-20f",
       "value": 3313000000.0,
-      "unit": "INR",
-      "fiscal_year": 2025,
+      "unit": "USD",
+      "fiscal_year": 2026,
       "fiscal_period": "FY",
       "source": "yfinance_mcp",
       "provenance": "LIVE_YAHOO_FINANCE_MCP",
-      "retrieval_timestamp": "2026-10-27T14:27:39.197249+00:00"
+      "retrieval_timestamp": "2026-10-27T14:47:17.969584+00:00"
     },
     {
       "ticker": "INFY",
       "fact_name": "TotalAssets",
-      "taxonomy": "mca-ind-as",
+      "taxonomy": "sec-form-20f",
       "value": 16446000000.0,
-      "unit": "INR",
-      "fiscal_year": 2025,
+      "unit": "USD",
+      "fiscal_year": 2026,
       "fiscal_period": "FY",
       "source": "yfinance_mcp",
       "provenance": "LIVE_YAHOO_FINANCE_MCP",
-      "retrieval_timestamp": "2026-10-27T14:27:39.197249+00:00"
+      "retrieval_timestamp": "2026-10-27T14:47:17.969584+00:00"
     },
     {
       "ticker": "INFY",
       "fact_name": "TotalLiabilities",
-      "taxonomy": "mca-ind-as",
+      "taxonomy": "sec-form-20f",
       "value": 6606000000.0,
-      "unit": "INR",
-      "fiscal_year": 2025,
+      "unit": "USD",
+      "fiscal_year": 2026,
       "fiscal_period": "FY",
       "source": "yfinance_mcp",
       "provenance": "LIVE_YAHOO_FINANCE_MCP",
-      "retrieval_timestamp": "2026-10-27T14:27:39.197249+00:00"
+      "retrieval_timestamp": "2026-10-27T14:47:17.969584+00:00"
     },
     {
       "ticker": "INFY",
       "fact_name": "OperatingCashFlow",
-      "taxonomy": "mca-ind-as",
+      "taxonomy": "sec-form-20f",
       "value": 4039000000.0,
-      "unit": "INR",
-      "fiscal_year": 2025,
+      "unit": "USD",
+      "fiscal_year": 2026,
       "fiscal_period": "FY",
       "source": "yfinance_mcp",
       "provenance": "LIVE_YAHOO_FINANCE_MCP",
-      "retrieval_timestamp": "2026-10-27T14:27:39.197249+00:00"
+      "retrieval_timestamp": "2026-10-27T14:47:17.969584+00:00"
     }
   ],
   "provenance": "LIVE_YAHOO_FINANCE_MCP"
