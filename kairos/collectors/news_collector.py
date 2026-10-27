@@ -49,12 +49,18 @@ class NewsCollector:
             pub_dt_str = datetime.fromtimestamp(pub_time, tz=timezone.utc).isoformat()
             content_hash = hashlib.sha256(f"{title}|{pub_dt_str}|{link}".encode("utf-8")).hexdigest()[:16]
 
+            raw_summary = item.get("summary") or item.get("description") or ""
+            if not raw_summary or len(raw_summary) < 20:
+                summary_text = f"Financial disclosure and market news regarding {clean_symbol}: {title}"
+            else:
+                summary_text = raw_summary.strip()
+
             articles.append(
                 NewsArticle(
                     article_id=content_hash,
                     ticker=clean_symbol,
                     headline=title,
-                    summary=f"Market disclosure and news regarding {clean_symbol} published by {publisher}.",
+                    summary=summary_text,
                     source=publisher,
                     url=link,
                     datetime=pub_dt_str,

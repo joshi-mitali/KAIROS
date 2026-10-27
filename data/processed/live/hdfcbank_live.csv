@@ -1,2 +1,2 @@
 symbol,last_price,quote_timestamp,volume,day_open,open,day_high,day_low,previous_close,bid,ask,currency,exchange,provider_name,quote_delay,is_live_data,source,provenance,retrieval_timestamp
-HDFCBANK,680.2,2026-10-27T09:58:09+00:00,40290698,689.7,689.7,690.25,678.65,688.05,679.86,680.54,INR,NSE,yfinance_mcp,15_MIN_DELAYED,True,yfinance_mcp,LIVE_YAHOO_FINANCE_MCP,2026-10-27T14:47:14.962200+00:00
+HDFCBANK,680.2,2026-10-27T09:58:09+00:00,40290698,689.7,689.7,690.25,678.65,688.05,679.86,680.54,INR,NSE,yfinance_mcp,15_MIN_DELAYED,True,yfinance_mcp,LIVE_YAHOO_FINANCE_MCP,2026-10-27T15:14:10.738751+00:00
