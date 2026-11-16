@@ -18,6 +18,10 @@ class RedditPost(BaseModel):
     retrieval_timestamp: Optional[str] = Field(default=None, description="ISO timestamp when ingested")
     is_synthetic: bool = Field(default=False, description="True if generated from test fixture")
     source_status: str = Field(default="AUTHORIZED_API", description="Data provenance status")
+    sentiment_label: Optional[str] = Field(default="NEUTRAL", description="POSITIVE, NEGATIVE, or NEUTRAL")
+    sentiment_score: Optional[float] = Field(default=0.0, description="Sentiment score from -1.0 to 1.0")
+    relevance_level: Optional[str] = Field(default="TICKER_SPECIFIC", description="TICKER_SPECIFIC or MACRO_MARKET_CONTEXT")
+    author: Optional[str] = Field(default=None, description="Author handle or anonymous")
 
     class Config:
         populate_by_name = True
@@ -39,6 +43,8 @@ class SentimentPayload(BaseModel):
     posts: List[RedditPost] = Field(default_factory=list, description="List of validated Reddit posts")
     is_live_data: bool = Field(default=True, description="True if originating from authorized live API")
     permission_status: str = Field(default="PERMITTED", description="Status of API permissions or fixture flag")
+    live_posts_count: int = Field(default=0, description="Count of verified live Reddit JSON posts")
+    fallback_posts_count: int = Field(default=0, description="Count of curated fallback posts used")
 
 
 # Alias for compatibility with varying nomenclature

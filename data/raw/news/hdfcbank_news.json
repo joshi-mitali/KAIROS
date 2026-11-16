@@ -13,20 +13,20 @@
       "provider": "verified_media_feed",
       "provenance": "LIVE_MEDIA_FEED",
       "http_status": 200,
-      "retrieved_at": "2026-10-27T15:14:18.995685+00:00"
+      "retrieved_at": "2026-10-27T20:08:59.764998+00:00"
     },
     {
-      "article_id": "8f4f9f2b5223e38b",
+      "article_id": "ab2c5c04eaaaa756",
       "ticker": "HDFCBANK",
-      "headline": "A banking giant, a battered stock: Can HDFC Bank\u2019s new chief turn the tide?",
-      "summary": "HDFC Bank&rsquo;s stock is down nearly 29% from its peak, and new CEO Anup Bagchi faces a tough turnaround test. Can he revive growth, improve margins and unlock the value of the HDFC merger? We break down the challenges, growth outlook and what investors should watch next.Follow ET Markets for more market insights.",
+      "headline": "Credit card additions hit second-highest monthly level in 2026 as banks gear up for festive season",
+      "summary": "HDFC Bank and Axis Bank together accounted for nearly 43% of the net additions during September, adding 539,878 cards between them. The two private sector lenders emerged as the largest contributors to fresh additions, followed by SBI Cards.",
       "source": "The Economic Times",
-      "url": "https://economictimes.indiatimes.com/markets/stocks/a-banking-giant-a-battered-stock-can-hdfc-banks-new-chief-turn-the-tide/videoshow/135227258.cms",
-      "datetime": "Tue, 27 Oct 2026 12:35:45 +0530",
+      "url": "https://economictimes.indiatimes.com/industry/banking/finance/banking/credit-card-additions-hit-second-highest-monthly-level-in-2026-as-banks-gear-up-for-festive-season/articleshow/135244463.cms",
+      "datetime": "Wed, 28 Oct 2026 00:29:37 +0530",
       "provider": "verified_media_feed",
       "provenance": "LIVE_MEDIA_FEED",
       "http_status": 200,
-      "retrieved_at": "2026-10-27T15:14:18.995685+00:00"
+      "retrieved_at": "2026-10-27T20:08:59.764998+00:00"
     },
     {
       "article_id": "a6f6af7c7cede757",
@@ -39,7 +39,7 @@
       "provider": "verified_media_feed",
       "provenance": "LIVE_MEDIA_FEED",
       "http_status": 200,
-      "retrieved_at": "2026-10-27T15:14:18.995685+00:00"
+      "retrieved_at": "2026-10-27T20:08:59.764998+00:00"
     },
     {
       "article_id": "729ebe76223840fa",
@@ -52,7 +52,7 @@
       "provider": "verified_media_feed",
       "provenance": "LIVE_MEDIA_FEED",
       "http_status": 200,
-      "retrieved_at": "2026-10-27T15:14:18.995685+00:00"
+      "retrieved_at": "2026-10-27T20:08:59.764998+00:00"
     },
     {
       "article_id": "4a857ebb3746c673",
@@ -65,7 +65,7 @@
       "provider": "verified_media_feed",
       "provenance": "LIVE_MEDIA_FEED",
       "http_status": 200,
-      "retrieved_at": "2026-10-27T15:14:18.995685+00:00"
+      "retrieved_at": "2026-10-27T20:08:59.764998+00:00"
     },
     {
       "article_id": "630d01d03a77e013",
@@ -78,33 +78,7 @@
       "provider": "verified_media_feed",
       "provenance": "LIVE_MEDIA_FEED",
       "http_status": 200,
-      "retrieved_at": "2026-10-27T15:14:18.995685+00:00"
-    },
-    {
-      "article_id": "1bbccf04caf9ca0a",
-      "ticker": "HDFCBANK",
-      "headline": "Anup Bagchi backs 'exceptional' team as he connects the dots at HDFC Bank",
-      "summary": "Anup Bagchi is set to take charge as MD and CEO of HDFC Bank starting October 27. He is currently familiarizing himself with the bank",
-      "source": "The Economic Times",
-      "url": "https://economictimes.indiatimes.com/industry/banking/finance/banking/anup-bagchi-backs-exceptional-team-as-he-connects-the-dots-at-hdfc-bank/articleshow/135034757.cms",
-      "datetime": "Mon, 19 Oct 2026 00:44:03 +0530",
-      "provider": "verified_media_feed",
-      "provenance": "LIVE_MEDIA_FEED",
-      "http_status": 200,
-      "retrieved_at": "2026-10-27T15:14:18.995685+00:00"
-    },
-    {
-      "article_id": "1f1a8a4733bdd453",
-      "ticker": "HDFCBANK",
-      "headline": "Three challenges facing HDFC Bank\u2019s new CEO",
-      "summary": "HDFC Bank&#x27;s new CEO Anup Bagchi faces the challenge of rebuilding confidence, preventing further senior management departures and reviving the growth engines.",
-      "source": "Livemint",
-      "url": "https://www.livemint.com/companies/people/hdfc-bank-new-ceo-anup-bagchi-challenges-11793008943373.html",
-      "datetime": "Tue, 27 Oct 2026 06:00:24 +0530",
-      "provider": "verified_media_feed",
-      "provenance": "LIVE_MEDIA_FEED",
-      "http_status": 200,
-      "retrieved_at": "2026-10-27T15:14:18.995685+00:00"
+      "retrieved_at": "2026-10-27T20:08:59.764998+00:00"
     },
     {
       "article_id": "c869fc7f19cd33d0",
@@ -117,7 +91,7 @@
       "provider": "verified_media_feed",
       "provenance": "LIVE_MEDIA_FEED",
       "http_status": 200,
-      "retrieved_at": "2026-10-27T15:14:18.995685+00:00"
+      "retrieved_at": "2026-10-27T20:08:59.764998+00:00"
     },
     {
       "article_id": "1ad34e8c58b2c1a8",
@@ -126,14 +100,40 @@
       "summary": "The bank\u2019s investigation began after concerns emerged among senior leaders that internal information could have been disclosed.",
       "source": "Retail Banker International",
       "url": "https://finance.yahoo.com/news/hdfc-bank-probe-reveals-data-120610010.html",
-      "datetime": "2026-10-27T15:14:18.995685+00:00",
+      "datetime": "2026-10-27T20:08:59.764998+00:00",
       "provider": "verified_media_feed",
       "provenance": "LIVE_MEDIA_FEED",
       "http_status": 200,
-      "retrieved_at": "2026-10-27T15:14:18.995685+00:00"
+      "retrieved_at": "2026-10-27T20:08:59.764998+00:00"
+    },
+    {
+      "article_id": "b77af8f023e62a72",
+      "ticker": "HDFCBANK",
+      "headline": "Market Chatter: HDFC Bank Probe Finds Two Executives Leaked Secrets",
+      "summary": "HDFC Bank (HDB) found evidence that two senior executives leaked confidential business strategies an",
+      "source": "MT Newswires",
+      "url": "https://finance.yahoo.com/markets/stocks/articles/market-chatter-hdfc-bank-probe-084647142.html",
+      "datetime": "2026-10-27T20:08:59.764998+00:00",
+      "provider": "verified_media_feed",
+      "provenance": "LIVE_MEDIA_FEED",
+      "http_status": 200,
+      "retrieved_at": "2026-10-27T20:08:59.764998+00:00"
+    },
+    {
+      "article_id": "4a4161d51fc78e49",
+      "ticker": "HDFCBANK",
+      "headline": "HDFC Bank Ltd (HDB) (Q2 2027) Earnings Call Highlights: Deposits Surge 18. ...",
+      "summary": "HDFC Bank Ltd (HDB) posted robust 18.8% deposit growth and 15.3% AUM expansion in Q2 FY27, with management signaling NIM has bottomed and GNPA improving to 1.11%.",
+      "source": "GuruFocus.com",
+      "url": "https://finance.yahoo.com/markets/stocks/articles/hdfc-bank-ltd-hdb-q2-010104657.html",
+      "datetime": "2026-10-27T20:08:59.764998+00:00",
+      "provider": "verified_media_feed",
+      "provenance": "LIVE_MEDIA_FEED",
+      "http_status": 200,
+      "retrieved_at": "2026-10-27T20:08:59.764998+00:00"
     }
   ],
   "provenance": "LIVE_MEDIA_FEED",
   "url_verification": "CONTENT_AND_HTTP_200_CONFIRMED",
-  "retrieved_at": "2026-10-27T15:14:18.995685+00:00"
+  "retrieved_at": "2026-10-27T20:08:59.764998+00:00"
 }

@@ -1,0 +1,11 @@
+{
+  // Injection detection is one layer; schemas, grounding and approval remain mandatory.
+  "prompt_guard": {
+    "model": "meta-llama/llama-prompt-guard-2-86m",
+    "attack_threshold": 0.5,
+    "chunk_bytes": 400,
+    "overlap_bytes": 64,
+    "max_chunks": 40,
+    "failure_policy": "block"
+  }
+}

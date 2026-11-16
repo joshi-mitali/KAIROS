@@ -1,0 +1,57 @@
+<style>
+#kairos-flow { font-family:var(--font-sans,system-ui,sans-serif); color:var(--foreground); }
+#kairos-flow * { box-sizing:border-box; }
+#kairos-flow .node { padding:16px; border:1px solid var(--border); border-radius:var(--radius,10px); text-align:center; background:var(--card); color:var(--card-foreground,var(--foreground)); }
+#kairos-flow .label { display:block; font-weight:500; }
+#kairos-flow .detail { display:block; margin-top:4px; font-size:13px; color:var(--muted-foreground); }
+#kairos-flow .arrow { text-align:center; padding:7px 0; color:var(--muted-foreground); font-size:13px; }
+#kairos-flow .arrow span { display:block; font-size:20px; line-height:20px; }
+#kairos-flow .analysts { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:8px; }
+#kairos-flow .analysts .node { padding:14px 8px; }
+#kairos-flow .pair { display:grid; grid-template-columns:1fr 34px 1fr; align-items:center; gap:4px; }
+#kairos-flow .bridge { text-align:center; color:var(--muted-foreground); }
+#kairos-flow .stage { font-size:12px; letter-spacing:.07em; text-transform:uppercase; color:var(--muted-foreground); margin:0 0 8px; }
+#kairos-flow .note { text-align:center; color:var(--muted-foreground); font-size:12px; margin-top:8px; }
+#kairos-flow .accent { border-color:var(--primary); }
+#kairos-flow .memory { border-style:dashed; }
+#kairos-flow .subflow { margin-top:18px; }
+@media(max-width:520px) { #kairos-flow .analysts {grid-template-columns:repeat(2,minmax(0,1fr));} #kairos-flow .pair {grid-template-columns:1fr;} #kairos-flow .bridge {padding:4px;} }
+</style>
+<div id="kairos-flow" role="figure" aria-label="KAIROS agent flow: separately collect data, run four analysts sequentially, send reports through a signed local message hub, debate with Bull and Bear researchers, synthesize a verdict, retrieve memory and create a simulated trading proposal.">
+  <div class="stage">Data preparation · runs separately</div>
+  <div class="node">
+    <span class="label">Market prices · Company financials · News · Reddit</span>
+    <span class="detail">Collectors / refresh jobs → cleaning and validation → saved CSV &amp; Parquet</span>
+  </div>
+  <div class="arrow"><span>↓</span>Saved datasets feed the four specialists</div>
+  <div class="node accent">
+    <span class="label">Choose a stock + risk preference</span>
+    <span class="detail">Python orchestrator coordinates the analysis; risk preference also feeds the trader</span>
+  </div>
+  <div class="arrow"><span>↓</span>Gather evidence · executed in order 1 → 2 → 3 → 4</div>
+  <div class="analysts">
+    <div class="node"><span class="label">1 · Market</span><span class="detail">Price trends<br>Support &amp; resistance</span></div>
+    <div class="node"><span class="label">2 · Sentiment</span><span class="detail">Retail mood<br>Reddit themes</span></div>
+    <div class="node"><span class="label">3 · News</span><span class="detail">Growth catalysts<br>Regulatory risks</span></div>
+    <div class="node"><span class="label">4 · Fundamentals</span><span class="detail">Profitability<br>Debt &amp; solvency</span></div>
+  </div>
+  <div class="arrow"><span>↓</span>Validate and bundle all four reports</div>
+  <div class="node"><span class="label">Signed A2A request</span><span class="detail">Local message hub routes the report bundle to the research crew</span></div>
+  <div class="arrow"><span>↓</span>Debate the evidence · CrewAI</div>
+  <div class="pair">
+    <div class="node"><span class="label">5 · Bull researcher</span><span class="detail">“Why could this stock rise?”</span></div>
+    <div class="bridge" aria-label="Bull then Bear">→</div>
+    <div class="node"><span class="label">6 · Bear researcher</span><span class="detail">“What could go wrong?”</span></div>
+  </div>
+  <div class="note">↶ Bear's response feeds the next Bull rebuttal · 2 rounds by default</div>
+  <div class="arrow"><span>↓</span>Weigh both cases</div>
+  <div class="node accent"><span class="label">7 · Research manager</span><span class="detail">OVERWEIGHT / NEUTRAL / UNDERWEIGHT + conviction and explanation</span></div>
+  <div class="arrow"><span>↓</span>Save the verdict; retrieve context for the trader</div>
+  <div class="node memory"><span class="label">Persistent memory · PostgreSQL or SQLite</span><span class="detail">Research + pending proposals + recorded trade lessons<br>Rank by relevance and recency → retrieve top 3 memories</span></div>
+  <div class="arrow"><span>↓</span>Reports + manager verdict + memories + user risk preference</div>
+  <div class="node accent"><span class="label">8 · Trader agent</span><span class="detail">Turns the research into a proposal suited to conservative, neutral or aggressive risk</span></div>
+  <div class="arrow"><span>↓</span>Save proposal to memory as PENDING ↶</div>
+  <div class="node"><span class="label">BUY / HOLD / SELL · Simulated proposal</span><span class="detail">Entry · Stop-loss · Target · Position sizing · Confidence · Rationale</span></div>
+  <div class="arrow"><span>↓</span>Terminal explanation + JSON reports · No live order placement</div>
+  <div class="subflow node"><span class="label">Model unavailable? Use the labeled rule-based fallback</span><span class="detail">Applies to analyst reports, research debate and trader proposals.<br>Invalid or missing required data can still stop the workflow.</span></div>
+</div>

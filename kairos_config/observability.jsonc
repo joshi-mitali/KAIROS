@@ -1,0 +1,12 @@
+// Stable labels for Langfuse traces; never put credentials here.
+{
+  "application": "KAIROS",
+  "trace_name": "analyze-equity",
+  "release": "0.1.0",
+  "tags": [
+    "app:kairos",
+    "workflow:equity-research",
+    "execution:simulated"
+  ],
+  "capture_content": true
+}

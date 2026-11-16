@@ -1,6 +1,6 @@
 {
   "ticker": "ICICIBANK",
-  "count": 10,
+  "count": 8,
   "articles": [
     {
       "article_id": "fc331c3e656d429d",
@@ -13,20 +13,7 @@
       "provider": "verified_media_feed",
       "provenance": "LIVE_MEDIA_FEED",
       "http_status": 200,
-      "retrieved_at": "2026-10-27T15:14:18.995685+00:00"
-    },
-    {
-      "article_id": "a99f957c8b9e5dbb",
-      "ticker": "ICICIBANK",
-      "headline": "Top stocks to buy: Experts suggest BSE, GMR Airports, Nykaa, Zen Tech, and 2 others - Target price, stop-loss",
-      "summary": "Experts recommended six stocks for possible short-term gains, based on support levels, trend reversals and momentum signals; named picks include Nykaa, ICICI Prudential AMC and Zen Technologies.",
-      "source": "Livemint",
-      "url": "https://www.livemint.com/market/stock-market-news/top-stocks-to-buy-experts-suggest-bse-gmr-airports-nykaa-zen-tech-and-2-others-target-price-stoploss-11793083427379.html",
-      "datetime": "Tue, 27 Oct 2026 12:32:39 +0530",
-      "provider": "verified_media_feed",
-      "provenance": "LIVE_MEDIA_FEED",
-      "http_status": 200,
-      "retrieved_at": "2026-10-27T15:14:18.995685+00:00"
+      "retrieved_at": "2026-10-27T20:08:59.764998+00:00"
     },
     {
       "article_id": "e310ac135fd6c517",
@@ -39,46 +26,7 @@
       "provider": "verified_media_feed",
       "provenance": "LIVE_MEDIA_FEED",
       "http_status": 200,
-      "retrieved_at": "2026-10-27T15:14:18.995685+00:00"
-    },
-    {
-      "article_id": "b00b7199d5858a92",
-      "ticker": "ICICIBANK",
-      "headline": "Here's why Kotak Neo recommends 'Buy' rating on ICICI Bank; 'Add' Nykaa",
-      "summary": "Stocks to buy today: Nykaa offers an attractive combination of category leadership, strong execution, multiple growth levers, and improving profitability, says Shrikant Chouhan, Head of Equity Research at Kotak Neo.",
-      "source": "Business Standard",
-      "url": "https://www.business-standard.com/markets/news/stocks-to-buy-today-here-s-why-kotak-neo-recommends-buy-rating-on-icici-bank-add-nykaa-126102700085_1.html",
-      "datetime": "Tue, 27 Oct 2026 07:55:27 +0530",
-      "provider": "verified_media_feed",
-      "provenance": "LIVE_MEDIA_FEED",
-      "http_status": 200,
-      "retrieved_at": "2026-10-27T15:14:18.995685+00:00"
-    },
-    {
-      "article_id": "3362eb2015f58cb6",
-      "ticker": "ICICIBANK",
-      "headline": "ICICI Prudential Life Insurance to focus on growing absolute VNB amid slump in FY24",
-      "summary": "In its Q4FY24 results, the company",
-      "source": "Moneycontrol",
-      "url": "https://www.moneycontrol.com/news/business/earnings/icici-prudential-life-insurance-to-focus-on-growing-absolute-vnb-amid-slump-in-fy24-12706491.html",
-      "datetime": "Tue, 23 Apr 2024 22:36:32 +0530",
-      "provider": "verified_media_feed",
-      "provenance": "LIVE_MEDIA_FEED",
-      "http_status": 200,
-      "retrieved_at": "2026-10-27T15:14:18.995685+00:00"
-    },
-    {
-      "article_id": "f014bd230618a7d8",
-      "ticker": "ICICIBANK",
-      "headline": "ICICI Pru Life Q4 net profit falls 26% to Rs 174 cr, insurer announces dividend",
-      "summary": "Net premium income rose to Rs 14,788 crore",
-      "source": "Moneycontrol",
-      "url": "https://www.moneycontrol.com/news/business/earnings/icici-pru-life-q4-net-profit-falls-26-to-rs-174-cr-insurer-announces-dividend-12705441.html",
-      "datetime": "Tue, 23 Apr 2024 18:26:16 +0530",
-      "provider": "verified_media_feed",
-      "provenance": "LIVE_MEDIA_FEED",
-      "http_status": 200,
-      "retrieved_at": "2026-10-27T15:14:18.995685+00:00"
+      "retrieved_at": "2026-10-27T20:08:59.764998+00:00"
     },
     {
       "article_id": "8cead44026153b46",
@@ -87,11 +35,11 @@
       "summary": "ICICI Bank Ltd (IBN) delivered 23.4% profit before tax growth and improved net NPA to 0.30%, though net interest margin slipped to 4.18% with further moderation expected in Q3 before recovery.",
       "source": "GuruFocus.com",
       "url": "https://finance.yahoo.com/markets/stocks/articles/icici-bank-ltd-ibn-q2-050028285.html",
-      "datetime": "2026-10-27T15:14:18.995685+00:00",
+      "datetime": "2026-10-27T20:08:59.764998+00:00",
       "provider": "verified_media_feed",
       "provenance": "LIVE_MEDIA_FEED",
       "http_status": 200,
-      "retrieved_at": "2026-10-27T15:14:18.995685+00:00"
+      "retrieved_at": "2026-10-27T20:08:59.764998+00:00"
     },
     {
       "article_id": "7ccc0863548ef59c",
@@ -100,11 +48,11 @@
       "summary": "Deep contingency reserves and clean asset quality give the bank a cushion to weather economic shocks while pursuing growth.",
       "source": "Motley Fool",
       "url": "https://finance.yahoo.com/markets/stocks/articles/icici-bank-3-key-takeaways-201717509.html",
-      "datetime": "2026-10-27T15:14:18.995685+00:00",
+      "datetime": "2026-10-27T20:08:59.764998+00:00",
       "provider": "verified_media_feed",
       "provenance": "LIVE_MEDIA_FEED",
       "http_status": 200,
-      "retrieved_at": "2026-10-27T15:14:18.995685+00:00"
+      "retrieved_at": "2026-10-27T20:08:59.764998+00:00"
     },
     {
       "article_id": "a9a64ee148980b1d",
@@ -113,11 +61,11 @@
       "summary": "Profit surged 23.4% year-over-year as loan growth accelerated and asset quality improved.",
       "source": "Motley Fool",
       "url": "https://finance.yahoo.com/markets/stocks/articles/icici-bank-ibn-q2-2027-151319202.html",
-      "datetime": "2026-10-27T15:14:18.995685+00:00",
+      "datetime": "2026-10-27T20:08:59.764998+00:00",
       "provider": "verified_media_feed",
       "provenance": "LIVE_MEDIA_FEED",
       "http_status": 200,
-      "retrieved_at": "2026-10-27T15:14:18.995685+00:00"
+      "retrieved_at": "2026-10-27T20:08:59.764998+00:00"
     },
     {
       "article_id": "c0884954c0a5737b",
@@ -126,14 +74,40 @@
       "summary": "ICICI Bank (NYSE:IBN) reported a 20.1% year-over-year increase in second-quarter fiscal 2027 profit after tax to INR 148.43 billion, supported by growth in net interest income, fees and lending across corporate, business banking, retail and rural portfolios. Profit before tax excluding treasury ros",
       "source": "MarketBeat",
       "url": "https://finance.yahoo.com/markets/stocks/articles/icici-bank-q2-earnings-call-150214519.html",
-      "datetime": "2026-10-27T15:14:18.995685+00:00",
+      "datetime": "2026-10-27T20:08:59.764998+00:00",
       "provider": "verified_media_feed",
       "provenance": "LIVE_MEDIA_FEED",
       "http_status": 200,
-      "retrieved_at": "2026-10-27T15:14:18.995685+00:00"
+      "retrieved_at": "2026-10-27T20:08:59.764998+00:00"
+    },
+    {
+      "article_id": "1b76dec3aece0b77",
+      "ticker": "ICICIBANK",
+      "headline": "ICICI Bank Q2 profit beats estimates on strong loan growth",
+      "summary": "Investing.com-- ICICI Bank (NSE:ICBK), India",
+      "source": "Investing.com",
+      "url": "https://finance.yahoo.com/markets/stocks/articles/icici-bank-q2-profit-beats-115139367.html",
+      "datetime": "2026-10-27T20:08:59.764998+00:00",
+      "provider": "verified_media_feed",
+      "provenance": "LIVE_MEDIA_FEED",
+      "http_status": 200,
+      "retrieved_at": "2026-10-27T20:08:59.764998+00:00"
+    },
+    {
+      "article_id": "c95351a2dbfb6ed5",
+      "ticker": "ICICIBANK",
+      "headline": "ICICI Life Insurance launches new brand identity",
+      "summary": "ICICI Life Insurance Limited, formerly known as ICICI Prudential Life Insurance Company Limited, today announced its new brand identity and tag line \u2014",
+      "source": "PR Newswire",
+      "url": "https://finance.yahoo.com/healthcare/articles/icici-life-insurance-launches-brand-073900113.html",
+      "datetime": "2026-10-27T20:08:59.764998+00:00",
+      "provider": "verified_media_feed",
+      "provenance": "LIVE_MEDIA_FEED",
+      "http_status": 200,
+      "retrieved_at": "2026-10-27T20:08:59.764998+00:00"
     }
   ],
   "provenance": "LIVE_MEDIA_FEED",
   "url_verification": "CONTENT_AND_HTTP_200_CONFIRMED",
-  "retrieved_at": "2026-10-27T15:14:18.995685+00:00"
+  "retrieved_at": "2026-10-27T20:08:59.764998+00:00"
 }

@@ -110,6 +110,7 @@ class MockMCPTransport:
                 "marketState": "REGULAR",
                 "quoteType": "EQUITY",
                 "quoteDelay": "15_MIN_DELAYED",
+                "provenance": "SYNTHETIC_FIXTURE",
             }
 
         elif tool_name in ("get_financial_statement", "get_income_statement", "get_balance_sheet", "get_cash_flow"):

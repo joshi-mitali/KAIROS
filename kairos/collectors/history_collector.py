@@ -1,6 +1,7 @@
 """Collector for ~10 years of historical daily OHLCV Indian equity data via MCP servers."""
 
 import json
+import math
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional
@@ -57,6 +58,17 @@ class HistoryCollector:
         if not raw_resp or "bars" not in raw_resp:
             raise RuntimeError(f"yfinance-mcp-server returned no historical bars for {formatted_sym}")
 
+        import os
+        raw_prov = raw_resp.get("provenance", "")
+        if "SYNTHETIC" in str(raw_prov).upper():
+            prov = "SYNTHETIC_FIXTURE"
+        else:
+            prov = "LIVE_YAHOO_FINANCE"
+
+        allow_mock = os.environ.get("KAIROS_ALLOW_MOCK", "").lower() in ("true", "1") or self.settings.env.lower() in ("test", "testing")
+        if prov == "SYNTHETIC_FIXTURE" and not allow_mock:
+            raise ValueError(f"Synthetic fixture historical bars strictly rejected for production persistence in {formatted_sym}")
+
         # Save raw payload
         self.file_store.save_raw("market", f"{clean_symbol.lower()}_history.json", raw_resp)
 
@@ -74,6 +86,8 @@ class HistoryCollector:
             hi = float(b["high"])
             lo = float(b["low"])
             cl = float(b["close"])
+            if not all(math.isfinite(v) for v in (op, hi, lo, cl)):
+                continue  # provider emitted an incomplete (NaN) bar, e.g. the current session
             adj_cl = float(b["adjusted_close"]) if b.get("adjusted_close") is not None else cl
             vol = int(b.get("volume", 0))
 
@@ -91,6 +105,7 @@ class HistoryCollector:
                 adjusted_close=round(adj_cl, 2),
                 volume=vol,
                 source="yfinance_mcp",
+                provenance=prov,
                 retrieval_timestamp=retrieval_ts,
             )
             parsed_bars.append(bar)
@@ -103,7 +118,15 @@ class HistoryCollector:
             try:
                 table = pq.read_table(parquet_file)
                 pydict = table.to_pydict()
-                if "date" in pydict and pydict["date"]:
+                # Check for synthetic fixture contamination in existing dataset
+                existing_provs = pydict.get("provenance", [])
+                if any("SYNTHETIC" in str(p).upper() for p in existing_provs) and not allow_mock:
+                    logger.warning(
+                        f"Existing parquet for {clean_symbol} was contaminated with synthetic fixtures! "
+                        "Discarding contaminated bars in favor of genuine live bars."
+                    )
+                    existing_bars_map = {}
+                elif "date" in pydict and pydict["date"]:
                     for i in range(len(pydict["date"])):
                         d = str(pydict["date"][i])
                         existing_bars_map[d] = HistoricalBar(
@@ -116,6 +139,7 @@ class HistoryCollector:
                             adjusted_close=float(pydict["adjusted_close"][i]),
                             volume=int(pydict["volume"][i]),
                             source=str(pydict.get("source", ["yfinance_mcp"])[i]),
+                            provenance=str(pydict.get("provenance", [prov])[i]),
                         )
             except Exception as e:
                 logger.warning(f"Could not read existing parquet for incremental update: {e}")
@@ -168,6 +192,7 @@ class HistoryCollector:
                 "macd_signal": sig_line[i],
                 "macd_histogram": hist[i],
                 "source": bar.source,
+                "provenance": bar.provenance,
                 "retrieval_timestamp": bar.retrieval_timestamp,
             })
 

@@ -1,0 +1,21 @@
+{
+  "symbol": "INFY",
+  "last_price": 1163.0,
+  "quote_timestamp": "2026-10-27T09:58:09+00:00",
+  "volume": 20116414,
+  "day_open": 1151.95,
+  "open": 1151.95,
+  "day_high": 1165.8,
+  "day_low": 1129.3,
+  "previous_close": 1166.0,
+  "bid": 1162.42,
+  "ask": 1163.58,
+  "currency": "INR",
+  "exchange": "NSE",
+  "provider_name": "yfinance_mcp",
+  "quote_delay": "15_MIN_DELAYED",
+  "is_live_data": true,
+  "source": "yfinance_mcp",
+  "provenance": "LIVE_YAHOO_FINANCE_MCP",
+  "retrieval_timestamp": "2026-10-27T14:47:14.962200+00:00"
+}

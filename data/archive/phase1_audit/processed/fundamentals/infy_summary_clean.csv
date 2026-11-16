@@ -1,0 +1,2 @@
+ticker,company_name,revenue,net_income,total_assets,total_liabilities,operating_cash_flow,debt_to_equity,profit_margins,currency,fiscal_period_end,filing_standard,source,provenance,retrieval_timestamp
+INFY,INFOSYS LIMITED,20158000000.0,3313000000.0,16446000000.0,6606000000.0,4039000000.0,0.6713,0.1644,USD,2026-03-31,sec-form-20f,yfinance_mcp,LIVE_YAHOO_FINANCE_MCP,2026-10-27T14:47:17.969584+00:00

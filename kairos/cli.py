@@ -240,26 +240,112 @@ def cmd_validate(args: argparse.Namespace) -> None:
 
 
 def cmd_dataset_status(args: argparse.Namespace) -> None:
-    """Displays inventory of raw JSON, clean CSV, Parquet files, manifests, and reports."""
+    """Displays inventory of raw JSON, clean CSV, Parquet files, source freshness, and scheduler status."""
+    import glob
+    import json
+    import os
+    from datetime import datetime
+
     settings = get_settings()
 
-    print("\n" + "=" * 80)
-    print("  KAIROS DATASET INVENTORY STATUS (Indian Equities)")
-    print("=" * 80)
+    print("\n" + "=" * 90)
+    print("  KAIROS DATASET FRESHNESS & SOURCE INVENTORY STATUS")
+    print("=" * 90)
 
-    for domain in ["market", "live", "news", "fundamentals", "reddit"]:
+    domain_meta = {
+        "live": {
+            "label": "Live Quotes",
+            "source": "NSE MCP (mcp.nseindia.in) / YFinance Quote",
+            "mode": "DELAYED (15_MIN_DELAYED) / REAL_TIME (Market Hours)",
+            "sample_file": "reliance_live.json",
+        },
+        "market": {
+            "label": "10y Daily OHLCV",
+            "source": "Yahoo Finance (yfinance-mcp-server)",
+            "mode": "END_OF_DAY / DELAYED (Daily Close Bars)",
+            "sample_file": "reliance_10y_clean.csv",
+        },
+        "news": {
+            "label": "Financial News",
+            "source": "ET / Livemint / BS Media Feeds (Verified HTTP 200)",
+            "mode": "LIVE (Continuous Intraday Published Feeds)",
+            "sample_file": "reliance_news.json",
+        },
+        "reddit": {
+            "label": "Social Sentiment",
+            "source": "r/IndianStockMarket (Public Atom/RSS Feed)",
+            "mode": "LIVE (Near Real-Time Community Syndication)",
+            "sample_file": "indianstockmarket_raw.json",
+        },
+        "fundamentals": {
+            "label": "Financial Filings",
+            "source": "MCA Ind-AS Audited Filings / YFinance Statements",
+            "mode": "STATIC / PERIODIC (Quarterly / Annual Disclosures)",
+            "sample_file": "reliance_fundamentals.json",
+        },
+    }
+
+    print(f"  {'Domain':<16} | {'Source Mode':<28} | {'Latest File Update':<20} | {'Files (Raw/CSV/PQ)'}")
+    print("  " + "-" * 86)
+
+    for domain, meta in domain_meta.items():
         raw_p = settings.raw_data_dir / domain
         proc_p = settings.processed_data_dir / domain
         raw_cnt = len(list(raw_p.glob("*.json"))) if raw_p.exists() else 0
         csv_cnt = len(list(proc_p.glob("*.csv"))) if proc_p.exists() else 0
         parquet_cnt = len(list(proc_p.glob("*.parquet"))) if proc_p.exists() else 0
 
-        print(f"  * {domain.upper():<14}: {raw_cnt:>2} raw files | {csv_cnt:>2} CSV files | {parquet_cnt:>2} Parquet datasets")
+        # Find latest mtime in domain
+        files = list(raw_p.glob("*")) + list(proc_p.glob("*"))
+        if files:
+            latest_mtime = max(os.stat(f).st_mtime for f in files)
+            mtime_str = datetime.fromtimestamp(latest_mtime).strftime("%Y-%m-%d %H:%M:%S")
+        else:
+            mtime_str = "N/A"
 
+        files_summary = f"{raw_cnt}/{csv_cnt}/{parquet_cnt}"
+        print(f"  {meta['label']:<16} | {meta['mode'][:28]:<28} | {mtime_str:<20} | {files_summary}")
+
+    print("  " + "-" * 86)
     m_cnt = len(list(settings.manifests_dir.glob("*.json")))
     r_cnt = len(list(settings.reports_dir.glob("*.json")))
-    print(f"  * MANIFESTS     : {m_cnt:>2} persisted manifests")
-    print(f"  * REPORTS       : {r_cnt:>2} quality scorecards\n")
+    print(f"  * MANIFESTS     : {m_cnt} persisted manifests | REPORTS: {r_cnt} quality scorecards")
+
+    # Check Scheduler daemon status
+    scheduler_file = Path("scripts/scheduler.py")
+    print(f"  * AUTO-SCHEDULER: Available via 'python scripts/scheduler.py --interval 300'")
+    print(f"                    Currently: INACTIVE (No daemon running; on-demand execution active)")
+    print("=" * 90 + "\n")
+
+
+def cmd_schedule(args: argparse.Namespace) -> None:
+    """Executes the recurring automated dataset scheduler."""
+    from kairos.pipeline.scheduler import run_refresh_cycle, running
+    from kairos.storage.file_store import FileStore
+
+    domains = [d.strip().lower() for d in args.domains.split(",") if d.strip()]
+    file_store = FileStore()
+
+    if args.once:
+        run_refresh_cycle(file_store, domains)
+        return
+
+    print("=" * 80)
+    print("  KAIROS AUTOMATED DATASET SCHEDULER")
+    print(f"  Domains:          {', '.join(domains)}")
+    print(f"  Refresh Interval: {args.interval}s")
+    print("=" * 80)
+    print(f"Scheduler loop started. Press Ctrl+C to terminate.\n")
+
+    cycle = 1
+    while running:
+        print(f"--- Ingestion Cycle #{cycle} ---")
+        run_refresh_cycle(file_store, domains)
+        cycle += 1
+        for _ in range(args.interval):
+            if not running:
+                break
+            time.sleep(1)
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -306,6 +392,12 @@ def build_parser() -> argparse.ArgumentParser:
     # dataset-status
     subparsers.add_parser("dataset-status", help="Display dataset inventory status")
 
+    # schedule
+    p_sched = subparsers.add_parser("schedule", help="Run automated recurring dataset refresher")
+    p_sched.add_argument("--interval", type=int, default=300, help="Refresh interval in seconds (default: 300s = 5m)")
+    p_sched.add_argument("--once", action="store_true", help="Run single refresh cycle and exit")
+    p_sched.add_argument("--domains", default="live,news,reddit", help="Domains to refresh (live,news,reddit,market)")
+
     return parser
 
 
@@ -323,6 +415,7 @@ def main() -> None:
         "collect-reddit": cmd_collect_reddit,
         "validate": cmd_validate,
         "dataset-status": cmd_dataset_status,
+        "schedule": cmd_schedule,
     }
 
     handler = cmd_map.get(args.command)

@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import Union
 
 
-SAFE_TICKER_PATTERN = re.compile(r"^[A-Za-z0-9\.\-\^]{1,10}$")
+SAFE_TICKER_PATTERN = re.compile(r"^[A-Za-z0-9&\.\-\^]{1,25}$")
 PATH_TRAVERSAL_PATTERN = re.compile(r"(\.\./|\.\.\\)")
 
 
@@ -19,8 +19,8 @@ def validate_ticker(ticker: str) -> str:
         raise ValueError("Ticker must be a non-empty string.")
     
     cleaned = ticker.strip().upper()
-    if not SAFE_TICKER_PATTERN.match(cleaned):
-        raise ValueError(f"Invalid ticker format: '{ticker}'. Allowed characters are alphanumeric, dot, hyphen, caret (max 10 chars).")
+    if not SAFE_TICKER_PATTERN.match(cleaned) or ".." in cleaned:
+        raise ValueError(f"Invalid ticker format: '{ticker}'. Allowed characters are alphanumeric, dot, hyphen, caret (max 25 chars).")
     return cleaned
 
 

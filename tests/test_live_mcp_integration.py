@@ -13,12 +13,7 @@ from pathlib import Path
 
 from kairos.config.settings import get_settings
 from kairos.mcp_client.client import get_mcp_client
-from verify_live_mcp import (
-    test_live_alphavantage_mcp,
-    test_live_nse_mcp,
-    test_live_reddit_mcp,
-    test_live_yfinance_mcp,
-)
+from kairos.verification import live_mcp  # module import: its test_* helpers must not be collected as tests
 
 _ROOT = Path(__file__).resolve().parent.parent
 _VENV_BIN = _ROOT / ".venv" / "bin"
@@ -55,13 +50,16 @@ class TestLiveMCPIntegration(unittest.TestCase):
             else:
                 self.skipTest("yfinance-mcp-server binary not found on PATH or in .venv")
 
-        p = subprocess.Popen(
-            [str(binary)],
-            stdin=subprocess.PIPE,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            text=True,
-        )
+        try:
+            p = subprocess.Popen(
+                [str(binary)],
+                stdin=subprocess.PIPE,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True,
+            )
+        except OSError as e:  # e.g. venv copied from another machine: shebang interpreter missing
+            self.skipTest(f"yfinance-mcp-server is not executable here: {e}")
         try:
             # 1. Initialize
             init_req = {
@@ -140,21 +138,22 @@ class TestLiveMCPIntegration(unittest.TestCase):
         except socket.gaierror:
             self.skipTest("Sandbox isolation active; external DNS is blocked.")
 
-        res = test_live_nse_mcp()
+        res = live_mcp.test_live_nse_mcp()
         self.assertEqual(res["server"], "nse")
         # In live network: server reaches Akamai edge (HTTP 200 or 400 depending on session)
         self.assertIn(res["status"], ["CONNECTED", "GATEWAY_THROTTLED", "HTTP_400", "HTTP_None"])
 
     def test_alphavantage_credentials_requirement(self):
         """Audits Alpha Vantage configuration and asserts missing credentials warning."""
-        res = test_live_alphavantage_mcp(self.settings.alphavantage_api_key or "")
+        # Explicit empty key: the real .env may hold a valid key, which is not what this test audits.
+        res = live_mcp.test_live_alphavantage_mcp("")
         self.assertEqual(res["server"], "alphavantage")
         self.assertEqual(res["status"], "MISSING_CREDENTIALS")
         self.assertIn("ALPHAVANTAGE_API_KEY", res["error"])
 
     def test_reddit_credentials_requirement(self):
         """Audits Reddit credentials configuration and asserts missing credentials warning."""
-        res = test_live_reddit_mcp(
+        res = live_mcp.test_live_reddit_mcp(
             self.settings.reddit_client_id or "", self.settings.reddit_client_secret or ""
         )
         self.assertEqual(res["server"], "reddit")

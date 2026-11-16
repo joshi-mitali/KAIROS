@@ -1,0 +1,353 @@
+[
+  {
+    "ticker": "TCS",
+    "trace_id": "00-28c876473dde499498ce7c727104d85e-28c876473dde4994-01",
+    "total_rounds": 2,
+    "execution_mode": "DETERMINISTIC_FALLBACK",
+    "timestamp": "2026-10-27T20:38:12.514393+00:00",
+    "rounds": [
+      {
+        "round": 1,
+        "bull_argument": {
+          "ticker": "TCS",
+          "target_horizon_months": 12,
+          "primary_arguments": [
+            "Solid earnings engine with reported annual revenue of 2,670,210,000,000 INR and 18.4% net margin.",
+            "Balance sheet solvency characterized as ROBUST under mca-ind-as filing standards.",
+            "Technical posture indicates support established at \u20b92,021.65 with 20-day SMA at \u20b92,260.29.",
+            "Media catalyst: Identified growth catalyst: Tata Consultancy Services Ltd (BOM:532540) (Q2 2027) Earnings Call Highlights: A..."
+          ],
+          "upside_potential_pct": 13.11,
+          "catalysts": [
+            "Identified growth catalyst: Tata Consultancy Services Ltd (BOM:532540) (Q2 2027) Earnings Call Highlights: A...",
+            "Identified growth catalyst: Tata Consultancy Services Stock And Other Indian Dividend Anchors Built For Stea...",
+            "Identified growth catalyst: TCS shares rise as AI revenue offsets sluggish growth, lifts Indian IT stocks..."
+          ],
+          "acknowledged_risks": [
+            "Identified regulatory/market risk: Tata Consultancy Services Ltd (BOM:532540) (Q2 2027) Earnings Call Highlights: A...",
+            "Near-term technical overhead resistance at \u20b92,625.00"
+          ],
+          "conviction_level": "STRONG",
+          "researcher_name": "crewai.bull_researcher",
+          "debate_round": 1,
+          "execution_mode": "DETERMINISTIC_FALLBACK"
+        },
+        "bear_counterargument": {
+          "ticker": "TCS",
+          "primary_arguments": [
+            "Technical downside exposure to key support at \u20b92,021.65 representing a -19.0% potential drawdown.",
+            "Macro/multiple compression risks amid INR liabilities of 738,940,000,000.",
+            "Regulatory/compliance sensitivity: Identified regulatory/market risk: Tata Consultancy Services Ltd (BOM:532540) (Q2 2027) Earnings Call Highlights: A..."
+          ],
+          "downside_risk_pct": -19.03,
+          "vulnerabilities": [
+            "Total corporate liabilities of 738,940,000,000 INR",
+            "Valuation sensitivity if margin shrinks below 18.4%"
+          ],
+          "trigger_events": [
+            "Unexpected monetary policy tightening or interest rate surge by RBI",
+            "Adverse regulatory decree or tax compliance inquiry",
+            "Breakdown below technical support level of \u20b92,021.65"
+          ],
+          "conviction_level": "MODERATE",
+          "researcher_name": "crewai.bear_researcher",
+          "debate_round": 1,
+          "execution_mode": "DETERMINISTIC_FALLBACK"
+        }
+      },
+      {
+        "round": 2,
+        "bull_argument": {
+          "ticker": "TCS",
+          "target_horizon_months": 12,
+          "primary_arguments": [
+            "[Round 2 Rebuttal] Rebutted Bear downside of -19.0%: balance sheet solvency and operating cash flows absorb near-term macro shocks.",
+            "[Round 2 Moat Defense] Sustaining primary driver: Solid earnings engine with reported annual revenue of 2,670,210,000,000 INR and 18.4% net margin.",
+            "Addressed vulnerability 'Total corporate liabilities of 738,940,000,000 INR': corporate margins maintain adequate downside margin of safety."
+          ],
+          "upside_potential_pct": 12.59,
+          "catalysts": [
+            "Identified growth catalyst: Tata Consultancy Services Ltd (BOM:532540) (Q2 2027) Earnings Call Highlights: A...",
+            "Identified growth catalyst: Tata Consultancy Services Stock And Other Indian Dividend Anchors Built For Stea...",
+            "Identified growth catalyst: TCS shares rise as AI revenue offsets sluggish growth, lifts Indian IT stocks..."
+          ],
+          "acknowledged_risks": [
+            "Identified regulatory/market risk: Tata Consultancy Services Ltd (BOM:532540) (Q2 2027) Earnings Call Highlights: A...",
+            "Near-term technical overhead resistance at \u20b92,625.00",
+            "Monitored catalyst trigger: Unexpected monetary policy tightening or interest rate surge by RBI"
+          ],
+          "conviction_level": "STRONG",
+          "researcher_name": "crewai.bull_researcher",
+          "debate_round": 2,
+          "execution_mode": "DETERMINISTIC_FALLBACK"
+        },
+        "bear_counterargument": {
+          "ticker": "TCS",
+          "primary_arguments": [
+            "[Round 2 Counter] Challenged Bull upside of +12.6%: multiple expansion is capped by historical valuation ceiling.",
+            "[Round 2 Stress Test] Reasserted downside risk of -19.0% given prevailing interest rate and overhead resistance hurdles.",
+            "Discounted catalyst 'Identified growth catalyst: Tata Consultancy Services Ltd (BOM:532540) (Q2 2027) Earnings Call Highlights: A...' due to potential execution latency and sector headwinds."
+          ],
+          "downside_risk_pct": -19.03,
+          "vulnerabilities": [
+            "Total corporate liabilities of 738,940,000,000 INR",
+            "Valuation sensitivity if margin shrinks below 18.4%"
+          ],
+          "trigger_events": [
+            "Unexpected monetary policy tightening or interest rate surge by RBI",
+            "Adverse regulatory decree or tax compliance inquiry",
+            "Breakdown below technical support level of \u20b92,021.65"
+          ],
+          "conviction_level": "MODERATE",
+          "researcher_name": "crewai.bear_researcher",
+          "debate_round": 2,
+          "execution_mode": "DETERMINISTIC_FALLBACK"
+        }
+      }
+    ],
+    "manager_verdict": {
+      "recommendation": "UNDERWEIGHT",
+      "conviction": "MODERATE",
+      "bull_summary": "Bull thesis projects +12.6% upside driven by robust corporate profitability (18.4% margin) and positive catalyst momentum.",
+      "bear_summary": "Bear thesis highlights -19.0% downside risk toward support level amid macro multiple sensitivity and outstanding liabilities.",
+      "synthesis_rationale": "KAIROS Research Committee reviewed evidence for TCS. Risk/reward asymmetry stands at 0.66x (upside +12.6% vs downside -19.0%). Given robust solvency posture under audited mca-ind-as accounts and prevailing bullish technical regime, committee concludes an institutional UNDERWEIGHT stance.",
+      "key_decision_factors": [
+        "Asymmetric risk/reward profile: 0.66x",
+        "Solvency classification: ROBUST",
+        "Technical trend posture: BULLISH",
+        "Catalyst backing vs legal/regulatory exposure ratio"
+      ],
+      "limitations": [
+        "Market price reflects 15_MIN_DELAYED feed latency from Yahoo Finance MCP",
+        "Retail sentiment represents online investor community discourse and may exhibit recency bias",
+        "Valuation metrics do not guarantee future multiple expansion under sudden RBI policy shifts",
+        "System is strictly read-only: no automated order placement or capital commitment"
+      ],
+      "data_freshness_status": "CURRENT_AS_OF_2026-10-27 (15_MIN_DELAYED)"
+    }
+  },
+  {
+    "ticker": "ICICIBANK",
+    "trace_id": "00-0805739b0c074fa6896e2be0281ec83e-0805739b0c074fa6-01",
+    "total_rounds": 2,
+    "execution_mode": "LIVE_CREWAI_LLM",
+    "timestamp": "2026-11-16T19:26:06.439863+00:00",
+    "rounds": [
+      {
+        "round": 1,
+        "bull_argument": {
+          "ticker": "ICICIBANK",
+          "target_horizon_months": 12,
+          "primary_arguments": [
+            "Strong credit growth in retail and SME portfolios"
+          ],
+          "upside_potential_pct": 18.5,
+          "catalysts": [
+            "Retail branch expansion"
+          ],
+          "acknowledged_risks": [
+            "Repo rate hikes"
+          ],
+          "conviction_level": "STRONG",
+          "researcher_name": "crewai.bull_researcher",
+          "debate_round": 1,
+          "execution_mode": "LIVE_CREWAI_LLM"
+        },
+        "bear_counterargument": {
+          "ticker": "ICICIBANK",
+          "primary_arguments": [
+            "Macro interest rate sensitivity"
+          ],
+          "downside_risk_pct": -10.0,
+          "vulnerabilities": [
+            "Unsecured retail debt leverage"
+          ],
+          "trigger_events": [
+            "RBI tightening decree"
+          ],
+          "conviction_level": "MODERATE",
+          "researcher_name": "crewai.bear_researcher",
+          "debate_round": 1,
+          "execution_mode": "LIVE_CREWAI_LLM"
+        }
+      },
+      {
+        "round": 2,
+        "bull_argument": {
+          "ticker": "ICICIBANK",
+          "target_horizon_months": 12,
+          "primary_arguments": [
+            "Strong credit growth in retail and SME portfolios"
+          ],
+          "upside_potential_pct": 18.5,
+          "catalysts": [
+            "Retail branch expansion"
+          ],
+          "acknowledged_risks": [
+            "Repo rate hikes"
+          ],
+          "conviction_level": "STRONG",
+          "researcher_name": "crewai.bull_researcher",
+          "debate_round": 1,
+          "execution_mode": "LIVE_CREWAI_LLM"
+        },
+        "bear_counterargument": {
+          "ticker": "ICICIBANK",
+          "primary_arguments": [
+            "Macro interest rate sensitivity"
+          ],
+          "downside_risk_pct": -10.0,
+          "vulnerabilities": [
+            "Unsecured retail debt leverage"
+          ],
+          "trigger_events": [
+            "RBI tightening decree"
+          ],
+          "conviction_level": "MODERATE",
+          "researcher_name": "crewai.bear_researcher",
+          "debate_round": 1,
+          "execution_mode": "LIVE_CREWAI_LLM"
+        }
+      }
+    ],
+    "manager_verdict": {
+      "recommendation": "OVERWEIGHT",
+      "conviction": "STRONG",
+      "bull_summary": "Strong retail loan growth and margin resilience",
+      "bear_summary": "Unsecured credit risk exposure and NPA uptick",
+      "synthesis_rationale": "Asymmetric 2.0x upside potential justifies overweight stance",
+      "key_decision_factors": [
+        "Credit growth",
+        "Robust net interest margin"
+      ],
+      "limitations": [
+        "Delayed quote feed",
+        "Recency bias in social sentiment"
+      ],
+      "data_freshness_status": "CURRENT_AS_OF_2026-10-27"
+    }
+  },
+  {
+    "ticker": "RELIANCE",
+    "trace_id": "00-f3fa08d86feb4ee89180603a522bc15e-f3fa08d86feb4ee8-01",
+    "total_rounds": 2,
+    "execution_mode": "DETERMINISTIC_FALLBACK",
+    "timestamp": "2026-11-16T19:26:08.804347+00:00",
+    "rounds": [
+      {
+        "round": 1,
+        "bull_argument": {
+          "ticker": "RELIANCE",
+          "target_horizon_months": 12,
+          "primary_arguments": [
+            "Solid earnings engine with reported annual revenue of 9,000,000,000,000 INR and 7.7% net margin.",
+            "Balance sheet solvency characterized as MODERATE under mca-ind-as filing standards.",
+            "Technical posture indicates support established at \u20b91,152.20 with 20-day SMA at \u20b91,186.41.",
+            "Media catalyst: Identified growth catalyst: RELIANCE Reports Strong Quarterly Earnings Across Retail and Enterprise Vertical..."
+          ],
+          "upside_potential_pct": 10.71,
+          "catalysts": [
+            "Identified growth catalyst: RELIANCE Reports Strong Quarterly Earnings Across Retail and Enterprise Vertical..."
+          ],
+          "acknowledged_risks": [
+            "Macroeconomic interest rate sensitivity and broad market multiple compression",
+            "Near-term technical overhead resistance at \u20b91,337.00"
+          ],
+          "conviction_level": "MODERATE",
+          "researcher_name": "crewai.bull_researcher",
+          "debate_round": 1,
+          "execution_mode": "DETERMINISTIC_FALLBACK"
+        },
+        "bear_counterargument": {
+          "ticker": "RELIANCE",
+          "primary_arguments": [
+            "Technical downside exposure to key support at \u20b91,152.20 representing a -8.0% potential drawdown.",
+            "Macro/multiple compression risks amid INR liabilities of 8,200,000,000,000.",
+            "Regulatory/compliance sensitivity: Macroeconomic interest rate sensitivity and broad market multiple compression"
+          ],
+          "downside_risk_pct": -8.0,
+          "vulnerabilities": [
+            "Total corporate liabilities of 8,200,000,000,000 INR",
+            "Valuation sensitivity if margin shrinks below 7.7%"
+          ],
+          "trigger_events": [
+            "Unexpected monetary policy tightening or interest rate surge by RBI",
+            "Adverse regulatory decree or tax compliance inquiry",
+            "Breakdown below technical support level of \u20b91,152.20"
+          ],
+          "conviction_level": "MODERATE",
+          "researcher_name": "crewai.bear_researcher",
+          "debate_round": 1,
+          "execution_mode": "DETERMINISTIC_FALLBACK"
+        }
+      },
+      {
+        "round": 2,
+        "bull_argument": {
+          "ticker": "RELIANCE",
+          "target_horizon_months": 12,
+          "primary_arguments": [
+            "[Round 2 Rebuttal] Rebutted Bear downside of -8.0%: balance sheet solvency and operating cash flows absorb near-term macro shocks.",
+            "[Round 2 Moat Defense] Sustaining primary driver: Solid earnings engine with reported annual revenue of 9,000,000,000,000 INR and 7.7% net margin.",
+            "Addressed vulnerability 'Total corporate liabilities of 8,200,000,000,000 INR': corporate margins maintain adequate downside margin of safety."
+          ],
+          "upside_potential_pct": 10.28,
+          "catalysts": [
+            "Identified growth catalyst: RELIANCE Reports Strong Quarterly Earnings Across Retail and Enterprise Vertical..."
+          ],
+          "acknowledged_risks": [
+            "Macroeconomic interest rate sensitivity and broad market multiple compression",
+            "Near-term technical overhead resistance at \u20b91,337.00",
+            "Monitored catalyst trigger: Unexpected monetary policy tightening or interest rate surge by RBI"
+          ],
+          "conviction_level": "MODERATE",
+          "researcher_name": "crewai.bull_researcher",
+          "debate_round": 2,
+          "execution_mode": "DETERMINISTIC_FALLBACK"
+        },
+        "bear_counterargument": {
+          "ticker": "RELIANCE",
+          "primary_arguments": [
+            "[Round 2 Counter] Challenged Bull upside of +10.3%: multiple expansion is capped by historical valuation ceiling.",
+            "[Round 2 Stress Test] Reasserted downside risk of -8.0% given prevailing interest rate and overhead resistance hurdles.",
+            "Discounted catalyst 'Identified growth catalyst: RELIANCE Reports Strong Quarterly Earnings Across Retail and Enterprise Vertical...' due to potential execution latency and sector headwinds."
+          ],
+          "downside_risk_pct": -8.0,
+          "vulnerabilities": [
+            "Total corporate liabilities of 8,200,000,000,000 INR",
+            "Valuation sensitivity if margin shrinks below 7.7%"
+          ],
+          "trigger_events": [
+            "Unexpected monetary policy tightening or interest rate surge by RBI",
+            "Adverse regulatory decree or tax compliance inquiry",
+            "Breakdown below technical support level of \u20b91,152.20"
+          ],
+          "conviction_level": "MODERATE",
+          "researcher_name": "crewai.bear_researcher",
+          "debate_round": 2,
+          "execution_mode": "DETERMINISTIC_FALLBACK"
+        }
+      }
+    ],
+    "manager_verdict": {
+      "recommendation": "NEUTRAL",
+      "conviction": "MODERATE",
+      "bull_summary": "Bull thesis projects +10.3% upside driven by robust corporate profitability (7.7% margin) and positive catalyst momentum.",
+      "bear_summary": "Bear thesis highlights -8.0% downside risk toward support level amid macro multiple sensitivity and outstanding liabilities.",
+      "synthesis_rationale": "KAIROS Research Committee reviewed evidence for RELIANCE. Risk/reward asymmetry stands at 1.28x (upside +10.3% vs downside -8.0%). Given moderate solvency posture under audited mca-ind-as accounts and prevailing neutral technical regime, committee concludes an institutional NEUTRAL stance.",
+      "key_decision_factors": [
+        "Asymmetric risk/reward profile: 1.28x",
+        "Solvency classification: MODERATE",
+        "Technical trend posture: NEUTRAL",
+        "Catalyst backing vs legal/regulatory exposure ratio"
+      ],
+      "limitations": [
+        "Market price reflects 15_MIN_DELAYED feed latency from Yahoo Finance MCP",
+        "Retail sentiment represents online investor community discourse and may exhibit recency bias",
+        "Valuation metrics do not guarantee future multiple expansion under sudden RBI policy shifts",
+        "System is strictly read-only: no automated order placement or capital commitment"
+      ],
+      "data_freshness_status": "CURRENT_AS_OF_2026-10-30 (15_MIN_DELAYED)"
+    }
+  }
+]

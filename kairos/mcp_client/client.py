@@ -1,9 +1,11 @@
 """Model Context Protocol (MCP) Client for interacting with external financial MCP servers."""
 
+import importlib.util
 import json
 import os
 import shutil
 import subprocess
+import sys
 import time
 from pathlib import Path
 from typing import Any, Dict, List, Optional
@@ -21,6 +23,24 @@ _ROOT = Path(__file__).resolve().parent.parent.parent
 _VENV_BIN = _ROOT / ".venv" / "bin"
 if _VENV_BIN.exists() and str(_VENV_BIN) not in os.environ.get("PATH", ""):
     os.environ["PATH"] = f"{_VENV_BIN}:{os.environ.get('PATH', '')}"
+
+
+def _load_yfinance_mcp_module() -> Any:
+    """Loads external yfinance-mcp-server module unambiguously without root main.py collision."""
+    for p in sys.path:
+        if "site-packages" in p:
+            candidate = Path(p) / "main.py"
+            if candidate.exists():
+                try:
+                    spec = importlib.util.spec_from_file_location("yfinance_mcp_server_module", candidate)
+                    if spec and spec.loader:
+                        mod = importlib.util.module_from_spec(spec)
+                        spec.loader.exec_module(mod)
+                        if hasattr(mod, "get_stock_info") or hasattr(mod, "get_stock_history"):
+                            return mod
+                except Exception as e:
+                    logger.debug(f"Failed loading candidate {candidate}: {e}")
+    return None
 
 
 class MCPToolCallRecord:
@@ -56,6 +76,7 @@ class MCPClientManager:
         self.config_path = config_path or settings.mcp_config_path
         self.servers_config = self._load_config()
         self.mock_transport = MockMCPTransport()
+        self.allow_mock = os.environ.get("KAIROS_ALLOW_MOCK", "").lower() in ("true", "1") or settings.env.lower() in ("test", "testing")
         self.tool_call_history: List[MCPToolCallRecord] = []
         self._active_processes: Dict[str, subprocess.Popen] = {}
         self._nse_session_id: Optional[str] = None
@@ -93,13 +114,17 @@ class MCPClientManager:
         server_name: str,
         tool_name: str,
         arguments: Dict[str, Any],
-        use_mock_fallback: bool = True,
+        use_mock_fallback: Optional[bool] = None,
     ) -> Dict[str, Any]:
         """
         Executes a tool on an external MCP server.
-        Attempts live invocation first if use_mock_fallback=False or if live provider is available.
-        Falls back to calibrated mock transport if offline/sandboxed.
+        Live invocation is always attempted first.
+        Silent mock fallback is strictly disabled in production: it only operates if
+        explicitly enabled in a test environment (KAIROS_ALLOW_MOCK=true or test environment).
         """
+        if use_mock_fallback is None:
+            use_mock_fallback = self.allow_mock
+
         start_time = time.perf_counter()
         server_cfg = self.servers_config.get(server_name, {})
 
@@ -108,30 +133,45 @@ class MCPClientManager:
         err_msg = None
         provenance = "LIVE"
 
-        # 1. Attempt live execution if requested
-        if not use_mock_fallback:
-            try:
-                if server_name == "yfinance":
-                    result = self._call_live_yfinance(tool_name, arguments)
-                elif server_name == "nse":
-                    result = self._call_live_nse(tool_name, arguments)
-                elif server_name == "alphavantage":
-                    result = self._call_live_alphavantage(tool_name, arguments)
-                else:
-                    result = self._call_stdio_process(server_name, tool_name, arguments, server_cfg)
-            except Exception as e:
-                logger.warning(f"Live invocation failed for {server_name}.{tool_name}: {e}")
-                err_msg = str(e)
-                result = None
+        # 1. Attempt live execution
+        try:
+            if server_name == "yfinance":
+                result = self._call_live_yfinance(tool_name, arguments)
+            elif server_name == "nse":
+                result = self._call_live_nse(tool_name, arguments)
+            elif server_name == "alphavantage":
+                result = self._call_live_alphavantage(tool_name, arguments)
+            else:
+                result = self._call_stdio_process(server_name, tool_name, arguments, server_cfg)
+        except Exception as e:
+            logger.warning(f"Live invocation failed for {server_name}.{tool_name}: {e}")
+            err_msg = str(e)
+            result = None
 
-        # 2. Seamless fallback to deterministic mock transport
+        # 2. Strict mock transport handling
         if result is None:
             if not use_mock_fallback:
                 status = "FAILED"
-                raise RuntimeError(f"Live MCP tool call failed for {server_name}.{tool_name}: {err_msg}")
+                self.tool_call_history.append(
+                    MCPToolCallRecord(
+                        server_name=server_name,
+                        tool_name=tool_name,
+                        arguments=arguments,
+                        latency_ms=(time.perf_counter() - start_time) * 1000.0,
+                        status=status,
+                        error_message=err_msg,
+                        provenance="FAILED",
+                    )
+                )
+                raise RuntimeError(
+                    f"Live MCP tool call failed for {server_name}.{tool_name}: {err_msg or 'No result returned'}. "
+                    "Silent mock fallback is strictly forbidden in production."
+                )
             try:
                 result = self.mock_transport.dispatch(server_name, tool_name, arguments)
                 provenance = "SYNTHETIC_FIXTURE"
+                if isinstance(result, dict) and "provenance" not in result:
+                    result["provenance"] = "SYNTHETIC_FIXTURE"
             except Exception as e:
                 status = "ERROR"
                 err_msg = str(e)
@@ -156,23 +196,24 @@ class MCPClientManager:
         return result
 
     def _call_live_yfinance(self, tool_name: str, arguments: Dict[str, Any]) -> Dict[str, Any]:
-        """Invokes yfinance-mcp-server live tool."""
-        try:
-            import main as yf_mcp
-        except ImportError:
-            raise RuntimeError("yfinance-mcp-server package not installed in environment.")
+        """Invokes yfinance-mcp-server live tool cleanly without ambiguous module collisions."""
+        import yfinance as yf
+        yf_mcp = _load_yfinance_mcp_module()
 
         sym = arguments.get("symbol", "")
         if tool_name in ("get_historical_stock_prices", "get_stock_history"):
             period = arguments.get("period", "10y")
             interval = arguments.get("interval", "1d")
-            # Invoke get_stock_history
-            res = yf_mcp.get_stock_history(symbol=sym, period=period, interval=interval)
-            raw_data = res.get("data", [])
-            # Also fetch fast_info or ticker info if needed to get full OHLCV columns
-            import yfinance as yf
+            # If FastMCP server module is loaded, call it
+            if yf_mcp and hasattr(yf_mcp, "get_stock_history"):
+                try:
+                    yf_mcp.get_stock_history(symbol=sym, period=period, interval=interval)
+                except Exception as e:
+                    logger.debug(f"FastMCP get_stock_history note: {e}")
             ticker = yf.Ticker(sym)
-            df = ticker.history(period=period, interval=interval).reset_index()
+            df = ticker.history(period=period, interval=interval, auto_adjust=True).reset_index()
+            if df.empty:
+                raise RuntimeError(f"No historical price bars returned by Yahoo Finance for {sym}")
             bars = []
             for _, row in df.iterrows():
                 d_str = str(row["Date"])[:10]
@@ -195,26 +236,33 @@ class MCPClientManager:
                 "provenance": "LIVE_YAHOO_FINANCE_MCP",
             }
 
-        elif tool_name == "get_stock_info":
-            info = yf_mcp.get_stock_info(sym)
-            import yfinance as yf
+        elif tool_name in ("get_stock_info", "get_fast_info"):
+            info = {}
+            if yf_mcp and hasattr(yf_mcp, "get_stock_info"):
+                try:
+                    info = yf_mcp.get_stock_info(sym) or {}
+                except Exception as e:
+                    logger.debug(f"FastMCP get_stock_info call note: {e}")
             ticker = yf.Ticker(sym)
             fi = ticker.fast_info
-            rmt = info.get("regularMarketTime")
+            rmt = info.get("regularMarketTime") if isinstance(info, dict) else None
             if not rmt:
                 try:
                     rmt = ticker.info.get("regularMarketTime")
                 except Exception:
                     rmt = None
+            last_px = fi.last_price or (info.get("currentPrice") if isinstance(info, dict) else None)
+            if not last_px:
+                raise RuntimeError(f"Live price unavailable for {sym} from Yahoo Finance.")
             return {
                 "symbol": sym,
-                "shortName": info.get("shortName", f"{sym} INDIA LTD"),
-                "currentPrice": fi.last_price or info.get("currentPrice") or info.get("regularMarketPrice"),
-                "regularMarketPreviousClose": fi.previous_close or info.get("regularMarketPreviousClose"),
-                "regularMarketOpen": fi.open or info.get("regularMarketOpen"),
-                "regularMarketDayHigh": fi.day_high or info.get("dayHigh"),
-                "regularMarketDayLow": fi.day_low or info.get("dayLow"),
-                "regularMarketVolume": fi.last_volume or info.get("regularMarketVolume", 0),
+                "shortName": info.get("shortName", f"{sym} INDIA LTD") if isinstance(info, dict) else f"{sym} INDIA LTD",
+                "currentPrice": round(float(last_px), 2),
+                "regularMarketPreviousClose": round(float(fi.previous_close or last_px), 2),
+                "regularMarketOpen": round(float(fi.open or last_px), 2),
+                "regularMarketDayHigh": round(float(fi.day_high or last_px), 2),
+                "regularMarketDayLow": round(float(fi.day_low or last_px), 2),
+                "regularMarketVolume": int(fi.last_volume or 0),
                 "regularMarketTime": rmt,
                 "currency": fi.currency or "INR",
                 "exchange": "NSE",
@@ -247,6 +295,9 @@ class MCPClientManager:
             except Exception as e:
                 logger.warning(f"Error fetching detailed live statements for {sym}: {e}")
 
+            if not financials:
+                raise RuntimeError(f"Unable to retrieve live financial statements for {sym}.")
+
             return {
                 "symbol": sym,
                 "currency": "INR",
@@ -260,6 +311,8 @@ class MCPClientManager:
             import yfinance as yf
             ticker = yf.Ticker(sym)
             raw_news = ticker.news or []
+            if not raw_news:
+                raise RuntimeError(f"Unable to retrieve live news for {sym}.")
             return {"symbol": sym, "news": raw_news, "provenance": "LIVE_YAHOO_FINANCE_MCP"}
 
         raise NotImplementedError(f"Tool {tool_name} not implemented for live yfinance.")

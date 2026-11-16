@@ -1,0 +1,191 @@
+[
+  {
+    "ticker": "RELIANCE",
+    "trace_id": "00-557cab458ade4967bd91afd0dfa5c6e2-557cab458ade4967-01",
+    "latency_ms": 128751.36,
+    "memory_mb": 337.2,
+    "analyst_reports": {
+      "market": {
+        "ticker": "RELIANCE",
+        "as_of_date": "2024-05-22",
+        "last_price": 1164.9,
+        "quote_delay": "15_MIN_DELAYED",
+        "indicators": {
+          "sma_20": 1186.41,
+          "rsi_14": 40.3,
+          "macd_line": -15.64,
+          "macd_signal": -16.0,
+          "macd_histogram": 0.36
+        },
+        "trend_direction": "BEARISH",
+        "signal_strength": "MODERATE",
+        "support_level": 1152.2,
+        "resistance_level": 1337.0,
+        "fifty_two_week_high": null,
+        "fifty_two_week_low": null,
+        "bars_analyzed": 100,
+        "key_observations": [
+          "Price is trading below the 20-day SMA, indicating short-term bearish momentum.",
+          "RSI at 40.3 suggests weakness but is not yet in oversold territory.",
+          "MACD histogram is positive, hinting at a potential early momentum shift despite negative values."
+        ],
+        "analyst_name": "Google ADK Market Analyst",
+        "execution_mode": "LIVE_GROQ_MODEL",
+        "generated_at": "2024-05-22T10:30:00Z"
+      },
+      "sentiment": {
+        "ticker": "RELIANCE",
+        "overall_sentiment": "NEUTRAL",
+        "sentiment_score": 0.17,
+        "sample_size_posts": 6,
+        "ticker_specific_posts_count": 1,
+        "macro_context_posts_count": 5,
+        "retail_bull_ratio": 0.5,
+        "community_source": "r/IndianStockMarket (LIVE_REDDIT_ATOM_FEED, 6 live syndication posts)",
+        "key_themes": [
+          "Hedging via puts",
+          "General market sentiment"
+        ],
+        "noise_filter_applied": true,
+        "analyst_name": "Google ADK Sentiment Analyst",
+        "execution_mode": "LIVE_GROQ_MODEL",
+        "generated_at": "2024-05-22T12:00:00Z",
+        "data_source": "LIVE_REDDIT_ATOM_FEED",
+        "live_posts_count": 6,
+        "fallback_posts_count": 0
+      },
+      "news": {
+        "ticker": "RELIANCE",
+        "news_sentiment": "BULLISH",
+        "total_articles_verified": 3,
+        "key_catalysts": [
+          "Strong quarterly earnings across Retail and Enterprise verticals",
+          "FII inflows driving Nifty rally and RELIANCE re-rating"
+        ],
+        "regulatory_and_litigation_risks": [
+          "Macroeconomic interest rate sensitivity",
+          "Broad market multiple compression"
+        ],
+        "top_verified_articles": [
+          {
+            "headline": "RELIANCE Reports Strong Quarterly Earnings Across Retai",
+            "summary": "Company delivered robust results in retail and enterprise segments, signaling operational strength.",
+            "source": "The Economic Times",
+            "url": "https://economictimes.indiatimes.com",
+            "published_at": "2024-05-20T10:00:00Z"
+          },
+          {
+            "headline": "FII Inflows Drive Rally in Nifty Index as RELIANCE Rebo",
+            "summary": "Foreign institutional investor buying supported index gains, with RELIANCE acting as a key driver.",
+            "source": "Livemint",
+            "url": "https://www.livemint.com",
+            "published_at": "2024-05-20T11:30:00Z"
+          }
+        ],
+        "analyst_name": "Google ADK News Analyst",
+        "execution_mode": "LIVE_GROQ_MODEL",
+        "generated_at": "2024-05-20T12:00:00Z"
+      },
+      "fundamentals": {
+        "ticker": "RELIANCE",
+        "company_name": "RELIANCE INDIA LTD",
+        "reporting_currency": "INR",
+        "filing_standard": "mca-ind-as",
+        "fiscal_period_end": "2023-03-31",
+        "revenue": 9000000000000.0,
+        "net_income": 690000000000.0,
+        "total_assets": 16000000000000.0,
+        "total_liabilities": 8200000000000.0,
+        "operating_cash_flow": 1400000000000.0,
+        "debt_to_equity": 1.0513,
+        "profit_margins": 7.7,
+        "valuation_posture": "FAIR_VALUE",
+        "solvency_health": "MODERATE",
+        "analyst_name": "Google ADK Fundamentals Analyst",
+        "execution_mode": "LIVE_GROQ_MODEL",
+        "generated_at": "2024-05-22T10:00:00Z"
+      }
+    },
+    "verdict": {
+      "ticker": "RELIANCE",
+      "trace_id": "00-557cab458ade4967bd91afd0dfa5c6e2-557cab458ade4967-01",
+      "recommendation": "NEUTRAL",
+      "conviction": "MODERATE",
+      "bull_summary": "Jio 5G leadership and high-margin retail expansion drive structural growth, offsetting energy volatility.",
+      "bear_summary": "Elevated leverage and Jio capex cycles suppress free cash flow, exposing the stock to rate shocks and valuation compression.",
+      "synthesis_rationale": "The structural growth thesis is currently neutralized by near-term cash flow constraints from 5G infrastructure investment. Elevated leverage creates asymmetric downside risk that outweighs the upside potential in a rising rate environment.",
+      "key_decision_factors": [
+        "Jio 5G capex cycle suppressing near-term free cash flow",
+        "High debt-to-equity ratio amplifying interest rate sensitivity",
+        "Retail margin expansion targets lacking historical precedent"
+      ],
+      "manager_name": "crewai.research_manager",
+      "deliberation_timestamp": "2026-10-24T14:30:00Z",
+      "generation_timestamp": "2026-10-24T14:35:00Z",
+      "data_freshness_status": "CURRENT_OCTOBER_2026_AUDITED (15_MIN_DELAYED_QUOTE)",
+      "source_references": [
+        "Reliance Industries Q3 FY26 Earnings Release",
+        "BSE/NSE Market Data Feed",
+        "RBI Monetary Policy Statement"
+      ],
+      "limitations": [
+        "15-minute delayed quote data may not reflect intraday volatility spikes",
+        "Forward-looking estimates for Jio subscriber growth carry high uncertainty"
+      ],
+      "research_only_disclaimer": "KAIROS Phase 2 Institutional Equity Research Report. Strictly research-only advisory; not financial advice. No automated order placement or real-money trading.",
+      "debate_rounds": 2,
+      "execution_mode": "LIVE_CREWAI_LLM"
+    },
+    "trading_proposal": {
+      "ticker": "RELIANCE",
+      "direction": "HOLD",
+      "entry_price": 1164.9,
+      "stop_loss": 1140.0,
+      "target": 1337.0,
+      "time_horizon": "4-6 weeks",
+      "confidence": 0.45,
+      "rationale": "Price is consolidating below the 20-day SMA with RSI at 40.3, indicating a lack of immediate bullish momentum. Elevated leverage and neutral sentiment suggest waiting for a confirmed breakout above resistance before initiating exposure.",
+      "data_freshness": "2026-11-02",
+      "risk_warnings": [
+        "Asymmetric downside risk from elevated leverage",
+        "Macroeconomic interest rate sensitivity",
+        "Broad market multiple compression"
+      ],
+      "risk_reward_ratio": 1.0,
+      "order_type": "LIMIT",
+      "status": "PENDING",
+      "disclaimer": "For informational purposes only. Not financial advice.",
+      "execution_mode": "LIVE_GROQ_MODEL",
+      "generated_at": "2026-11-02T00:00:00Z",
+      "risk_preference": "CONSERVATIVE",
+      "position_sizing": "0% (No new entry)",
+      "preference_influence": "Strict entry criteria enforced due to conservative risk profile and neutral verdict.",
+      "layman_summary": {
+        "action": "Hold",
+        "action_detail": "Wait and observe; no clear directional edge to buy or sell right now.",
+        "reasons": [
+          "Price is consolidating below the 20-day SMA with RSI at 40.3, indicating a lack of immediate bullish momentum.",
+          "Elevated leverage and neutral sentiment suggest waiting for a confirmed breakout above resistance before initiating exposure."
+        ],
+        "entry_price": "Around \u20b91,164.90",
+        "entry_explanation": "Current price; observe price action before considering an entry.",
+        "stop_loss": "\u20b91,140.00",
+        "stop_loss_explanation": "The safety boundary where losses should be limited. If the price drops below this level, exit immediately to protect your money.",
+        "target_price": "\u20b91,337.00",
+        "target_explanation": "The potential selling price to take profit if the positive scenario plays out.",
+        "risk_level": "Low-Medium",
+        "risk_explanation": "The stock is neutral and moving sideways; risk is contained while waiting for a confirmed breakout.",
+        "time_horizon": "1 to 4 weeks (Wait and watch)",
+        "what_could_go_wrong": [
+          "Asymmetric downside risk from elevated leverage",
+          "Macroeconomic interest rate sensitivity",
+          "Broad market multiple compression"
+        ],
+        "user_risk_preference": "Conservative",
+        "position_sizing": "0% (No new entry)",
+        "preference_influence": "Strict entry criteria enforced due to conservative risk profile and neutral verdict.",
+        "disclaimer": "\u26a0\ufe0f IMPORTANT NOTICE: Strictly educational and simulated research. NO real trade has been executed. Profits are NEVER guaranteed, and investing carries financial risk. Always do your own research before making investment decisions."
+      }
+    }
+  }
+]

@@ -1,0 +1,53 @@
+// Task templates. Python fills {placeholders} once; schemas and context stay in code.
+{
+  "market_analysis": {
+    "agent": "market_analyst",
+    "description": "Analyze NSE equity {ticker}.\nSynthesize technical price action using these key metrics:\n- Price: ₹{last_price:.2f} ({quote_delay}), 20d-SMA: ₹{sma_20:.2f}, RSI14: {rsi_14:.1f}\n- MACD: Line={macd_line:.2f}, Signal={macd_signal:.2f}\n- Range: Support ₹{support_level:.2f}, Resistance ₹{resistance_level:.2f}\nBe concise. Keep key_observations to max 3 short sentences. Return structured MarketAnalysisReport.",
+    "expected_output": "A valid MarketAnalysisReport JSON object."
+  },
+  "sentiment_analysis": {
+    "agent": "sentiment_analyst",
+    "description": "Analyze NSE equity {ticker}.\nData Provenance: {data_source} ({total_live} live Reddit posts, {fallback_count} curated fallback posts).\nAudit r/IndianStockMarket chatter: {total_posts} total posts, Bull Ratio: {bull_percentage:.0f}%, Avg Score: {avg_score:+.2f}.\n- Sample Titles: {sample_titles}\nBe concise. Keep key_themes to max 2 items. Return structured SentimentAnalysisReport with data_source='{data_source}'.",
+    "expected_output": "A valid SentimentAnalysisReport JSON object."
+  },
+  "news_analysis": {
+    "agent": "news_analyst",
+    "description": "Analyze NSE equity {ticker}.\nAudit verified media (Total: {article_count}):\n{headlines_text}\n- Catalysts: {top_catalysts}\n- Risks: {top_risks}\nBe concise (max 2 catalysts, max 2 risks). Output structured NewsAnalysisReport.",
+    "expected_output": "A valid NewsAnalysisReport JSON object."
+  },
+  "fundamentals_analysis": {
+    "agent": "fundamentals_analyst",
+    "description": "Analyze NSE equity {ticker}.\nEvaluate corporate balance sheet under {filing_standard}:\n- Revenue: {revenue:,.0f} {currency}, Net Income: {net_income:,.0f} (Margin: {margin_percentage:.1f}%)\n- Assets: {total_assets:,.0f}, Liabilities: {total_liabilities:,.0f}, Debt/Equity: {debt_to_equity}\n- Operating Cash Flow: {operating_cash_flow:,.0f} {currency}, Solvency: {solvency_health}\nBe concise. Return structured FundamentalsAnalysisReport.",
+    "expected_output": "A valid FundamentalsAnalysisReport JSON object."
+  },
+  "trading_proposal": {
+    "agent": "trader_agent",
+    "description": "Analyze NSE equity {ticker}.\nUser Risk Preference: {risk_preference} (adapt position sizing, entry strictness, and stop-loss buffer accordingly).\nSynthesize an institutional Trading Proposal based on verified inputs:\n- Verdict: {recommendation} ({conviction}) | Summary: {rationale_snippet}\n- Technicals: Price ₹{last_price}, Support ₹{support}, Resistance ₹{resistance}, SMA20 ₹{sma_20}, RSI {rsi_14}\n- Fundamentals: Margin {profit_margins}, Solvency {solvency_health}\n- Sentiment: {sentiment}\n- Catalysts: {catalysts} | Risks: {risks}\n--- HISTORICAL TRADE MEMORY (Recency-Weighted) ---\n{memory_context}\nBe concise. Rationale must be max 2 sentences. Exactly 2-3 short risk warnings. Keep total output under 250 tokens.\nProvide: direction (BUY/SELL/HOLD), entry_price, stop_loss, target, time_horizon, confidence, rationale, risk_warnings, position_sizing, preference_influence.",
+    "expected_output": "A valid TradingProposal JSON object."
+  },
+  "bull_thesis": {
+    "agent": "bull_researcher",
+    "description": "[ROUND 1 - INITIAL BULL THESIS: {ticker}]\nMetrics: Price ₹{mkt_price:.2f}, Support ₹{support:.2f}, Resistance ₹{resistance:.2f}, Margin {margin}%, Solvency {solvency}, Retail sentiment: {sentiment}, Catalysts: {top_cats}.\nConstruct a CONCISE Bull Thesis adhering to BullThesis schema:\n- ticker: '{ticker}'\n- primary_arguments: exactly 1-2 concise bullet points focusing on growth drivers\n- upside_potential_pct: projected upside percentage (positive float, e.g. 15.5)\n- catalysts: 1-2 specific catalysts\n- acknowledged_risks: 1-2 acknowledged downside risks\n- conviction_level: 'STRONG' or 'MODERATE'\n- debate_round: 1\n- execution_mode: 'LIVE_CREWAI_LLM'\nKeep total response concise (under 150 tokens). Output strictly valid JSON. Avoid repetitive text.",
+    "expected_output": "Structured BullThesis adhering strictly to the schema (Round {round_num})."
+  },
+  "bull_rebuttal": {
+    "agent": "bull_researcher",
+    "description": "[ROUND {round_num} - BULL REBUTTAL: {ticker}]\nReview Bear counter-arguments from the previous round in context.\nDefend growth thesis concisely against Bear risk critiques:\n- ticker: '{ticker}'\n- primary_arguments: exactly 1-2 concise defense points addressing Bear concerns\n- upside_potential_pct: defended upside percentage (positive float)\n- catalysts: 1-2 defended growth catalysts\n- acknowledged_risks: 1-2 residual risks\n- conviction_level: 'STRONG' or 'MODERATE'\n- debate_round: {round_num}\n- execution_mode: 'LIVE_CREWAI_LLM'\nKeep total response concise (under 150 tokens). Output strictly valid JSON. Avoid repetitive text.",
+    "expected_output": "Structured BullThesis adhering strictly to the schema (Round {round_num})."
+  },
+  "bear_thesis": {
+    "agent": "bear_researcher",
+    "description": "[ROUND 1 - INITIAL BEAR THESIS: {ticker}]\nMetrics: Price ₹{mkt_price:.2f}, Support ₹{support:.2f}, Resistance ₹{resistance:.2f}, Debt/Equity {debt_eq}, Liabilities ₹{liab:,.0f}, Risks: {top_risks}, Retail sentiment: {sentiment}.\nReview Bull thesis in context. Construct a CONCISE Bear Thesis adhering to BearThesis schema:\n- ticker: '{ticker}'\n- primary_arguments: exactly 1-2 concise bullet points focusing on downside risks\n- downside_risk_pct: projected downside percentage (strictly negative float, e.g. -14.5)\n- vulnerabilities: 1-2 key balance sheet or operational vulnerabilities\n- trigger_events: 1-2 specific trigger events that could precipitate a decline\n- conviction_level: 'STRONG' or 'MODERATE'\n- debate_round: 1\n- execution_mode: 'LIVE_CREWAI_LLM'\nKeep total response concise (under 150 tokens). Output strictly valid JSON. Avoid repetitive text.",
+    "expected_output": "Structured BearThesis adhering strictly to the schema (Round {round_num})."
+  },
+  "bear_rebuttal": {
+    "agent": "bear_researcher",
+    "description": "[ROUND {round_num} - BEAR COUNTER-REBUTTAL: {ticker}]\nReview Bull rebuttal in context.\nChallenge Bull defenses concisely:\n- ticker: '{ticker}'\n- primary_arguments: exactly 1-2 concise counter-arguments exposing Bull weaknesses\n- downside_risk_pct: defended downside percentage (strictly negative float, e.g. -16.0)\n- vulnerabilities: 1-2 structural vulnerabilities\n- trigger_events: 1-2 specific market triggers\n- conviction_level: 'STRONG' or 'MODERATE'\n- debate_round: {round_num}\n- execution_mode: 'LIVE_CREWAI_LLM'\nKeep total response concise (under 150 tokens). Output strictly valid JSON. Avoid repetitive text.",
+    "expected_output": "Structured BearThesis adhering strictly to the schema (Round {round_num})."
+  },
+  "research_synthesis": {
+    "agent": "research_manager",
+    "description": "[FINAL SYNTHESIS - {total_rounds}-ROUND DEBATE: {ticker}]\nReview the {total_rounds}-round deliberation between Bull and Bear Researchers in context.\nRetail sentiment evidence: {sentiment}\nWeigh upside potential against downside risk and synthesize the final institutional verdict adhering to ResearchSynthesisVerdict schema:\n- ticker: '{ticker}'\n- recommendation: 'OVERWEIGHT', 'NEUTRAL', or 'UNDERWEIGHT'\n- conviction: 'STRONG', 'MODERATE', or 'WEAK'\n- bull_summary: exactly 1 concise sentence summarizing the Bull case\n- bear_summary: exactly 1 concise sentence summarizing the Bear case\n- synthesis_rationale: exactly 2 concise sentences explaining the final decision\n- key_decision_factors: exactly 2-3 decisive factors\n- data_freshness_status: 'CURRENT_OCTOBER_2026_AUDITED (15_MIN_DELAYED_QUOTE)'\n- limitations: 1-2 operational or market limitations\n- debate_rounds: {total_rounds}\n- execution_mode: 'LIVE_CREWAI_LLM'\nKeep total response concise (under 200 tokens). Output strictly valid JSON. Avoid repetitive text.",
+    "expected_output": "Structured ResearchSynthesisVerdict evaluating the {total_rounds}-round debate."
+  }
+}

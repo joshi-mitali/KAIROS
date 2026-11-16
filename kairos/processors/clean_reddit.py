@@ -54,6 +54,7 @@ class CleanRedditProcessor:
                 "post_id": post.id,
                 "ticker": payload.ticker,
                 "subreddit": post.subreddit,
+                "author": getattr(post, "author", None) or "[anonymous]",
                 "title": sanitized_title,
                 "snippet": sanitized_snippet,
                 "score": post.score,
@@ -63,6 +64,10 @@ class CleanRedditProcessor:
                 "retrieval_timestamp": post.retrieval_timestamp,
                 "is_synthetic": post.is_synthetic,
                 "source_status": post.source_status,
+                "target_ticker": payload.ticker,
+                "relevance_level": getattr(post, "relevance_level", "TICKER_SPECIFIC") or "TICKER_SPECIFIC",
+                "sentiment_label": getattr(post, "sentiment_label", "NEUTRAL") or "NEUTRAL",
+                "sentiment_score": getattr(post, "sentiment_score", 0.0) or 0.0,
             })
 
         safe_filename_base = target_name.replace("/", "_").lower()

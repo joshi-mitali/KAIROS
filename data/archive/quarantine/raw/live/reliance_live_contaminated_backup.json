@@ -1,0 +1,15 @@
+{
+  "symbol": "RELIANCE",
+  "lastPrice": 2750.0,
+  "change": 14.5,
+  "pChange": 0.53,
+  "previousClose": 2735.5,
+  "open": 2742.0,
+  "dayHigh": 2772.0,
+  "dayLow": 2735.0,
+  "totalTradedVolume": 6842100,
+  "timestamp": "01-Nov-2026 20:01:35",
+  "isRealTime": true,
+  "marketStatus": "Open",
+  "provenance": "SYNTHETIC_FIXTURE"
+}

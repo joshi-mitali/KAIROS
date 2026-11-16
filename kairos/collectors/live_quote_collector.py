@@ -85,10 +85,19 @@ class LiveQuoteCollector:
         # Save raw payload
         self.file_store.save_raw("live", f"{clean_symbol.lower()}_live.json", quote_data)
 
+        import os
         # Determine provenance
-        prov = quote_data.get("provenance")
-        if not prov:
-            prov = "LIVE_NSE_MCP" if provider_name == "nse_mcp" else "LIVE_YAHOO_FINANCE_MCP"
+        raw_prov = quote_data.get("provenance", "")
+        if "SYNTHETIC" in str(raw_prov).upper():
+            prov = "SYNTHETIC_FIXTURE"
+        elif "NSE" in str(raw_prov).upper() or provider_name == "nse_mcp":
+            prov = "LIVE_NSE"
+        else:
+            prov = "LIVE_YAHOO_FINANCE"
+
+        allow_mock = os.environ.get("KAIROS_ALLOW_MOCK", "").lower() in ("true", "1") or self.settings.env.lower() in ("test", "testing")
+        if prov == "SYNTHETIC_FIXTURE" and not allow_mock:
+            raise ValueError(f"Synthetic fixture quote strictly rejected for production persistence in {clean_symbol}")
 
         # Normalize to Pydantic model
         quote = LiveQuote(

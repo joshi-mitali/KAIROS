@@ -1,0 +1,6 @@
+ticker,fact_name,taxonomy,value,unit,fiscal_year,fiscal_period,source,provenance,retrieval_timestamp
+INFY,TotalRevenue,sec-form-20f,20158000000.0,USD,2026,FY,yfinance_mcp,LIVE_YAHOO_FINANCE_MCP,2026-10-27T14:47:17.969584+00:00
+INFY,NetIncome,sec-form-20f,3313000000.0,USD,2026,FY,yfinance_mcp,LIVE_YAHOO_FINANCE_MCP,2026-10-27T14:47:17.969584+00:00
+INFY,TotalAssets,sec-form-20f,16446000000.0,USD,2026,FY,yfinance_mcp,LIVE_YAHOO_FINANCE_MCP,2026-10-27T14:47:17.969584+00:00
+INFY,TotalLiabilities,sec-form-20f,6606000000.0,USD,2026,FY,yfinance_mcp,LIVE_YAHOO_FINANCE_MCP,2026-10-27T14:47:17.969584+00:00
+INFY,OperatingCashFlow,sec-form-20f,4039000000.0,USD,2026,FY,yfinance_mcp,LIVE_YAHOO_FINANCE_MCP,2026-10-27T14:47:17.969584+00:00

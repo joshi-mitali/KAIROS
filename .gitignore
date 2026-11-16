@@ -26,3 +26,12 @@ build/
 # Local data (preserve directory structure but ignore large local data dumps if needed)
 # raw and processed data can be tracked if sample fixtures
 
+
+# Frontend and private runtime state
+node_modules/
+web/dist/
+.ruff_cache/
+data/runtime/
+
+# Local tooling state
+.impeccable/questions/

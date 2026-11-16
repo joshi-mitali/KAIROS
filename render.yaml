@@ -1,0 +1,22 @@
+# Deferred deployment. Free instances have ephemeral storage; read docs/deployment.md.
+services:
+  - type: web
+    name: kairos-research
+    runtime: docker
+    plan: free
+    healthCheckPath: /api/health
+    envVars:
+      - key: KAIROS_WEB_PASSWORD
+        sync: false
+      - key: GROQ_API_KEYS
+        sync: false
+      - key: MEGABULL_API_KEY
+        sync: false
+      - key: KAIROS_LANGFUSE_ENABLED
+        value: "true"
+      - key: LANGFUSE_PUBLIC_KEY
+        sync: false
+      - key: LANGFUSE_SECRET_KEY
+        sync: false
+      - key: LANGFUSE_BASE_URL
+        value: https://us.cloud.langfuse.com

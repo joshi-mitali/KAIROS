@@ -1,0 +1,617 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-16T18:18:11.619942+00:00",
+  "title": "Design System: KAIROS",
+  "extensions": {
+    "colorMeta": {
+      "blue": {
+        "role": "primary",
+        "displayName": "Blue",
+        "tonalRamp": [
+          "oklch(15% 0.0377 262.09)",
+          "oklch(26% 0.0754 262.09)",
+          "oklch(38% 0.1069 262.09)",
+          "oklch(50% 0.1257 262.09)",
+          "oklch(62% 0.1257 262.09)",
+          "oklch(74% 0.1006 262.09)",
+          "oklch(86% 0.0629 262.09)",
+          "oklch(95% 0.0189 262.09)"
+        ]
+      },
+      "blue-hover": {
+        "role": "primary",
+        "displayName": "Blue Hover",
+        "tonalRamp": [
+          "oklch(15% 0.0330 262.22)",
+          "oklch(26% 0.0661 262.22)",
+          "oklch(38% 0.0936 262.22)",
+          "oklch(50% 0.1101 262.22)",
+          "oklch(62% 0.1101 262.22)",
+          "oklch(74% 0.0881 262.22)",
+          "oklch(86% 0.0551 262.22)",
+          "oklch(95% 0.0165 262.22)"
+        ]
+      },
+      "blue-soft": {
+        "role": "primary",
+        "displayName": "Blue Soft",
+        "tonalRamp": [
+          "oklch(15% 0.0040 262.38)",
+          "oklch(26% 0.0079 262.38)",
+          "oklch(38% 0.0112 262.38)",
+          "oklch(50% 0.0132 262.38)",
+          "oklch(62% 0.0132 262.38)",
+          "oklch(74% 0.0106 262.38)",
+          "oklch(86% 0.0066 262.38)",
+          "oklch(95% 0.0020 262.38)"
+        ]
+      },
+      "shell": {
+        "role": "primary",
+        "displayName": "Shell",
+        "tonalRamp": [
+          "oklch(15% 0.0221 262.01)",
+          "oklch(26% 0.0442 262.01)",
+          "oklch(38% 0.0626 262.01)",
+          "oklch(50% 0.0737 262.01)",
+          "oklch(62% 0.0737 262.01)",
+          "oklch(74% 0.0589 262.01)",
+          "oklch(86% 0.0368 262.01)",
+          "oklch(95% 0.0110 262.01)"
+        ]
+      },
+      "shell-selected": {
+        "role": "primary",
+        "displayName": "Shell Selected",
+        "tonalRamp": [
+          "oklch(15% 0.0252 260.51)",
+          "oklch(26% 0.0503 260.51)",
+          "oklch(38% 0.0713 260.51)",
+          "oklch(50% 0.0838 260.51)",
+          "oklch(62% 0.0838 260.51)",
+          "oklch(74% 0.0671 260.51)",
+          "oklch(86% 0.0419 260.51)",
+          "oklch(95% 0.0126 260.51)"
+        ]
+      },
+      "shell-hover": {
+        "role": "primary",
+        "displayName": "Shell Hover",
+        "tonalRamp": [
+          "oklch(15% 0.0229 260.56)",
+          "oklch(26% 0.0459 260.56)",
+          "oklch(38% 0.0650 260.56)",
+          "oklch(50% 0.0765 260.56)",
+          "oklch(62% 0.0765 260.56)",
+          "oklch(74% 0.0612 260.56)",
+          "oklch(86% 0.0382 260.56)",
+          "oklch(95% 0.0115 260.56)"
+        ]
+      },
+      "shell-text": {
+        "role": "primary",
+        "displayName": "Shell Text",
+        "tonalRamp": [
+          "oklch(15% 0.0107 260.38)",
+          "oklch(26% 0.0214 260.38)",
+          "oklch(38% 0.0304 260.38)",
+          "oklch(50% 0.0357 260.38)",
+          "oklch(62% 0.0357 260.38)",
+          "oklch(74% 0.0286 260.38)",
+          "oklch(86% 0.0179 260.38)",
+          "oklch(95% 0.0054 260.38)"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Ink",
+        "tonalRamp": [
+          "oklch(15% 0.0172 258.93)",
+          "oklch(26% 0.0343 258.93)",
+          "oklch(38% 0.0486 258.93)",
+          "oklch(50% 0.0572 258.93)",
+          "oklch(62% 0.0572 258.93)",
+          "oklch(74% 0.0458 258.93)",
+          "oklch(86% 0.0286 258.93)",
+          "oklch(95% 0.0086 258.93)"
+        ]
+      },
+      "muted": {
+        "role": "neutral",
+        "displayName": "Muted",
+        "tonalRamp": [
+          "oklch(15% 0.0132 255.72)",
+          "oklch(26% 0.0263 255.72)",
+          "oklch(38% 0.0373 255.72)",
+          "oklch(50% 0.0439 255.72)",
+          "oklch(62% 0.0439 255.72)",
+          "oklch(74% 0.0351 255.72)",
+          "oklch(86% 0.0219 255.72)",
+          "oklch(95% 0.0066 255.72)"
+        ]
+      },
+      "surface": {
+        "role": "neutral",
+        "displayName": "Surface",
+        "tonalRamp": [
+          "oklch(15% 0.0000 89.88)",
+          "oklch(26% 0.0000 89.88)",
+          "oklch(38% 0.0000 89.88)",
+          "oklch(50% 0.0000 89.88)",
+          "oklch(62% 0.0000 89.88)",
+          "oklch(74% 0.0000 89.88)",
+          "oklch(86% 0.0000 89.88)",
+          "oklch(95% 0.0000 89.88)"
+        ]
+      },
+      "canvas": {
+        "role": "neutral",
+        "displayName": "Canvas",
+        "tonalRamp": [
+          "oklch(15% 0.0022 260.73)",
+          "oklch(26% 0.0044 260.73)",
+          "oklch(38% 0.0063 260.73)",
+          "oklch(50% 0.0074 260.73)",
+          "oklch(62% 0.0074 260.73)",
+          "oklch(74% 0.0059 260.73)",
+          "oklch(86% 0.0037 260.73)",
+          "oklch(95% 0.0011 260.73)"
+        ]
+      },
+      "line": {
+        "role": "neutral",
+        "displayName": "Line",
+        "tonalRamp": [
+          "oklch(15% 0.0041 258.35)",
+          "oklch(26% 0.0083 258.35)",
+          "oklch(38% 0.0117 258.35)",
+          "oklch(50% 0.0138 258.35)",
+          "oklch(62% 0.0138 258.35)",
+          "oklch(74% 0.0110 258.35)",
+          "oklch(86% 0.0069 258.35)",
+          "oklch(95% 0.0021 258.35)"
+        ]
+      },
+      "positive": {
+        "role": "secondary",
+        "displayName": "Positive",
+        "tonalRamp": [
+          "oklch(15% 0.0283 167.26)",
+          "oklch(26% 0.0566 167.26)",
+          "oklch(38% 0.0803 167.26)",
+          "oklch(50% 0.0944 167.26)",
+          "oklch(62% 0.0944 167.26)",
+          "oklch(74% 0.0755 167.26)",
+          "oklch(86% 0.0472 167.26)",
+          "oklch(95% 0.0142 167.26)"
+        ]
+      },
+      "positive-soft": {
+        "role": "secondary",
+        "displayName": "Positive Soft",
+        "tonalRamp": [
+          "oklch(15% 0.0042 162.47)",
+          "oklch(26% 0.0084 162.47)",
+          "oklch(38% 0.0120 162.47)",
+          "oklch(50% 0.0141 162.47)",
+          "oklch(62% 0.0141 162.47)",
+          "oklch(74% 0.0113 162.47)",
+          "oklch(86% 0.0070 162.47)",
+          "oklch(95% 0.0021 162.47)"
+        ]
+      },
+      "negative": {
+        "role": "tertiary",
+        "displayName": "Negative",
+        "tonalRamp": [
+          "oklch(15% 0.0478 17.72)",
+          "oklch(26% 0.0956 17.72)",
+          "oklch(38% 0.1354 17.72)",
+          "oklch(50% 0.1593 17.72)",
+          "oklch(62% 0.1593 17.72)",
+          "oklch(74% 0.1275 17.72)",
+          "oklch(86% 0.0797 17.72)",
+          "oklch(95% 0.0239 17.72)"
+        ]
+      },
+      "warning": {
+        "role": "tertiary",
+        "displayName": "Warning",
+        "tonalRamp": [
+          "oklch(15% 0.0329 71.78)",
+          "oklch(26% 0.0658 71.78)",
+          "oklch(38% 0.0932 71.78)",
+          "oklch(50% 0.1097 71.78)",
+          "oklch(62% 0.1097 71.78)",
+          "oklch(74% 0.0878 71.78)",
+          "oklch(86% 0.0548 71.78)",
+          "oklch(95% 0.0165 71.78)"
+        ]
+      },
+      "focus": {
+        "role": "neutral",
+        "displayName": "Focus",
+        "tonalRamp": [
+          "oklch(15% 0.0325 264.55)",
+          "oklch(26% 0.0650 264.55)",
+          "oklch(38% 0.0921 264.55)",
+          "oklch(50% 0.1083 264.55)",
+          "oklch(62% 0.1083 264.55)",
+          "oklch(74% 0.0866 264.55)",
+          "oklch(86% 0.0542 264.55)",
+          "oklch(95% 0.0162 264.55)"
+        ]
+      },
+      "pill-neutral": {
+        "role": "neutral",
+        "displayName": "Pill Neutral",
+        "tonalRamp": [
+          "oklch(15% 0.0019 255.48)",
+          "oklch(26% 0.0037 255.48)",
+          "oklch(38% 0.0053 255.48)",
+          "oklch(50% 0.0062 255.48)",
+          "oklch(62% 0.0062 255.48)",
+          "oklch(74% 0.0050 255.48)",
+          "oklch(86% 0.0031 255.48)",
+          "oklch(95% 0.0009 255.48)"
+        ]
+      },
+      "pill-ink": {
+        "role": "neutral",
+        "displayName": "Pill Ink",
+        "tonalRamp": [
+          "oklch(15% 0.0133 255.73)",
+          "oklch(26% 0.0266 255.73)",
+          "oklch(38% 0.0377 255.73)",
+          "oklch(50% 0.0443 255.73)",
+          "oklch(62% 0.0443 255.73)",
+          "oklch(74% 0.0354 255.73)",
+          "oklch(86% 0.0222 255.73)",
+          "oklch(95% 0.0066 255.73)"
+        ]
+      },
+      "pill-green": {
+        "role": "tertiary",
+        "displayName": "Pill Green",
+        "tonalRamp": [
+          "oklch(15% 0.0050 156.91)",
+          "oklch(26% 0.0099 156.91)",
+          "oklch(38% 0.0140 156.91)",
+          "oklch(50% 0.0165 156.91)",
+          "oklch(62% 0.0165 156.91)",
+          "oklch(74% 0.0132 156.91)",
+          "oklch(86% 0.0083 156.91)",
+          "oklch(95% 0.0025 156.91)"
+        ]
+      },
+      "pill-green-ink": {
+        "role": "tertiary",
+        "displayName": "Pill Green Ink",
+        "tonalRamp": [
+          "oklch(15% 0.0240 158.71)",
+          "oklch(26% 0.0480 158.71)",
+          "oklch(38% 0.0680 158.71)",
+          "oklch(50% 0.0800 158.71)",
+          "oklch(62% 0.0800 158.71)",
+          "oklch(74% 0.0640 158.71)",
+          "oklch(86% 0.0400 158.71)",
+          "oklch(95% 0.0120 158.71)"
+        ]
+      },
+      "pill-red": {
+        "role": "tertiary",
+        "displayName": "Pill Red",
+        "tonalRamp": [
+          "oklch(15% 0.0046 7.49)",
+          "oklch(26% 0.0092 7.49)",
+          "oklch(38% 0.0131 7.49)",
+          "oklch(50% 0.0154 7.49)",
+          "oklch(62% 0.0154 7.49)",
+          "oklch(74% 0.0123 7.49)",
+          "oklch(86% 0.0077 7.49)",
+          "oklch(95% 0.0023 7.49)"
+        ]
+      },
+      "pill-red-ink": {
+        "role": "tertiary",
+        "displayName": "Pill Red Ink",
+        "tonalRamp": [
+          "oklch(15% 0.0438 14.69)",
+          "oklch(26% 0.0876 14.69)",
+          "oklch(38% 0.1240 14.69)",
+          "oklch(50% 0.1459 14.69)",
+          "oklch(62% 0.1459 14.69)",
+          "oklch(74% 0.1167 14.69)",
+          "oklch(86% 0.0730 14.69)",
+          "oklch(95% 0.0219 14.69)"
+        ]
+      },
+      "pill-amber": {
+        "role": "tertiary",
+        "displayName": "Pill Amber",
+        "tonalRamp": [
+          "oklch(15% 0.0102 84.59)",
+          "oklch(26% 0.0204 84.59)",
+          "oklch(38% 0.0289 84.59)",
+          "oklch(50% 0.0340 84.59)",
+          "oklch(62% 0.0340 84.59)",
+          "oklch(74% 0.0272 84.59)",
+          "oklch(86% 0.0170 84.59)",
+          "oklch(95% 0.0051 84.59)"
+        ]
+      },
+      "pill-amber-ink": {
+        "role": "tertiary",
+        "displayName": "Pill Amber Ink",
+        "tonalRamp": [
+          "oklch(15% 0.0285 71.82)",
+          "oklch(26% 0.0569 71.82)",
+          "oklch(38% 0.0806 71.82)",
+          "oklch(50% 0.0949 71.82)",
+          "oklch(62% 0.0949 71.82)",
+          "oklch(74% 0.0759 71.82)",
+          "oklch(86% 0.0474 71.82)",
+          "oklch(95% 0.0142 71.82)"
+        ]
+      },
+      "pill-blue": {
+        "role": "neutral",
+        "displayName": "Pill Blue",
+        "tonalRamp": [
+          "oklch(15% 0.0051 267.79)",
+          "oklch(26% 0.0102 267.79)",
+          "oklch(38% 0.0144 267.79)",
+          "oklch(50% 0.0170 267.79)",
+          "oklch(62% 0.0170 267.79)",
+          "oklch(74% 0.0136 267.79)",
+          "oklch(86% 0.0085 267.79)",
+          "oklch(95% 0.0025 267.79)"
+        ]
+      },
+      "pill-blue-ink": {
+        "role": "neutral",
+        "displayName": "Pill Blue Ink",
+        "tonalRamp": [
+          "oklch(15% 0.0343 260.05)",
+          "oklch(26% 0.0685 260.05)",
+          "oklch(38% 0.0971 260.05)",
+          "oklch(50% 0.1142 260.05)",
+          "oklch(62% 0.1142 260.05)",
+          "oklch(74% 0.0914 260.05)",
+          "oklch(86% 0.0571 260.05)",
+          "oklch(95% 0.0171 260.05)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Workspace heading."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Section and report headings."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Readable specialist evidence and debate arguments."
+      },
+      "intro": {
+        "displayName": "Intro",
+        "purpose": "Workspace introduction and supporting copy."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Common field and pipeline labels."
+      },
+      "button": {
+        "displayName": "Button",
+        "purpose": "Compact action labels."
+      },
+      "price": {
+        "displayName": "Price",
+        "purpose": "Tabular research chart values."
+      }
+    },
+    "shadows": [
+      {
+        "name": "search-results",
+        "value": "0 12px 30px #17294520",
+        "purpose": "Overlay result list."
+      },
+      {
+        "name": "working-node",
+        "value": "0 5px 14px #315a9e13",
+        "purpose": "Currently active pipeline node."
+      },
+      {
+        "name": "mobile-drawer",
+        "value": "10px 0 40px #192d531c",
+        "purpose": "Navigation overlay."
+      },
+      {
+        "name": "login",
+        "value": "0 14px 44px #192d5310",
+        "purpose": "Isolated authentication panel."
+      }
+    ],
+    "motion": [
+      {
+        "name": "control-transition",
+        "value": "180ms ease",
+        "purpose": "Background, border and shadow state changes."
+      },
+      {
+        "name": "drawer-transition",
+        "value": "230ms ease",
+        "purpose": "Mobile navigation transform."
+      },
+      {
+        "name": "node-transition",
+        "value": "250ms ease",
+        "purpose": "Pipeline background, border and shadow state changes."
+      },
+      {
+        "name": "evidence-transfer",
+        "value": "1s linear infinite",
+        "purpose": "Connection animates only during actual handoff."
+      },
+      {
+        "name": "agent-breathe",
+        "value": "2s ease-in-out infinite",
+        "purpose": "Active step icon background."
+      },
+      {
+        "name": "spinner",
+        "value": "1s linear infinite",
+        "purpose": "Waiting for actual work."
+      },
+      {
+        "name": "reduced-motion",
+        "value": "none",
+        "purpose": "Global animation and transition suppression; immediate state changes."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "wide-min",
+        "value": "1600px"
+      },
+      {
+        "name": "compact-desktop-max",
+        "value": "1200px"
+      },
+      {
+        "name": "node-detail-max",
+        "value": "1100px"
+      },
+      {
+        "name": "single-column-max",
+        "value": "960px"
+      },
+      {
+        "name": "mobile-max",
+        "value": "700px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary action",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Start a real research workflow.",
+      "html": "<button class=\"ds-primary\">Run analysis</button>",
+      "css": ".ds-primary{font-family:'Manrope Variable',sans-serif;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:42px;padding:11px 16px;border-radius:8px;font-size:11px;font-weight:750;transition:background .18s ease,border-color .18s ease,box-shadow .18s ease;border:0;background:var(--blue,#294e96);color:var(--surface,#fff)}.ds-primary:hover:not(:disabled){background:#203f7c}.ds-primary:focus-visible{outline:3px solid var(--focus,#89aaf0);outline-offset:3px;}.ds-primary:disabled{opacity:.55;cursor:not-allowed}"
+    },
+    {
+      "name": "Secondary action",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Review or refresh without competing with the primary action.",
+      "html": "<button class=\"ds-secondary\">Review order</button>",
+      "css": ".ds-secondary{font-family:'Manrope Variable',sans-serif;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:42px;padding:11px 16px;border-radius:8px;font-size:11px;font-weight:750;transition:background .18s ease,border-color .18s ease,box-shadow .18s ease;border:1px solid #d8e1ee;background:var(--surface,#fff);color:#334966}.ds-secondary:hover:not(:disabled){background:#eef3fb}.ds-secondary:focus-visible{outline:3px solid var(--focus,#89aaf0);outline-offset:3px;}.ds-secondary:disabled{opacity:.55;cursor:not-allowed}"
+    },
+    {
+      "name": "Text action",
+      "kind": "button",
+      "refersTo": "button-text",
+      "description": "Reveal evidence or structured details.",
+      "html": "<button class=\"ds-text\">Inspect structured report</button>",
+      "css": ".ds-text{font-family:'Manrope Variable',sans-serif;cursor:pointer;background:transparent;border:0;color:var(--blue,#294e96);font-size:11px;font-weight:750;padding:6px 0;min-height:36px;transition:color .18s ease}.ds-text:hover{color:#132f64}.ds-text:focus-visible{outline:3px solid var(--focus,#89aaf0);outline-offset:3px;}"
+    },
+    {
+      "name": "Stock search",
+      "kind": "input",
+      "refersTo": "input-search",
+      "description": "Selected instrument and exchange remain visible above an editable search field.",
+      "html": "<div class=\"ds-search\"><div class=\"ds-listing\">RELIANCE <small>NSE</small></div><label class=\"ds-search-field\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.7\" aria-hidden=\"true\"><circle cx=\"11\" cy=\"11\" r=\"7\"/><path d=\"m16 16 4 4\"/></svg><input aria-label=\"Search NSE or BSE stocks\" placeholder=\"Search any stock\"/></label></div>",
+      "css": ".ds-search{font-family:'Manrope Variable',sans-serif;max-width:340px}.ds-listing{display:flex;gap:7px;align-items:center;color:var(--ink,#172945);font-size:12px;font-weight:650;margin-bottom:6px}.ds-listing small{font-size:10px;color:var(--muted,#596b83);font-weight:500}.ds-search-field{display:flex;align-items:center;gap:8px;min-height:42px;border:1px solid var(--line,#e1e7f0);border-radius:8px;padding:0 12px;background:var(--surface,#fff);color:var(--muted,#596b83)}.ds-search-field input{font:inherit;font-size:13px;color:var(--ink,#172945);width:100%;min-width:0;border:0;padding:10px 0;background:transparent;outline:0}.ds-search-field input::placeholder{color:var(--muted,#596b83);opacity:1}.ds-search-field input:hover{border-color:#a6b7cf}.ds-search-field input:focus-visible{outline:3px solid var(--focus,#89aaf0);outline-offset:3px;}.ds-search-field input:disabled{opacity:.65}@media(max-width:700px){.ds-search-field input{font-size:16px}}"
+    },
+    {
+      "name": "Shell navigation",
+      "kind": "nav",
+      "refersTo": "nav-item",
+      "description": "Deep-blue orientation with a selected research destination.",
+      "html": "<nav class=\"ds-nav\" aria-label=\"Workspace\"><button class=\"ds-nav-item ds-selected\" aria-current=\"page\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.7\" aria-hidden=\"true\"><path d=\"M3 12h4l3-7 4 14 3-7h4\"/></svg> Research</button><button class=\"ds-nav-item\">Evidence</button></nav>",
+      "css": ".ds-nav{background:var(--shell,#192d53);padding:18px;width:224px}.ds-nav-item{font-family:'Manrope Variable',sans-serif;cursor:pointer;width:100%;display:flex;align-items:center;gap:8px;text-align:left;background:transparent;color:#bbc9e0;padding:13px 14px;border:0;border-radius:8px;font-size:14px;font-weight:600;margin:4px 0;min-height:44px}.ds-nav-item.ds-selected{background:#324d7b;color:#fff}.ds-nav-item:hover{background:#2b436c;color:#fff}.ds-nav-item:focus-visible{outline:3px solid var(--focus,#89aaf0);outline-offset:3px;}"
+    },
+    {
+      "name": "Status chips",
+      "kind": "chip",
+      "refersTo": "chip",
+      "description": "Compact state labels with paired pale and dark semantic colors.",
+      "html": "<div class=\"ds-chips\"><span class=\"ds-chip\">Ready</span><span class=\"ds-chip ds-green\">Complete</span><span class=\"ds-chip ds-amber\">Delayed</span><span class=\"ds-chip ds-red\">Failed</span></div>",
+      "css": ".ds-chips{display:flex;gap:8px;flex-wrap:wrap}.ds-chip{font-family:'Manrope Variable',sans-serif;display:inline-flex;align-items:center;gap:5px;padding:5px 8px;border-radius:5px;background:#f1f4f8;color:#53657d;font-size:9px;line-height:1.3;font-weight:750;white-space:nowrap}.ds-green{background:#e9f5ed;color:#256143}.ds-amber{background:#fff3db;color:#815616}.ds-red{background:#fbedef;color:#9f3043}"
+    },
+    {
+      "name": "Research panel",
+      "kind": "card",
+      "refersTo": "panel",
+      "description": "White bounded surfaces hold readable research and provenance.",
+      "html": "<section class=\"ds-panel\"><div class=\"ds-panel-heading\"><h2>Research proposal</h2><p>Evidence and risk, reviewed together.</p></div><div class=\"ds-panel-note\">A completed run will produce an explained proposal.</div></section>",
+      "css": ".ds-panel{font-family:'Manrope Variable',sans-serif;background:var(--surface,#fff);color:var(--ink,#172945);border:1px solid var(--line,#e1e7f0);border-radius:var(--radius,14px);overflow:hidden;max-width:440px}.ds-panel-heading{padding:21px 22px 13px}.ds-panel-heading h2{margin:0;font-size:16px;font-weight:750;letter-spacing:-.025em}.ds-panel-heading p{margin:5px 0 0;font-size:12px;line-height:1.6;color:var(--muted,#596b83)}.ds-panel-note{display:flex;gap:8px;font-size:10px;color:#566d86;line-height:1.65;background:#f7f9fc;padding:14px 18px}"
+    },
+    {
+      "name": "Inspectable pipeline node",
+      "kind": "custom",
+      "refersTo": "pipeline-node",
+      "description": "A stateful agent step with role, framework and current status.",
+      "html": "<button class=\"ds-node\"><span class=\"ds-node-icon\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.7\" aria-hidden=\"true\"><path d=\"M3 12h4l3-7 4 14 3-7h4\"/></svg></span><span class=\"ds-node-name\"><strong>Market analyst</strong><small>Google ADK</small></span><span class=\"ds-node-state\">Ready</span></button>",
+      "css": ".ds-node{font-family:'Manrope Variable',sans-serif;cursor:pointer;position:relative;background:#f8faff;border:1px solid var(--line,#e1e7f0);border-radius:12px;padding:16px;text-align:left;display:flex;align-items:flex-start;flex-wrap:wrap;gap:12px;color:var(--ink,#172945);max-width:260px;min-height:117px;transition:background .25s,border-color .25s,box-shadow .25s}.ds-node:hover{border-color:#7c99cf;background:#eff4ff}.ds-node:focus-visible{outline:3px solid #8daae4;outline-offset:3px}.ds-node-icon{color:#5d7dae;display:grid;place-items:center;width:28px;height:28px;border-radius:7px;background:#e9effb;flex:none}.ds-node-name{flex:1;align-self:center}.ds-node-name strong{font-size:12px;display:block}.ds-node-name small{font-size:10px;color:var(--muted,#596b83);display:block;margin-top:5px}.ds-node-state{width:100%;font-size:10px;color:var(--muted,#596b83)}@media(prefers-reduced-motion:reduce){.ds-node{transition:none}}"
+    },
+    {
+      "name": "Evidence tabs",
+      "kind": "nav",
+      "refersTo": "evidence-tab",
+      "description": "Specialist report navigation with availability metadata.",
+      "html": "<div class=\"ds-tabs\" role=\"tablist\" aria-label=\"Specialist reports\"><button class=\"ds-tab\" role=\"tab\" aria-selected=\"true\">Market <span>Available</span></button><button class=\"ds-tab\" role=\"tab\" aria-selected=\"false\">News <span>Pending</span></button></div>",
+      "css": ".ds-tabs{display:flex;overflow:auto;border-top:1px solid var(--line,#e1e7f0);border-bottom:1px solid var(--line,#e1e7f0);padding:0 12px}.ds-tab{font-family:'Manrope Variable',sans-serif;cursor:pointer;border:0;border-bottom:2px solid transparent;background:transparent;color:var(--muted,#596b83);font-size:12px;display:flex;align-items:center;gap:8px;padding:16px 12px;white-space:nowrap}.ds-tab[aria-selected=true]{border-bottom-color:var(--blue,#294e96);color:var(--blue,#294e96);background:#f7f9fe}.ds-tab span{font-size:9px;background:#eef2f8;border-radius:4px;padding:3px 5px}.ds-tab:focus-visible{outline:3px solid var(--focus,#89aaf0);outline-offset:3px;}"
+    },
+    {
+      "name": "Debate contribution",
+      "kind": "custom",
+      "refersTo": "debate-turn",
+      "description": "A readable argument with a role cue and time, before raw output.",
+      "html": "<article class=\"ds-turn\"><div class=\"ds-turn-heading\"><span class=\"ds-speaker\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.7\" aria-hidden=\"true\"><path d=\"M3 12h4l3-7 4 14 3-7h4\"/></svg></span><strong>Bull researcher</strong><time>10:42</time></div><div class=\"ds-argument\"><p>Validated contributions appear here after specialist evidence arrives.</p><button class=\"ds-turn-action\">Structured output</button></div></article>",
+      "css": ".ds-turn{font-family:'Manrope Variable',sans-serif;color:var(--ink,#172945);padding:23px 0;border-top:1px solid var(--line,#e1e7f0);max-width:650px}.ds-turn-heading{display:flex;gap:10px;align-items:center}.ds-turn-heading strong{font-size:13px}.ds-turn-heading time{margin-left:auto;font-size:10px;color:var(--muted,#596b83)}.ds-speaker{display:grid;place-items:center;width:30px;height:30px;background:#eaf4ef;color:var(--positive,#167357);border-radius:8px}.ds-argument{margin-left:40px;font-size:13px;line-height:1.8;max-width:78ch}.ds-turn-action{font-family:'Manrope Variable',sans-serif;cursor:pointer;background:transparent;color:var(--blue,#294e96);font-size:11px;font-weight:750;padding:6px 0;border:0;min-height:36px}.ds-turn-action:hover{color:#132f64}.ds-turn-action:focus-visible{outline:3px solid var(--focus,#89aaf0);outline-offset:3px;}@media(max-width:700px){.ds-argument{margin-left:0}}"
+    }
+  ],
+  "narrative": {
+    "northStar": "Evidence Atlas",
+    "overview": "Evidence Atlas pairs a deep-blue navigation shell with cool light work areas and dark financial ink. Manrope keeps controls, evidence and tabular figures in one clear typographic voice. Emerald marks positive movement and completed evidence; amber and red expose warnings and failures.\n\nThe system is professional, compact and inspectable. Bordered surfaces organize dense research without turning every block into a floating card. Authored SVG diagrams and animated evidence connections explain actual workflow events; readable reports and debate arguments carry the substance.",
+    "keyCharacteristics": [
+      "Deep-blue shell around cool light research surfaces.",
+      "Manrope typography with tabular financial numerals.",
+      "Bounded semantic color and explicit status labels.",
+      "Authored SVG evidence geometry and event-driven handoffs.",
+      "Readable evidence first, structured details on demand."
+    ],
+    "rules": [
+      {
+        "name": "The Evidence Color Rule",
+        "body": "Semantic color follows evidence or execution state and is accompanied by a label or icon.",
+        "section": "colors"
+      },
+      {
+        "name": "The Bounded Surface Rule",
+        "body": "Research panels establish hierarchy with borders and tonal layering; lift is reserved for overlays or active work.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "**Do** use the shared ink, muted, surface, canvas and blue primitives for new surfaces.",
+      "**Do** pair status color with a readable label or icon.",
+      "**Do** keep source dates, provider identity, missing data and draft validation status visible.",
+      "**Do** preserve the selected symbol and exchange on narrow screens.",
+      "**Do** make reduced-motion state changes immediate and keep keyboard focus visible."
+    ],
+    "donts": [
+      "**Don't** animate progress independently of actual execution events.",
+      "**Don't** imply a generated report timestamp is the source publication time.",
+      "**Don't** use positive green or warning amber as decorative backgrounds for unrelated actions.",
+      "**Don't** replace authored evidence geometry with generic stock imagery.",
+      "**Don't** hide primary research content behind raw structured output."
+    ]
+  }
+}

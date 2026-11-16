@@ -1,0 +1,21 @@
+{
+  "symbol": "HDFCBANK",
+  "last_price": 680.2,
+  "quote_timestamp": "2026-10-27T09:58:09+00:00",
+  "volume": 40290698,
+  "day_open": 689.7,
+  "open": 689.7,
+  "day_high": 690.25,
+  "day_low": 678.65,
+  "previous_close": 688.05,
+  "bid": 679.86,
+  "ask": 680.54,
+  "currency": "INR",
+  "exchange": "NSE",
+  "provider_name": "yfinance_mcp",
+  "quote_delay": "15_MIN_DELAYED",
+  "is_live_data": true,
+  "source": "yfinance_mcp",
+  "provenance": "LIVE_YAHOO_FINANCE_MCP",
+  "retrieval_timestamp": "2026-10-27T14:47:14.962200+00:00"
+}

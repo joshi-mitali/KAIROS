@@ -6,6 +6,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import List, Optional
 
+from kairos_config import CONFIG_DIR
+
 
 def _load_env_file(filepath: Path) -> None:
     """Lightweight .env parser fallback without requiring external packages."""
@@ -58,7 +60,7 @@ class Settings:
         self.historical_years_target: int = int(os.environ.get("KAIROS_HISTORY_YEARS", "10"))
 
         # MCP Configuration Path
-        self.mcp_config_path: Path = Path(os.environ.get("KAIROS_MCP_CONFIG", "config/mcp_servers.json"))
+        self.mcp_config_path: Path = Path(os.environ.get("KAIROS_MCP_CONFIG") or CONFIG_DIR / "providers" / "mcp_servers.json")
 
         # Alpha Vantage Credentials
         self.alphavantage_api_key: Optional[str] = os.environ.get("ALPHAVANTAGE_API_KEY") or None
