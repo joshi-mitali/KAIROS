@@ -19,6 +19,7 @@ except ImportError:
 
 from kairos.a2a.contract import A2AMessageType, A2ATaskEnvelope, generate_trace_id
 from kairos.config.agent_definitions import get_agent_definition
+from kairos.config.settings import get_settings
 from kairos.observability.callbacks import CallbackManager
 from kairos.observability.guardrails import InstitutionalGuardrailSuite
 from kairos.observability.tracer import global_tracer
@@ -150,8 +151,8 @@ class BaseADKAnalyst:
         callback_manager: Optional[CallbackManager] = None,
         secret_key: str = "kairos_a2a_secret",
     ):
-        self.workspace_root = Path(__file__).resolve().parent.parent.parent.parent
-        self.data_dir = Path(data_dir) if data_dir else self.workspace_root / "data"
+        self.data_dir = Path(data_dir) if data_dir else get_settings().data_dir.resolve()
+        self.workspace_root = get_settings().data_dir.resolve().parent
         self.callback_manager = callback_manager or CallbackManager()
         self.guardrails = InstitutionalGuardrailSuite()
         self.secret_key = secret_key

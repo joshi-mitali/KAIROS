@@ -6,7 +6,7 @@ COPY web/ ./
 RUN npm run build
 
 FROM python:3.12-slim
-ENV PYTHONUNBUFFERED=1 KAIROS_WEB_HOST=0.0.0.0 PORT=8000 KAIROS_WEB_DIST=/app/web/dist KAIROS_RUNTIME_DIR=/app/data/runtime
+ENV PYTHONUNBUFFERED=1 KAIROS_WEB_HOST=0.0.0.0 PORT=8000 KAIROS_WEB_DIST=/app/web/dist KAIROS_RUNTIME_DIR=/app/data/runtime KAIROS_DATA_DIR=/app/data
 WORKDIR /app
 COPY pyproject.toml README.md ./
 COPY kairos/ ./kairos/

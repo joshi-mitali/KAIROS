@@ -45,6 +45,7 @@ from kairos.observability.tracer import global_tracer
 from kairos.observability.langfuse_tracing import traced
 from kairos.schemas.analyst_reports import ResearchSynthesisVerdict
 from kairos.schemas.trading_proposal import TradingProposal
+from kairos.config.settings import get_settings
 from kairos.utils.logging_config import get_logger
 
 logger = get_logger("kairos.phase2_orchestrator")
@@ -64,8 +65,8 @@ class Phase2Orchestrator:
         callback_manager: Optional[CallbackManager] = None,
         memory_manager: Optional[MemoryManager] = None,
     ):
-        self.workspace_root = Path(__file__).resolve().parent.parent
-        self.data_dir = Path(data_dir) if data_dir else self.workspace_root / "data"
+        self.data_dir = Path(data_dir) if data_dir else get_settings().data_dir.resolve()
+        self.workspace_root = get_settings().data_dir.resolve().parent
         self.callback_manager = callback_manager or CallbackManager([LoggingCallback()])
         self.a2a_hub = a2a_hub or default_a2a_hub
         self.memory_manager = memory_manager or get_memory_manager()

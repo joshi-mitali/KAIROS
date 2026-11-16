@@ -40,6 +40,7 @@ from kairos.agents.crewai_research.runtime import UnavailableLLM, create_researc
 from kairos.observability.callbacks import CallbackManager
 from kairos.observability.langfuse_tracing import traced
 from kairos.schemas.analyst_reports import ResearchSynthesisVerdict
+from kairos.config.settings import get_settings
 from kairos.utils.logging_config import get_logger
 
 logger = get_logger("kairos.agents.crewai.crew")
@@ -143,7 +144,7 @@ def save_debate_transcript(
     """Serializes the multi-round debate transcript and verdict to research_debate.json."""
     out_p = Path(output_path)
     if not out_p.is_absolute():
-        workspace_root = Path(__file__).resolve().parent.parent.parent.parent
+        workspace_root = get_settings().data_dir.resolve().parent
         out_p = workspace_root / out_p
 
     out_p.parent.mkdir(parents=True, exist_ok=True)
