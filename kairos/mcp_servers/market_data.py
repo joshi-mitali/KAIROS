@@ -45,6 +45,14 @@ def get_price_history(ticker: str) -> dict:
     sma, rsi = compute_sma(close), compute_rsi(close)
     macd, signal, histogram = compute_macd(close)
     last = data.iloc[-1]
+    if live:  # persist the bars the analyst saw so the report can chart them; never block analysis
+        try:
+            path = Path(os.environ.get("KAIROS_DATA_DIR", "data")) / "processed" / "market" / (ticker.lower() + "_price_history.parquet")
+            path.parent.mkdir(parents=True, exist_ok=True)
+            pd.DataFrame({"date": data["date"].astype(str).str[:10], "close": data["close"].astype(float),
+                          "sma_20": sma, "sma_50": compute_sma(close, 50)}).tail(260).to_parquet(path, index=False)
+        except Exception:
+            pass
     def number(value, fallback):
         return float(value) if value is not None and pd.notna(value) else fallback
     result = {

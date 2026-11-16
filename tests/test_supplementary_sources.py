@@ -112,7 +112,7 @@ def test_collect_never_raises_and_flags_failures():
     patched = {k: (ok if k == "rbi" else boom, *v[1:]) for k, v in src.SOURCES.items()}
     with patch.dict(src.SOURCES, patched):
         res = src.collect_supplementary("RELIANCE.NS", "Reliance Industries Limited", NOW)
-    assert len(res) == 8 and {r["id"] for r in res} == set(src.SOURCES)
+    assert len(res) == len(src.SOURCES) and {r["id"] for r in res} == set(src.SOURCES)
     by = {r["id"]: r for r in res}
     assert by["rbi"]["status"] == "ok" and len(by["rbi"]["items"]) == 10  # capped
     assert by["sebi"]["status"] == "unavailable" and "boom" in by["sebi"]["reason"] and by["sebi"]["items"] == []
@@ -145,3 +145,56 @@ def test_supplementary_context_handles_missing_cells(tmp_path):
     text = BaseADKAnalyst(data_dir=str(tmp_path)).supplementary_context("RELIANCE.NS", ["filings"])
     assert "nan" not in text.lower() and "None" not in text
     assert "undated" in text and "data year 2024" in text and "GDP 6.5 %" in text
+
+
+# ---- Firecrawl ----
+from kairos.sources import firecrawl as fc
+
+_KEY = "fc-SECRET-KEY-123"
+_NEWS = {"success": True, "data": {"news": [
+    {"title": "Reliance Industries Q2 profit rises", "url": "https://news.example/a", "snippet": "RIL posts <b>profit</b>", "date": "2026-11-15T10:00:00Z"},
+    {"title": "Old story", "url": "https://news.example/old", "snippet": "x", "date": "2026-10-01T10:00:00Z"},
+    {"title": "Reddit chatter", "url": "https://www.reddit.com/r/x/1", "snippet": "x"},
+    {"title": "Bad scheme", "url": "javascript:alert(1)", "snippet": "x"}]}}
+_WEB = {"success": True, "data": {"web": [
+    {"title": "Reliance Industries Q2 profit rises", "url": "https://news.example/a", "description": "dup"},
+    {"title": "Sector outlook", "url": "https://web.example/b", "description": "Oil demand outlook"}]}}
+_MD = "# Title\n\n[Skip to content](/x)\n\n" + "Reliance Industries reported a strong second quarter with [record](http://a.b) retail growth and **higher** refining margins. " * 5
+
+
+def _fake(status=200):
+    def post(method, url, **kw):
+        assert kw["headers"]["Authorization"] == f"Bearer {_KEY}"
+        if status != 200:
+            return resp(b"{}", text="{}", status=status)
+        if url.endswith("/search"):
+            return resp(text=__import__("json").dumps(_NEWS if kw["json"]["sources"] == ["news"] else _WEB))
+        return resp(text=__import__("json").dumps({"success": True, "data": {"markdown": _MD}}))
+    return post
+
+
+def _run(monkeypatch, status=200):
+    monkeypatch.setenv("FIRECRAWL_API_KEY", _KEY)
+    with patch("requests.request", side_effect=lambda m, u, **kw: _fake(status)(m, u, **kw)):
+        with patch("kairos.sources._http.time.sleep"):
+            return src.SOURCES["firecrawl"][0]("RELIANCE", "Reliance Industries Limited", NOW)
+
+
+def test_firecrawl_parse_dedupe_reddit_scrape(monkeypatch):
+    out = _run(monkeypatch)
+    urls = [i["url"] for i in out["items"]]
+    assert urls == ["https://news.example/a", "https://web.example/b"]  # old, reddit, bad scheme, duplicate dropped
+    a, b = out["items"]
+    assert a["relevance"] == "TICKER_SPECIFIC" and b["relevance"] == "MARKET_CONTEXT" and b["published_at"] is None
+    assert a["summary"].startswith("Reliance Industries reported") and len(a["summary"]) <= 400 and "](" not in a["summary"] and "**" not in a["summary"]
+    assert _KEY not in repr(out)
+
+
+def test_firecrawl_not_configured_and_errors(monkeypatch):
+    monkeypatch.delenv("FIRECRAWL_API_KEY", raising=False)
+    assert fc.firecrawl("X.NS", "X Ltd", NOW)["status"] == "not_configured"
+    with pytest.raises(SourceError) as e:
+        _run(monkeypatch, 402)
+    assert "credits" in str(e.value) and _KEY not in str(e.value)
+    res = src._result("firecrawl", NOW, status="unavailable", reason=str(e.value))
+    assert res["status"] == "unavailable" and _KEY not in repr(res)

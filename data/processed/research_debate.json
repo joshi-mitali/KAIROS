@@ -128,10 +128,10 @@
   },
   {
     "ticker": "ICICIBANK",
-    "trace_id": "00-0805739b0c074fa6896e2be0281ec83e-0805739b0c074fa6-01",
+    "trace_id": "00-50179307fb3e402c9b9c85d17826c7bb-50179307fb3e402c-01",
     "total_rounds": 2,
     "execution_mode": "LIVE_CREWAI_LLM",
-    "timestamp": "2026-11-16T19:26:06.439863+00:00",
+    "timestamp": "2026-11-16T20:20:58.973895+00:00",
     "rounds": [
       {
         "round": 1,
@@ -229,10 +229,10 @@
   },
   {
     "ticker": "RELIANCE",
-    "trace_id": "00-f3fa08d86feb4ee89180603a522bc15e-f3fa08d86feb4ee8-01",
+    "trace_id": "00-108ab81cf43d48ebb81a0f766dcb5723-108ab81cf43d48eb-01",
     "total_rounds": 2,
     "execution_mode": "DETERMINISTIC_FALLBACK",
-    "timestamp": "2026-11-16T19:26:08.804347+00:00",
+    "timestamp": "2026-11-16T20:20:59.918116+00:00",
     "rounds": [
       {
         "round": 1,

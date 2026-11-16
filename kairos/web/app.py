@@ -10,8 +10,8 @@ from pathlib import Path
 from typing import Literal
 
 import pandas as pd
-from fastapi import Depends, FastAPI, HTTPException, Request, Response
-from fastapi.responses import FileResponse, StreamingResponse
+from fastapi import Depends, FastAPI, HTTPException, Query, Request, Response
+from fastapi.responses import FileResponse, HTMLResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, ConfigDict, Field, StrictBool, field_validator
 from kairos.config.agent_definitions import get_agent_definition
@@ -21,6 +21,7 @@ from kairos.observability.langfuse_tracing import flush_traces
 from kairos.trading.approval import PaperApprovalService
 from kairos.trading.megabull import MegabullClient, PaperOrder
 from kairos.utils.security import validate_ticker
+from kairos.web import report
 from kairos.web.runs import RunStore
 from kairos.trading.market import MarketFeed, normalize_symbol
 from kairos_config import CONFIG_DIR
@@ -149,6 +150,19 @@ def create_app(data_dir: Path | None = None, runtime_dir: Path | None = None, pa
         if result is None:
             raise HTTPException(404,"Research run not found.")
         return result
+
+    @app.get("/api/runs/{run_id}/report")
+    def run_report(run_id:str,print_view:bool=Query(False,alias="print"),user=Depends(owner)):
+        run=runs.get(run_id,user)
+        if run is None:
+            raise HTTPException(404,"Research run not found.")
+        if run["status"] in ("QUEUED","RUNNING"):
+            raise HTTPException(409,"The report is available once the run has finished.")
+        html=report.render(run,report.all_events(runs,run_id),runs.path.parent/"evidence"/run_id,print_mode=print_view)
+        headers={"Content-Security-Policy":"default-src 'none'; style-src 'unsafe-inline'"+("; script-src 'unsafe-inline'" if print_view else "")}
+        if not print_view:
+            headers["Content-Disposition"]=f'attachment; filename="{report.filename(run)}"'
+        return HTMLResponse(html,headers=headers)
 
     @app.get("/api/runs/{run_id}/events")
     async def events(run_id:str,request:Request,after:int=0,user=Depends(owner)):

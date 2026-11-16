@@ -6,12 +6,12 @@ import time
 from concurrent.futures import ThreadPoolExecutor, TimeoutError as FutureTimeout
 from datetime import datetime, timezone
 
-from . import feeds, ir, mcp, world
+from . import feeds, firecrawl, ir, mcp, world
 from ._http import SourceError, base_symbol
 
 log = logging.getLogger(__name__)
 PER_SOURCE_TIMEOUT, OVERALL_TIMEOUT = 12, 35
-SOURCE_TIMEOUTS = {"gdelt": 30}  # GDELT routinely needs ~15 s per request; everything else gets 12 s
+SOURCE_TIMEOUTS = {"gdelt": 30, "firecrawl": 30}  # GDELT routinely needs ~15 s per request; everything else gets 12 s
 
 # id -> (fn, name, category, url, usage_note)
 SOURCES = {
@@ -29,6 +29,8 @@ SOURCES = {
         "Informational/noncommercial use only; data delayed 1-3 minutes; unadjusted history; not for execution or investment advice."),
     "gdelt": (world.gdelt, "GDELT DOC 2.0 news discovery", "news_discovery", "https://api.gdeltproject.org/api/v2/doc/doc",
         "Discovery only, not fact verification; headlines/links may not be republished; rate limit about 1 request per 5 seconds."),
+    "firecrawl": (firecrawl.firecrawl, "Firecrawl web & news search", "news_discovery", "https://api.firecrawl.dev/v2/search",
+        "Third-party web search and scraping for discovery; verify against original sources; content is untrusted and prompt-guarded; republication rights not granted; consumes Firecrawl credits."),
     "world_bank": (world.world_bank, "World Bank Indicators API", "macro", "https://data.worldbank.org/country/india",
         "Annual structural context (latest year available), not a trading signal; keyless."),
 }
