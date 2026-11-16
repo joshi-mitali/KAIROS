@@ -28,12 +28,12 @@ def request(method: str, url: str, *, timeout: float = 8, retries: int = 1, **kw
         try:
             r = requests.request(method, url, headers=headers, timeout=timeout, **kw)
         except requests.RequestException as e:
-            if attempt == retries:
+            if attempt == retries or isinstance(e, requests.Timeout):  # a hung host will hang again; fail fast
                 raise SourceError(f"{type(e).__name__}: {str(e)[:100]}") from e
             time.sleep(1)
             continue
-        if r.status_code in (429, 500, 502, 503, 504) and attempt < retries:
-            time.sleep(5 if r.status_code == 429 else 1)
+        if r.status_code in (500, 502, 503, 504) and attempt < retries:  # 429 is not retried: the wait outlasts any source budget
+            time.sleep(1)
             continue
         if r.status_code >= 400:
             raise SourceError(f"HTTP {r.status_code}")

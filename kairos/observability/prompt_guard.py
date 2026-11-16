@@ -2,7 +2,10 @@
 import hashlib
 import math
 import os
+import threading
 from functools import lru_cache
+
+import openai
 
 from kairos.config.agent_definitions import load_jsonc
 from kairos.observability.langfuse_tracing import observation
@@ -28,9 +31,19 @@ def chunks(text: str, size: int, overlap: int):
         start += size-overlap
 
 
+_scan_lock = threading.Lock()  # Groq stalls ~1 in 4 concurrent guard-model requests until timeout; sequential scans (~0.15s each) do not
+
+
 @lru_cache(maxsize=512)
 def _scan(model, threshold, text):
-    response = _client().chat.completions.create(model=model,messages=[{"role":"user","content":text}])
+    with _scan_lock:
+        for attempt in range(2):  # a stalled scan is retried once on a short timeout; a scan takes ~0.15s when healthy
+            try:
+                response = _client().chat.completions.create(model=model,messages=[{"role":"user","content":text}],timeout=5)
+                break
+            except openai.APITimeoutError:
+                if attempt:
+                    raise
     score = float(response.choices[0].message.content.strip())
     if not math.isfinite(score) or not 0 <= score <= 1:
         raise ValueError("Guard model returned an invalid attack score.")

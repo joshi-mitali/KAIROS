@@ -252,6 +252,10 @@ Working nodes receive blue emphasis and a small lift. Connections animate only w
 
 Report tabs expose specialist narratives, source articles, provider dates and measurements before optional structured data. Bull and Bear contributions use restrained emerald and red icon treatments; the manager uses blue. Streamed text sits in a bounded pale-blue draft area with an explicit unvalidated label. Completed contributions and verdicts remain visually distinct from drafts. Empty states use authored evidence-path SVGs and explain what a real run will produce.
 
+### Research run layout (supersedes the pipeline-node grid above)
+
+A completed run reads top to bottom: sticky run bar (ticker, status, duration, agents x/8, data-gap badge, Download report, Save as PDF), a Decision card beside a secondary price chart, one four-step pipeline strip (Evidence, Analysts, Debate, Trader) with per-phase durations, then a single tabbed workbench (Debate, Analyst reports, Sources & gaps, Execution log). Strip steps open the matching tab. There is no separate Evidence pane. HOLD shows "HOLD — no order to place" and "Reference levels (no order)" instead of a button. A source or analyst with no usable data shows amber "No data", never "Complete". In progress, a vertical stepper leads with per-source evidence chips (working, then status, text and duration), concurrent analyst rows, and a live log rail. Agent output is rendered as labelled metrics and bullets; raw JSON sits behind "Show raw data". Timestamps are IST; text floor is 11px.
+
 ## Do's and Don'ts
 
 ### Do:

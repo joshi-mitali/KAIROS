@@ -333,7 +333,7 @@ This report shows only what was recorded before it stopped; missing sections say
 <div class="tile"><b>Entry</b><span>{{ (proposal or {}).get('entry_price')|fmt }}</span></div>
 <div class="tile"><b>Stop</b><span class="neg">{{ (proposal or {}).get('stop_loss')|fmt }}</span></div>
 <div class="tile"><b>Target</b><span class="pos">{{ (proposal or {}).get('target')|fmt }}</span></div>
-<div class="tile"><b>Risk / reward</b><span>{{ (proposal or {}).get('risk_reward_ratio')|fmt }}</span></div></div>
+<div class="tile"><b>Risk / reward</b><span>{{ 'n/a (reference levels only)' if (proposal or {}).get('levels_reference_only') else (proposal or {}).get('risk_reward_ratio')|fmt }}</span></div></div>
 {% if proposal and proposal.rationale %}<h3>Trader rationale</h3><p>{{ proposal.rationale }}</p>{% endif %}
 {% if verdict %}<h3>Manager rationale</h3><p>{{ verdict.synthesis_rationale or na }}</p>
 <div class="cols"><div class="card"><h3 class="pos">Bull case</h3><p>{{ verdict.bull_summary or na }}</p></div><div class="card"><h3 class="neg">Bear case</h3><p>{{ verdict.bear_summary or na }}</p></div></div>

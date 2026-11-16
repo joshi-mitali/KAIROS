@@ -124,7 +124,10 @@ class TestLiveMCPIntegration(unittest.TestCase):
 
         import yfinance as yf
         t = yf.Ticker("RELIANCE.NS")
-        price = t.fast_info.last_price
+        try:
+            price = t.fast_info.last_price
+        except (OSError, TimeoutError) as exc:  # requests/curl network errors subclass OSError
+            self.skipTest(f"external service unavailable: Yahoo Finance request failed ({type(exc).__name__})")
         self.assertIsNotNone(price)
         self.assertGreater(price, 0.0)
 

@@ -194,7 +194,8 @@ class TestMarketDataIntegrity(unittest.TestCase):
         )
         self.assertEqual(prop.direction, TradeDirection.HOLD)
         self.assertIn("0% new capital", prop.position_sizing)
-        self.assertEqual(prop.risk_reward_ratio, 1.0)
+        self.assertEqual(prop.risk_reward_ratio, 0.0)  # HOLD levels are reference only
+        self.assertTrue(prop.levels_reference_only)
 
     def test_reddit_source_provenance_distinction(self):
         """Verifies that Reddit RSS posts are tagged LIVE_REDDIT_ATOM_FEED and not marked synthetic."""

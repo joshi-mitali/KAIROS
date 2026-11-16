@@ -67,3 +67,18 @@ def test_streamed_debate_events_preserve_role_and_draft():
     store=Mock();callback=EventCallback(store,'run')
     callback.on_research_stream('Bull Researcher','task','actual chunk','trace')
     store.emit.assert_called_once_with('run','debate-stream',{'agent':'Bull Researcher','task_id':'task','text':'actual chunk'})
+
+
+def test_guard_scan_retries_one_stalled_request(monkeypatch):
+    import httpx, openai
+    from types import SimpleNamespace
+    calls = []
+    def create(**kwargs):
+        calls.append(kwargs["timeout"])
+        if len(calls) == 1:
+            raise openai.APITimeoutError(httpx.Request("POST", "https://x"))
+        return SimpleNamespace(choices=[SimpleNamespace(message=SimpleNamespace(content="0.02"))])
+    monkeypatch.setattr(guard, "_client", lambda: SimpleNamespace(chat=SimpleNamespace(completions=SimpleNamespace(create=create))))
+    guard._scan.cache_clear()
+    assert guard._scan("m", .5, "retry-me") == .02 and len(calls) == 2
+    guard._scan.cache_clear()

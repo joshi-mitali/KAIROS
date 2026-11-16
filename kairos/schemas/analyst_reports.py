@@ -189,6 +189,12 @@ class BearThesis(BaseModel):
     execution_mode: str = Field(default="LIVE_CREWAI_LLM", description="'LIVE_CREWAI_LLM' or 'DETERMINISTIC_FALLBACK'")
 
 
+def data_freshness_label(market: dict) -> str:
+    """Freshness text from the run's own market report (as-of bar date, quote delay); today's date if absent."""
+    as_of = str(market.get("as_of_date") or datetime.now(timezone.utc).date().isoformat())[:10]
+    return f"CURRENT_AS_OF_{as_of} ({market.get('quote_delay', '15_MIN_DELAYED_QUOTE')})"
+
+
 class ResearchSynthesisVerdict(BaseModel):
     """Final investment research synthesis produced by CrewAI Research Manager."""
 
@@ -204,7 +210,7 @@ class ResearchSynthesisVerdict(BaseModel):
     deliberation_timestamp: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
     generation_timestamp: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
     data_freshness_status: str = Field(
-        default="CURRENT_OCTOBER_2026_AUDITED (15_MIN_DELAYED_QUOTE)",
+        default_factory=lambda: data_freshness_label({}),
         description="Freshness state of underlying market, news, sentiment and filings data",
     )
     source_references: List[str] = Field(

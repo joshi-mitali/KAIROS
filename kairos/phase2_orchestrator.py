@@ -5,11 +5,13 @@ across target NSE tickers.
 
 import argparse
 import asyncio
+import contextvars
 import json
 import os
 import sys
 import time
 import resource
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
@@ -102,12 +104,17 @@ class Phase2Orchestrator:
         # -------------------------------------------------------------
         print(f"[{ticker}] Phase 2.1: Executing Google ADK Specialist Analysts (Market, Sentiment, News, Fundamentals)...", flush=True)
         from kairos.schemas.analyst_reports import MarketAnalysisReport
-        mkt_report = MarketAnalysisReport.model_validate(asyncio.run(call_agent(
-            self.standard_a2a, "market", {"ticker": ticker}, trace_id
-        )))
-        sentiment_report = self.sentiment_analyst.analyze(ticker, trace_id=trace_id)
-        news_report = self.news_analyst.analyze(ticker, trace_id=trace_id)
-        fund_report = self.fundamentals_analyst.analyze(ticker, trace_id=trace_id)
+        # The four analysts read only their own evidence files, so they run concurrently; each context copy keeps the tracing parent.
+        jobs = {
+            "market": lambda: MarketAnalysisReport.model_validate(asyncio.run(call_agent(
+                self.standard_a2a, "market", {"ticker": ticker}, trace_id))),
+            "sentiment": lambda: self.sentiment_analyst.analyze(ticker, trace_id=trace_id),
+            "news": lambda: self.news_analyst.analyze(ticker, trace_id=trace_id),
+            "fundamentals": lambda: self.fundamentals_analyst.analyze(ticker, trace_id=trace_id),
+        }
+        with ThreadPoolExecutor(len(jobs), thread_name_prefix="kairos-analyst") as pool:
+            futures = {name: pool.submit(contextvars.copy_context().run, job) for name, job in jobs.items()}
+        mkt_report, sentiment_report, news_report, fund_report = (futures[name].result() for name in jobs)  # re-raises the first failure
 
         analyst_bundle = {
             "market": mkt_report.model_dump(),

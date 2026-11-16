@@ -29,7 +29,9 @@ class TradingProposal(BaseModel):
     risk_warnings: List[str] = Field(..., min_length=1, description="Institutional risk caveats and volatility boundaries")
 
     # Institutional Compliance & Execution Metadata
-    risk_reward_ratio: float = Field(default=0.0, ge=0.0, description="Target upside vs risk ratio")
+    risk_reward_ratio: float = Field(default=0.0, ge=0.0, description="Computed from the levels; 0.0 for HOLD (not applicable)")
+    levels_reference_only: bool = Field(default=False, description="True for HOLD: entry/stop/target are context levels, not an executable setup")
+    level_adjustments: List[str] = Field(default_factory=list, description="Honest record of any level the validator had to repair")
     order_type: str = Field(default="LIMIT", description="Order execution type: LIMIT")
     status: str = Field(default="SIMULATED_PROPOSAL_ONLY", description="Simulation status; strictly not executed")
     disclaimer: str = Field(
@@ -122,39 +124,38 @@ class TradingProposal(BaseModel):
 
     @model_validator(mode="after")
     def validate_and_align_trade_parameters(self) -> "TradingProposal":
-        """Strictly validates BUY/SELL/HOLD price consistency and calculates verified risk-reward."""
+        """Checks level direction, records any repair, and computes risk/reward from the levels (never trusts the LLM)."""
         ep = round(float(self.entry_price), 2)
         sl = round(float(self.stop_loss), 2)
         tp = round(float(self.target), 2)
+        notes: List[str] = []
 
-        if self.direction == TradeDirection.BUY:
-            # For BUY: stop_loss < entry_price < target
+        if self.direction == TradeDirection.BUY:  # stop < entry < target
             if sl >= ep:
+                notes.append(f"Stop {sl} was not below entry {ep}; replaced with entry -5%.")
                 sl = round(ep * 0.95, 2)
             if tp <= ep:
+                notes.append(f"Target {tp} was not above entry {ep}; replaced with entry +10%.")
                 tp = round(ep * 1.10, 2)
-            risk = max(0.01, ep - sl)
-            reward = max(0.01, tp - ep)
-            self.risk_reward_ratio = round(reward / risk, 2)
-
-        elif self.direction == TradeDirection.SELL:
-            # For SELL/SHORT: target < entry_price < stop_loss
+            self.risk_reward_ratio = round((tp - ep) / (ep - sl), 2) if ep > sl else 0.0
+        elif self.direction == TradeDirection.SELL:  # target < entry < stop
             if sl <= ep:
+                notes.append(f"Stop {sl} was not above entry {ep}; replaced with entry +5%.")
                 sl = round(ep * 1.05, 2)
             if tp >= ep:
+                notes.append(f"Target {tp} was not below entry {ep}; replaced with entry -10%.")
                 tp = round(ep * 0.90, 2)
-            risk = max(0.01, sl - ep)
-            reward = max(0.01, ep - tp)
-            self.risk_reward_ratio = round(reward / risk, 2)
-
-        else:  # HOLD
-            # For HOLD: defensive boundary band, risk_reward normalized to 1.0
+            self.risk_reward_ratio = round((ep - tp) / (sl - ep), 2) if sl > ep else 0.0
+        else:  # HOLD: nothing is executed, so the band is context and has no risk/reward
             if sl >= ep:
                 sl = round(ep * 0.95, 2)
             if tp <= ep:
                 tp = round(ep * 1.05, 2)
-            self.risk_reward_ratio = 1.0
+            self.risk_reward_ratio = 0.0
+            self.levels_reference_only = True
 
+        self.level_adjustments = [*self.level_adjustments, *notes]
+        self.risk_warnings = [*self.risk_warnings, *notes]
         self.entry_price = ep
         self.stop_loss = sl
         self.target = tp

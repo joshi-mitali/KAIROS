@@ -13,7 +13,7 @@ from ._http import SourceError, base_symbol, iso, matches_entity, parse_date, re
 API = "https://api.firecrawl.dev/v2"
 SEARCH_LIMIT = 8   # per search (credits scale with results)
 SCRAPE_TOP = 3     # pages scraped in total
-BUDGET_S = 24      # whole-source wall budget; scraping is skipped/trimmed when search used too much
+BUDGET_S = 11      # whole-source wall budget (collector caps at 12 s); scraping only uses what search left
 NEWS_DAYS = 7
 _ERRORS = {401: "Firecrawl rejected the API key (HTTP 401)", 402: "Firecrawl credits exhausted (HTTP 402)",
            403: "Firecrawl access denied (HTTP 403)", 429: "Firecrawl rate limited (HTTP 429)"}
@@ -67,8 +67,8 @@ def firecrawl(symbol, company_name, now):
     ]
 
     def run(q):
-        body = {"query": q[0], "limit": SEARCH_LIMIT, "sources": [q[1]], "tbs": q[2], "country": "IN", "location": "India", "timeout": 15000}
-        return q[1], _post("search", body, 17)
+        body = {"query": q[0], "limit": SEARCH_LIMIT, "sources": [q[1]], "tbs": q[2], "country": "IN", "location": "India", "timeout": 8000}
+        return q[1], _post("search", body, 9)
 
     with ThreadPoolExecutor(2) as ex:
         futs = [ex.submit(run, q) for q in searches]
@@ -102,10 +102,10 @@ def firecrawl(symbol, company_name, now):
     items.sort(key=lambda i: i["relevance"] != "TICKER_SPECIFIC")  # stable: ticker-specific first
     items = items[:10]
     left = BUDGET_S - (time.monotonic() - start)
-    top = items[:SCRAPE_TOP] if left >= 6 else []
+    top = items[:SCRAPE_TOP] if left >= 3 else []  # otherwise keep the search snippets
     if top:
         with ThreadPoolExecutor(len(top)) as ex:
-            for it, s in zip(top, ex.map(lambda i: _scrape(i["url"], left - 3), top)):
+            for it, s in zip(top, ex.map(lambda i: _scrape(i["url"], left - 2.5), top)):
                 if s:
                     it["summary"] = s
     dates = [i["published_at"] for i in items if i["published_at"]]

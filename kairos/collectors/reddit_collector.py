@@ -6,6 +6,7 @@ import os
 import re
 import time
 import xml.etree.ElementTree as ET
+from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timedelta, timezone
 from urllib.parse import urlencode
 from pathlib import Path
@@ -54,11 +55,19 @@ def reddit_user_agent() -> str:
     return os.environ.get("REDDIT_USER_AGENT") or DEFAULT_USER_AGENT
 
 
-def reddit_get(url, session=None, headers=None, timeout=(4.0, 8.0), retries=2, **kwargs):
-    """GET with a descriptive UA. Retries only 429 (honouring Retry-After, capped at 5s); 403 is permanent."""
+REDDIT_BUDGET_S = 4.0  # whole-source wall budget for one evidence fetch
+
+
+def reddit_get(url, session=None, headers=None, timeout=(4.0, 8.0), retries=2, deadline=None, **kwargs):
+    """GET with a descriptive UA. Retries only 429 and only when Retry-After fits before `deadline`; 403 is permanent."""
     getter = (session or requests).get
     merged = {"User-Agent": reddit_user_agent(), **(headers or {})}
     for attempt in range(retries + 1):
+        if deadline is not None:
+            left = deadline - time.monotonic()
+            if left <= 0:
+                raise requests.Timeout("Reddit time budget exhausted")
+            timeout = min(left, 8.0)
         resp = getter(url, headers=merged, timeout=timeout, **kwargs)
         if resp.status_code != 429 or attempt == retries:
             return resp
@@ -66,7 +75,10 @@ def reddit_get(url, session=None, headers=None, timeout=(4.0, 8.0), retries=2, *
             wait = float(resp.headers.get("Retry-After", 1))
         except (ValueError, TypeError):
             wait = 1.0
-        time.sleep(min(5.0, max(0.0, wait)))
+        wait = min(5.0, max(0.0, wait))
+        if deadline is not None and time.monotonic() + wait >= deadline:
+            return resp  # rate limited and not worth waiting for
+        time.sleep(wait)
 
 
 def _plain(markup: str) -> str:
@@ -119,7 +131,7 @@ def _fresh_matching(posts, terms, now, seen):
     return kept
 
 
-def fetch_reddit_evidence(symbol, company_name, now=None, session=None, settings=None):
+def fetch_reddit_evidence(symbol, company_name, now=None, session=None, settings=None, budget=REDDIT_BUDGET_S):
     """Acquire live Reddit posts: OAuth search, then RSS search, then per-subreddit new feeds.
 
     Returns (posts, meta). meta['status'] is 'OK', 'NO_RECENT_DISCUSSION', or 'UNAVAILABLE' (every method
@@ -133,6 +145,7 @@ def fetch_reddit_evidence(symbol, company_name, now=None, session=None, settings
     name = _COMPANY_SUFFIX.sub("", company_name or "").strip()
     query = f'{base} OR "{name}"' if len(name) > 3 and name.upper() != base else base
     attempts, seen, reached = [], set(), []
+    deadline = time.monotonic() + budget
 
     def attempt(method, url, call):
         try:
@@ -159,7 +172,7 @@ def fetch_reddit_evidence(symbol, company_name, now=None, session=None, settings
             url = "https://oauth.reddit.com/r/" + "+".join(subs) + "/search?" + urlencode(
                 {"q": query, "restrict_sr": 1, "sort": "new", "t": "week", "limit": 100})
             resp = attempt("oauth_search", url.split("?")[0], lambda: reddit_get(
-                url, session, headers={"Authorization": f"bearer {token}"}))
+                url, session, headers={"Authorization": f"bearer {token}"}, deadline=deadline))
             if resp is not None:
                 reached.append("oauth_search")
                 posts = [{"id": c["data"]["name"], "title": c["data"].get("title", "").strip(),
@@ -173,7 +186,7 @@ def fetch_reddit_evidence(symbol, company_name, now=None, session=None, settings
 
     url = "https://www.reddit.com/r/" + "+".join(subs) + "/search.rss?" + urlencode(
         {"q": query, "restrict_sr": "on", "sort": "new", "t": "week"})
-    resp = attempt("rss_search", url, lambda: reddit_get(url, session))
+    resp = attempt("rss_search", url, lambda: reddit_get(url, session, deadline=deadline))
     if resp is not None:
         reached.append("rss_search")
         try:
@@ -185,19 +198,23 @@ def fetch_reddit_evidence(symbol, company_name, now=None, session=None, settings
         if kept:
             return done("rss_search", kept)
 
-    collected = []
-    for index, sub in enumerate(subs):
-        if index:
-            time.sleep(0.5)
+    def feed(sub):  # concurrent: a 429 is not retried past the deadline, so nothing sleeps beyond the budget
         url = f"https://www.reddit.com/r/{sub}/new/.rss?limit=100"
-        resp = attempt("rss_subreddit_new", url, lambda: reddit_get(url, session))
+        resp = attempt("rss_subreddit_new", url, lambda: reddit_get(url, session, deadline=deadline))
         if resp is None:
-            continue
+            return None
         try:
-            collected += _fresh_matching(parse_atom_entries(resp.content), terms, now, seen)
-            reached.append("rss_subreddit_new")
+            return parse_atom_entries(resp.content)
         except (ET.ParseError, TypeError):
-            attempts[-1]["status"] = "error: ParseError"
+            attempts.append({"method": "rss_subreddit_new", "url": url, "status": "error: ParseError"})
+            return None
+
+    collected = []
+    with ThreadPoolExecutor(max(1, len(subs))) as pool:
+        for entries in pool.map(feed, subs):
+            if entries is not None:
+                collected += _fresh_matching(entries, terms, now, seen)
+                reached.append("rss_subreddit_new")
     if collected:
         return done("rss_subreddit_new", collected)
     if not reached:

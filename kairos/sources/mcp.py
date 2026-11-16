@@ -1,8 +1,10 @@
 """Official MCP servers over streamable HTTP (JSON-RPC): MoSPI eSankhyiki and NSE."""
 from __future__ import annotations
 
+import itertools
 import json
 import os
+from concurrent.futures import ThreadPoolExecutor
 from datetime import timedelta
 
 from ._http import SourceError, base_symbol, iso, parse_date, request
@@ -14,16 +16,15 @@ _MONTHS = ["January", "February", "March", "April", "May", "June", "July", "Augu
 
 class McpClient:
     def __init__(self, url: str):
-        self.url, self.headers, self._id = url, {"Content-Type": "application/json", "Accept": "application/json, text/event-stream"}, 0
+        self.url, self.headers, self._ids = url, {"Content-Type": "application/json", "Accept": "application/json, text/event-stream"}, itertools.count(1)
         r = self._rpc("initialize", {"protocolVersion": "2025-03-26", "capabilities": {}, "clientInfo": {"name": "kairos", "version": "0.1"}})
         if r.headers.get("Mcp-Session-Id"):
             self.headers["Mcp-Session-Id"] = r.headers["Mcp-Session-Id"]
-        request("POST", url, headers=self.headers, json={"jsonrpc": "2.0", "method": "notifications/initialized"}, timeout=8)
+        request("POST", url, headers=self.headers, json={"jsonrpc": "2.0", "method": "notifications/initialized"}, timeout=6, retries=0)
 
     def _rpc(self, method, params):
-        self._id += 1
-        return request("POST", self.url, headers=self.headers, timeout=8,
-                       json={"jsonrpc": "2.0", "id": self._id, "method": method, "params": params})
+        return request("POST", self.url, headers=self.headers, timeout=6, retries=0,
+                       json={"jsonrpc": "2.0", "id": next(self._ids), "method": method, "params": params})
 
     def call(self, tool: str, args: dict) -> dict:
         """tools/call -> parsed JSON of the first text content block."""
@@ -83,13 +84,18 @@ def mospi_mcp(symbol, company_name, now):
                         "summary": f"Constant-price GDP (base 2022-23) INR crore {cur[q]:,.0f} vs {prev[q]:,.0f} a year earlier; growth computed by KAIROS from two MoSPI NAS values.",
                         "value": g, "unit": "% y/y", "period": f"{q} FY{y}-{str(y + 1)[2:]}", "indicator": "GDP growth (computed)"}
 
-    for fn in (cpi, iip, gdp):
+    def run(fn):
         try:
-            it = fn()
+            return fn(), None
+        except (SourceError, ValueError, KeyError, TypeError) as e:
+            return None, f"{fn.__name__}: {e}"
+
+    with ThreadPoolExecutor(3) as ex:  # independent calls on one session; ~3x faster than sequential
+        for it, err in ex.map(run, (cpi, iip, gdp)):
             if it:
                 items.append({**it, "url": "https://esankhyiki.mospi.gov.in/", "relevance": "MARKET_CONTEXT"})
-        except (SourceError, ValueError, KeyError, TypeError) as e:
-            errs.append(f"{fn.__name__}: {e}")
+            if err:
+                errs.append(err)
     if not items and errs:
         raise SourceError("; ".join(errs))
     dates = [i.pop("as_of") for i in items if i.get("as_of")]

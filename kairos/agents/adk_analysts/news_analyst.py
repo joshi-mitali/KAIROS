@@ -4,6 +4,7 @@ Consumes verified financial media articles to evaluate catalysts and regulatory 
 
 from pathlib import Path
 from typing import List, Optional
+from datetime import datetime, timezone
 import pandas as pd
 
 from kairos.a2a.contract import A2AMessageType
@@ -84,7 +85,7 @@ class NewsAnalyst(BaseADKAnalyst):
             source = str(row.get("source", "Financial Media")).strip()
             url = str(row.get("url", "")).strip()
             published_at = str(
-                row.get("datetime", str(row.get("retrieved_at", "2026-10-27")))
+                row.get("datetime", str(row.get("retrieved_at", datetime.now(timezone.utc).isoformat())))
             ).strip()
 
             item = VerifiedNewsItem(

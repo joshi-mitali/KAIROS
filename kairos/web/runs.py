@@ -15,6 +15,15 @@ def encode(value):
     return json.dumps(mask_data(value), default=str)
 
 
+def data_gaps(provenance):
+    """Short labels for evidence that returned nothing; supplementary labels use the source name."""
+    gaps=[]
+    if (provenance["sources"].get("sentiment") or {}).get("status") in ("UNAVAILABLE","NO_RECENT_DISCUSSION"):
+        gaps.append("Sentiment")
+    gaps+=[r["name"] for r in provenance["sources"].get("supplementary") or [] if r.get("status") in ("unavailable","failed")]
+    return gaps
+
+
 class RunStore:
     def __init__(self, path: Path, data_dir: Path):
         self.path, self.data_dir = path, data_dir
@@ -39,8 +48,12 @@ class RunStore:
         return db
 
     def emit(self, run_id, event_type, payload):
-        with self.connect() as db:
-            db.execute("INSERT INTO research_events(run_id,type,created,payload) VALUES(?,?,?,?)", (run_id,event_type,time.time(),encode(payload)))
+        db = self.connect()  # one connection per call, so any thread may emit; closed explicitly (the with-block only commits)
+        try:
+            with db:
+                db.execute("INSERT INTO research_events(run_id,type,created,payload) VALUES(?,?,?,?)", (run_id,event_type,time.time(),encode(payload)))
+        finally:
+            db.close()
 
     def create(self, owner, ticker, risk, source):
         run_id = uuid.uuid4().hex
@@ -90,8 +103,21 @@ class RunStore:
 
     def list(self, owner):
         with self.connect() as db:
-            rows=db.execute("SELECT id,ticker,risk,source,status,created,error FROM research_runs WHERE owner=? ORDER BY created DESC LIMIT 100",(owner,)).fetchall()
-        return [dict(row) for row in rows]
+            rows=db.execute("""SELECT id,ticker,risk,source,status,created,error,
+                json_extract(result,'$.verdict.recommendation') AS recommendation,
+                json_extract(result,'$.trading_proposal.direction') AS direction,
+                json_extract(result,'$.provenance') AS provenance,
+                (SELECT MAX(created) FROM research_events e WHERE e.run_id=research_runs.id AND e.type IN ('run-completed','run-failed')) AS finished
+                FROM research_runs WHERE owner=? ORDER BY created DESC LIMIT 100""",(owner,)).fetchall()
+        out=[]
+        for row in rows:
+            item=dict(row)
+            provenance=json.loads(item.pop("provenance")) if item["provenance"] else None
+            finished=item.pop("finished")
+            item["duration_s"]=round(finished-item["created"],1) if finished else None
+            item["data_gaps"]=data_gaps(provenance) if provenance else None
+            out.append(item)
+        return out
 
     def events(self, run_id, after=0):
         with self.connect() as db:

@@ -4,6 +4,7 @@ Consumes 10-year OHLCV bars and live quotes to generate technical analysis repor
 
 from pathlib import Path
 from typing import Optional
+from datetime import datetime, timezone
 import pandas as pd
 
 from kairos.a2a.contract import A2AMessageType
@@ -70,7 +71,7 @@ class MarketAnalyst(BaseADKAnalyst):
             )
 
         latest_bar = df_hist.iloc[-1]
-        as_of_date = str(latest_bar.get("date", "2026-10-27"))[:10]
+        as_of_date = str(latest_bar.get("date", datetime.now(timezone.utc).date().isoformat()))[:10]
 
         # Use live quote last_price if available, else latest bar close
         if (

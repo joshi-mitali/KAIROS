@@ -24,6 +24,7 @@ from kairos.schemas.analyst_reports import (
     SignalStrength,
     TrendDirection,
     sentiment_prompt_line,
+    data_freshness_label,
 )
 from kairos.utils.logging_config import get_logger
 
@@ -52,6 +53,7 @@ class ResearchManager:
             total_rounds=total_rounds,
             ticker=ticker,
             sentiment=sentiment_prompt_line(analyst_reports.get("sentiment", {})),
+            data_freshness=data_freshness_label(analyst_reports.get("market", {})),
         )
         return Task(
             config=task_config,
@@ -130,7 +132,7 @@ class ResearchManager:
 
             sentiment_unavailable = analyst_reports.get("sentiment", {}).get("data_source") == "SOURCE_UNAVAILABLE"
             quote_delay = mkt.get("quote_delay", "15_MIN_DELAYED")
-            as_of_date = mkt.get("as_of_date", "2026-10-27")
+            as_of_date = mkt.get("as_of_date") or datetime.now(timezone.utc).date().isoformat()
             data_freshness_status = f"CURRENT_AS_OF_{as_of_date} ({quote_delay})"
 
             source_references = [

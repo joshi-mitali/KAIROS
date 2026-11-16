@@ -25,6 +25,7 @@ from kairos.schemas.analyst_reports import (
     ResearchSynthesisVerdict,
     SentimentAnalysisReport,
     SignalStrength,
+    data_freshness_label,
     sentiment_prompt_line,
 )
 from kairos.schemas.trading_proposal import (
@@ -138,14 +139,12 @@ class TraderAgent(BaseADKAnalyst):
             rationale_text = verdict.get(
                 "synthesis_rationale", "Deterministic multi-agent synthesis."
             )
-            data_freshness = verdict.get(
-                "data_freshness_status", f"CURRENT_OCTOBER_2026 ({quote_delay})"
-            )
+            data_freshness = verdict.get("data_freshness_status") or data_freshness_label(mkt)
             verdict_limits = verdict.get("limitations", [])
         else:
             rec, conv = "NEUTRAL", "MODERATE"
             rationale_text = "Standard quantitative positioning."
-            data_freshness = f"CURRENT_OCTOBER_2026 ({quote_delay})"
+            data_freshness = data_freshness_label(mkt)
             verdict_limits = []
 
         # 3. Memory Feedback Adjustment: Check historical win/loss lessons
@@ -316,7 +315,7 @@ class TraderAgent(BaseADKAnalyst):
             entry_price = round(last_price, 2)
             stop_loss = round(support * 0.95, 2)
             target = round(resistance * 1.05, 2)
-            rr_ratio = 1.0
+            rr_ratio = 0.0  # HOLD levels are reference only; the schema enforces this
             time_horizon = "MONITOR (1-4 WEEKS)"
             confidence = 0.50
             if risk_pref == "CONSERVATIVE":

@@ -1,49 +1,66 @@
 import { useId, useState } from 'react';
-import { AlertTriangle, CheckCircle2, CircleDashed, CircleSlash, ChevronDown, ExternalLink, Database } from 'lucide-react';
-import type { Data, RunEvent } from '../types';
-const human = (s: string) => s.replaceAll('_', ' ').replace(/\b\w/g, c => c.toUpperCase());
-function safeUrl(url: unknown) { try { const u = new URL(String(url)); return ['https:', 'http:'].includes(u.protocol) ? u.href : undefined; } catch { return undefined; } }
-const when = (v: unknown) => { if (!v) return undefined; const d = new Date(String(v)); return Number.isNaN(d.getTime()) ? String(v) : /[T ]\d/.test(String(v)) ? d.toLocaleString('en-IN', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }); };
-const states: Record<string, { label: string; tone: string; icon: typeof CheckCircle2; note: string }> = {
-  ok: { label: 'Available', tone: 'green', icon: CheckCircle2, note: '' },
-  empty: { label: 'Empty', tone: 'blue', icon: CircleDashed, note: 'Reached, nothing to report.' },
-  unavailable: { label: 'Unavailable', tone: 'red', icon: AlertTriangle, note: 'Could not be reached.' },
-  not_configured: { label: 'Not configured', tone: 'amber', icon: CircleSlash, note: 'Not set up on this server.' },
-};
+import { ChevronDown, Database, ExternalLink } from 'lucide-react';
+import type { Data } from '../types';
+import type { Chip } from '../lib/run';
+import { duration, human, ist, safeUrl } from '../lib/format';
+import { sourceState } from './Pipeline';
+
+type Row = { id: string; name: string; group: string; status: string; items?: number; asOf?: string; elapsedMs?: number; reason?: string; url?: unknown; usage?: string; attempts?: Data[]; method?: string };
+
 const methods: Record<string, string> = { oauth_search: 'Reddit API search', rss_search: 'Reddit RSS search', rss_subreddit_new: 'Subreddit new-posts RSS' };
-function Status({ status }: { status: unknown }) {
-  const s = states[String(status)] || { label: status ? human(String(status)) : 'Status not supplied', tone: 'neutral', icon: CircleDashed, note: '' }, Icon = s.icon;
-  return <span className={`pill source-status ${s.tone}`}><Icon size={13} aria-hidden="true" />{s.label}</span>;
+const SUMMARY_ORDER = ['empty', 'no_recent_discussion', 'unavailable', 'failed', 'not_configured'];
+
+export function sourceRows(prov: Data | undefined, chips: Chip[]): Row[] {
+  const src = prov?.sources as Data | undefined;
+  if (!src) return chips.map(c => ({ id: c.id, name: c.name, group: c.group, status: c.state, items: c.items, elapsedMs: c.elapsedMs, reason: c.reason, asOf: c.asOf }));
+  const rows: Row[] = [];
+  if (src.fundamentals) rows.push({ id: 'fundamentals', name: 'Company financials', group: 'required', status: 'ok', asOf: src.fundamentals.fiscal_period_end, reason: human(String(src.fundamentals.source || '').toLowerCase()) });
+  if (src.news) rows.push({ id: 'news', name: 'Company news', group: 'required', status: src.news.articles > 0 ? 'ok' : 'empty', items: src.news.articles, asOf: src.news.latest_publication, reason: human(String(src.news.source || '').toLowerCase()) });
+  const s = src.sentiment as Data | undefined;
+  if (s) {
+    const raw = String(s.status || '').toLowerCase();
+    rows.push({
+      id: 'sentiment', name: 'Reddit discussion', group: 'sentiment',
+      status: raw === 'unavailable' ? 'unavailable' : raw === 'no_recent_discussion' ? 'no_recent_discussion' : raw && raw !== 'ok' ? raw : s.posts === 0 ? 'no_recent_discussion' : 'ok',
+      items: typeof s.posts === 'number' ? s.posts : undefined, asOf: s.latest_post, elapsedMs: s.elapsed_ms,
+      reason: raw === 'unavailable' ? `Reddit unreachable. Sentiment was not assessed and is not treated as neutral. ${s.reason || ''}`.trim() : raw === 'no_recent_discussion' ? 'No recent posts, so sentiment is not backed by a retail-discussion sample.' : undefined,
+      attempts: Array.isArray(s.attempts) ? s.attempts : undefined, method: s.method ? methods[s.method] || human(String(s.method)) : s.source === 'REDDIT_RSS' ? 'Reddit RSS (older run, method not recorded)' : undefined,
+    });
+  }
+  for (const x of Array.isArray(src.supplementary) ? src.supplementary : []) rows.push({ id: String(x.id ?? x.name), name: x.name || human(String(x.id)), group: x.group || 'supplementary', status: String(x.status || 'unknown'), items: x.item_count, asOf: x.as_of, elapsedMs: x.elapsed_ms, reason: x.reason, url: x.url, usage: x.usage_note });
+  return rows;
 }
-function Meta({ items }: { items: [string, unknown][] }) {
-  const shown = items.filter(([, v]) => v !== undefined && v !== null && v !== '');
-  return shown.length ? <dl className="source-meta">{shown.map(([k, v]) => <div key={k}><dt>{k}</dt><dd>{String(v)}</dd></div>)}</dl> : null;
+
+export function sourceSummary(rows: Row[]) {
+  if (!rows.length) return '';
+  const ok = rows.filter(r => r.status === 'ok').length;
+  const extra = SUMMARY_ORDER.map(k => [k, rows.filter(r => r.status === k).length] as const).filter(([, n]) => n).map(([k, n]) => `${n} ${sourceState(k).label.toLowerCase()}`);
+  return [`${ok} of ${rows.length} sources returned data`, ...extra].join(' · ');
 }
-function Link({ url }: { url: unknown }) { const href = safeUrl(url); return href ? <a className="source-link" href={href} target="_blank" rel="noreferrer">Open source <ExternalLink size={13} /></a> : url ? <span className="muted">Source link unavailable</span> : null; }
-function SentimentSource({ s }: { s: Data }) {
-  const [open, setOpen] = useState(false), attempts: Data[] = Array.isArray(s.attempts) ? s.attempts : [];
-  const quiet = s.status === 'NO_RECENT_DISCUSSION', down = s.status === 'UNAVAILABLE', legacy = s.source === 'REDDIT_RSS' && !s.method;
-  return <li className="source-row"><div className="source-head"><div><strong>Reddit discussion</strong><small>Sentiment analyst input</small></div>{down ? <Status status="unavailable" /> : quiet ? <span className="pill source-status amber"><CircleDashed size={13} aria-hidden="true" />No recent discussion</span> : <Status status="ok" />}</div>
-    <Meta items={[['Method', legacy ? 'Reddit RSS (older run, method not recorded)' : methods[s.method] || (s.method && human(s.method))], ['Posts used', typeof s.posts === 'number' ? s.posts : undefined], ['Latest post', when(s.latest_post)]]} />
-    {down && <p className="source-reason">Sentiment unavailable — Reddit unreachable. Sentiment was not assessed and is not treated as neutral. {s.reason}</p>}
-    {quiet && <p className="source-reason">No recent posts were found, so the sentiment report is not backed by a retail-discussion sample.</p>}
-    {attempts.length > 0 && <><button className="text-button" onClick={() => setOpen(!open)} aria-expanded={open}>Fetch attempts ({attempts.length}) <ChevronDown size={14} className={open ? 'rotated' : ''} /></button>{open && <ol className="source-attempts">{attempts.map((a, i) => <li key={i}><span>{methods[a.method] || human(String(a.method ?? 'Attempt'))}</span><span>{a.status ?? 'No status'}</span>{safeUrl(a.url) ? <a href={safeUrl(a.url)} target="_blank" rel="noreferrer">{String(a.url)}</a> : <span>{a.url ? 'Link unavailable' : ''}</span>}</li>)}</ol>}</>}
+
+function SourceRow({ row }: { row: Row }) {
+  const [open, setOpen] = useState(false), id = useId(), s = sourceState(row.status);
+  const meta = [row.items !== undefined && `${row.items} item${row.items === 1 ? '' : 's'}`, row.asOf && `as of ${ist(row.asOf)}`, row.elapsedMs !== undefined && duration(row.elapsedMs / 1000), row.method].filter(Boolean).join(' · ');
+  const href = safeUrl(row.url);
+  return <li className="source-row">
+    <span className={`pill source-status ${s.tone}`}><s.Icon size={13} aria-hidden="true" />{s.label}</span>
+    <div className="source-main"><strong>{row.name}</strong>{meta && <span className="source-meta">{meta}</span>}{row.reason && <span className="source-reason">{row.reason}</span>}</div>
+    <div className="source-actions">
+      {href && <a className="source-link" href={href} target="_blank" rel="noreferrer" aria-label={`Open ${row.name}`}><ExternalLink size={14} /></a>}
+      {(row.usage || row.attempts?.length) && <button type="button" className="text-button" aria-expanded={open} aria-controls={id} onClick={() => setOpen(!open)}>{row.usage ? 'How it is used' : `Attempts (${row.attempts!.length})`} <ChevronDown size={13} className={open ? 'rotated' : ''} /></button>}
+    </div>
+    {open && <div id={id} className="source-more">
+      {row.usage && <p>{row.usage}</p>}
+      {row.attempts?.length ? <ol>{row.attempts.map((a, i) => <li key={i}><span>{methods[a.method] || human(String(a.method ?? 'Attempt'))}</span><span>{a.status ?? 'No status'}</span>{safeUrl(a.url) && <a href={safeUrl(a.url)} target="_blank" rel="noreferrer">{String(a.url)}</a>}</li>)}</ol> : null}
+    </div>}
   </li>;
 }
-function Supplementary({ s }: { s: Data }) {
-  const [open, setOpen] = useState(false), id = useId();
-  return <li className="source-row"><div className="source-head"><div><strong>{s.name || (s.id ? human(String(s.id)) : 'Unnamed source')}</strong>{s.category && <small>{human(String(s.category))}</small>}</div><Status status={s.status} /></div>
-    {(s.reason || states[String(s.status)]?.note) && <p className="source-reason">{s.reason || states[String(s.status)].note}</p>}
-    <Meta items={[['As of', when(s.as_of)], ['Retrieved', when(s.retrieved_at)], ['Items', typeof s.item_count === 'number' ? s.item_count : undefined]]} />
-    <div className="source-actions"><Link url={s.url} />{s.usage_note && <button className="text-button" onClick={() => setOpen(!open)} aria-expanded={open} aria-controls={id}>How it is used <ChevronDown size={14} className={open ? 'rotated' : ''} /></button>}</div>
-    {open && s.usage_note && <p id={id} className="source-usage">{String(s.usage_note)}</p>}
-  </li>;
-}
-export default function SourceProvenance({ sources, events }: { sources?: Data; events: RunEvent[] }) {
-  const sentiment = sources?.sentiment as Data | undefined, supplementary: Data[] = Array.isArray(sources?.supplementary) ? sources!.supplementary : [];
-  const refreshed = events.filter(e => e.type === 'evidence-refreshed' && typeof e.payload.total === 'number').at(-1)?.payload;
-  const okCount = supplementary.filter(s => s.status === 'ok').length;
-  if (!sentiment && !supplementary.length) return <div className="report-pending"><Database size={32} /><h3>{refreshed ? `Supplementary sources: ${refreshed.available} of ${refreshed.total} available` : 'No source provenance recorded.'}</h3><p>{refreshed ? 'Per-source detail appears here when the run finishes.' : 'Source details appear here after a run completes. Runs saved before provenance was recorded do not have them.'}</p></div>;
-  return <div className="source-provenance"><p className="source-summary">{supplementary.length ? `${okCount} of ${supplementary.length} supplementary sources returned data.` : 'No supplementary sources recorded for this run.'} Status shows what arrived, not whether it supports the recommendation.</p>
-    <ul className="source-list">{sentiment && <SentimentSource s={sentiment} />}{supplementary.map((s, i) => <Supplementary key={String(s.id ?? i)} s={s} />)}</ul></div>;
+
+export default function SourceProvenance({ rows, retrievedAt }: { rows: Row[]; retrievedAt?: string }) {
+  if (!rows.length) return <div className="report-pending"><Database size={30} /><h3>No source detail recorded.</h3><p>Runs saved before provenance was recorded do not have it.</p></div>;
+  const groups: [string, string][] = [['required', 'Required'], ['sentiment', 'Sentiment'], ['supplementary', 'Supplementary']];
+  return <div className="source-provenance">
+    <p className="source-summary"><strong>{sourceSummary(rows)}</strong>{retrievedAt ? ` · Retrieved ${ist(retrievedAt)}` : ''}. Status shows what arrived, not whether it supports the recommendation.</p>
+    {groups.map(([g, title]) => { const list = rows.filter(r => r.group === g || (!groups.some(x => x[0] === r.group) && g === 'supplementary')); return list.length ? <section key={g}><h4>{title}</h4><ul className="source-list">{list.map(r => <SourceRow key={r.id} row={r} />)}</ul></section> : null; })}
+  </div>;
 }

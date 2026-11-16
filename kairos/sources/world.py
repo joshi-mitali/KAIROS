@@ -26,7 +26,7 @@ def gdelt(symbol, company_name, now):
         _gdelt_last[0] = time.monotonic()
         try:
             r = get(GDELT_URL, params={"query": f'"{name}" sourcecountry:IN', "mode": "artlist", "format": "json", "maxrecords": 25,
-                                       "timespan": "7d", "sort": "datedesc"}, timeout=24, retries=0)
+                                       "timespan": "7d", "sort": "datedesc"}, timeout=10, retries=0)
         except SourceError as e:
             raise SourceError("rate limited by GDELT (HTTP 429)" if "429" in str(e) else str(e)) from e
     text = r.text.strip()

@@ -77,6 +77,7 @@ class TestMCPClientIntegration(unittest.TestCase):
         res = self.nse_adapter.market_status()
         self.assertIn("marketState", res)
 
+    @skip_if_live_unavailable
     def test_alphavantage_mcp_bse_quote(self):
         res = self.alpha_adapter.global_quote("RELIANCE.BSE")
         if "Global Quote" not in res and "error" in str(res.get("structuredContent", res)):

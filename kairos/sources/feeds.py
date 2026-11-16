@@ -1,12 +1,13 @@
 """RSS-based sources: NSE corporate feeds, RBI, SEBI."""
 from __future__ import annotations
 
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import ThreadPoolExecutor, wait
 from datetime import timedelta
 
 from ._http import SourceError, base_symbol, get, iso, matches_entity, parse_feed
 
 WINDOW = timedelta(days=30)
+FEED_WAIT_S = 6  # shared wait for all feeds of one source; slow feeds are reported as partial
 NSE_FEEDS = {  # all verified live 17 Nov 2026; unlisted names 404
     "Announcements": "https://nsearchives.nseindia.com/content/RSS/Online_announcements.xml",
     "Financial results": "https://nsearchives.nseindia.com/content/RSS/Financial_Results.xml",
@@ -29,8 +30,11 @@ def _fetch_all(feeds: dict) -> tuple[list[tuple[str, dict]], list[str]]:
             return label, parse_feed(get(url).content), None
         except SourceError as e:
             return label, [], f"{label}: {e}"
-    with ThreadPoolExecutor(len(feeds)) as ex:
-        res = list(ex.map(one, feeds.items()))
+    ex = ThreadPoolExecutor(len(feeds))
+    futs = {label: ex.submit(one, (label, url)) for label, url in feeds.items()}
+    wait(futs.values(), timeout=FEED_WAIT_S)
+    ex.shutdown(wait=False, cancel_futures=True)  # one hung feed must not hold the rest back
+    res = [f.result() if f.done() else (label, [], f"{label}: timed out") for label, f in futs.items()]
     errs = [r[2] for r in res if r[2]]
     if len(errs) == len(res):
         raise SourceError("; ".join(errs))

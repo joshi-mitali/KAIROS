@@ -1,13 +1,18 @@
 """Rotate configured Groq keys on 429; respect per-key cooldowns, never retry forever."""
 import os
+import random
 import threading
 import time
 from functools import lru_cache
 from types import SimpleNamespace
 
 
+SHORT_RETRY_MAX_S = 6.0  # a 429 whose Retry-After is at most this long gets exactly one jittered retry
+
+
 class GroqCooldownError(RuntimeError):
     status_code = 429
+    retry_after = None  # seconds until the soonest key is usable again
 
 
 class GroqKeyPool:
@@ -28,7 +33,9 @@ class GroqKeyPool:
             if not self.keys:
                 raise ValueError("No Groq API key is configured.")
             delay = max(1, min(self.cooldowns.values()) - time.monotonic())
-            raise GroqCooldownError(f"All configured Groq keys are cooling down; retry after {delay:.0f}s.")
+            err = GroqCooldownError(f"All configured Groq keys are cooling down; retry after {delay:.0f}s.")
+            err.retry_after = delay
+            raise err
 
     def rate_limited(self, key, error):
         response = getattr(error, "response", None)
@@ -52,7 +59,18 @@ class GroqPoolClient:
         self.chat = SimpleNamespace(completions=SimpleNamespace(create=self.create))
 
     def create(self, **kwargs):
+        """One jittered retry on a short 429, independent of GROQ_MAX_RETRIES (which the local launcher sets to 0)."""
+        try:
+            return self._create(**kwargs)
+        except GroqCooldownError as exc:
+            if exc.retry_after is None or exc.retry_after > SHORT_RETRY_MAX_S:
+                raise
+            time.sleep(exc.retry_after + random.uniform(0, 0.5))
+            return self._create(**kwargs)
+
+    def _create(self, **kwargs):
         pool = get_key_pool()
+        delays = []
         for _ in range(len(pool.keys)):
             key = pool.current()
             if key not in self.clients:
@@ -68,5 +86,7 @@ class GroqPoolClient:
             except Exception as exc:
                 if getattr(exc, "status_code", None) != 429:
                     raise
-                pool.rate_limited(key, exc)
-        raise GroqCooldownError("Groq key pool exhausted; retry after the provider cooldown. Account-wide limits may affect every key.")
+                delays.append(pool.rate_limited(key, exc))
+        err = GroqCooldownError("Groq key pool exhausted; retry after the provider cooldown. Account-wide limits may affect every key.")
+        err.retry_after = min(delays, default=None)
+        raise err
