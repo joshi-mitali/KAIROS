@@ -5,9 +5,11 @@ Each source emits evidence-source-started / evidence-source-done {source_id, nam
 """
 import hashlib
 import json
+import os
+import re
 import threading
 import time
-from urllib.parse import quote_plus
+from urllib.parse import quote_plus, urlparse
 from concurrent.futures import FIRST_EXCEPTION, ThreadPoolExecutor, wait
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
@@ -57,28 +59,71 @@ def company_identity(symbol, provider):
     return {'longName':name,'currency':currency,'origin':origin}
 
 
-def google_news_articles(company,now,fetch=None,limit=3,exclude_titles=()):
-    """Fresh (<=7 days) Google News RSS (India edition) items for the company; [] on any failure. The 200 feed fetch is the
-    reachability check; redirect links are not followed. Bounded to one 6 s request."""
-    url='https://news.google.com/rss/search?q='+quote_plus(f'"{company}" when:7d')+'&hl=en-IN&gl=IN&ceid=IN:en'
-    fetch=fetch or get  # resolved at call time so tests can patch it
-    try:entries=parse_feed(fetch(url,timeout=6,retries=0).content)
-    except (SourceError,requests.RequestException):return []
-    seen={t.strip().lower() for t in exclude_titles}
+FALLBACK_BUDGET_S=10  # whole news top-up; each request is capped at 5 s, no retries
+_SUFFIX=re.compile(r'\s+(limited|ltd\.?)$',re.I)
+
+
+def _rss_articles(fetch,url,now,default_publisher,seen,limit):
+    """Fresh (<=7 days) items of one RSS feed as (articles, note). A 200 feed is the reachability check; links are not followed."""
+    try:entries=parse_feed(fetch(url,timeout=5,retries=0).content)
+    except (SourceError,requests.RequestException) as exc:return [],str(exc)[:120]
     out=[]
     for e in entries:
         link,title,published=e.get('link') or '',e.get('title') or '',e.get('published')
         if not title or not published or not link.startswith(('http://','https://')):continue
         published=published.astimezone(timezone.utc)
         if published<now-timedelta(days=7) or published>now+timedelta(minutes=5):continue
-        if title.strip().lower() in seen:continue
-        seen.add(title.strip().lower())
         headline,sep,publisher=title.rpartition(' - ')
-        if not sep or not headline:headline,publisher=title,'Google News'
+        if not sep or not headline:headline,publisher=title,default_publisher
+        if headline.strip().lower() in seen or title.strip().lower() in seen:continue
+        seen.add(headline.strip().lower())
         out.append({'headline':headline,'summary':e.get('summary') or '','url':link,'datetime':published.isoformat(),
-                    'source':publisher.strip() or 'Google News','retrieved_at':now.isoformat()})
+                    'source':publisher.strip() or default_publisher,'retrieved_at':now.isoformat()})
         if len(out)>=limit:break
-    return out
+    return out,f'{len(out)} fresh items' if not out else None
+
+
+def _firecrawl_articles(name,now,seen,limit,timeout):
+    """Firecrawl news search restricted to the past week; only results carrying a publication date within 7 days are used."""
+    from kairos.sources import firecrawl as fc
+    from kairos.sources._http import parse_date
+    if not os.environ.get('FIRECRAWL_API_KEY','').strip():return None,None  # not configured: skipped silently
+    try:data=fc._post('search',{'query':f'"{name}"','limit':8,'sources':['news'],'tbs':'qdr:w','country':'IN','location':'India','timeout':int(timeout*1000)},timeout)
+    except SourceError as exc:return [],str(exc)[:120]
+    out=[]
+    for r in ((data.get('data') or {}).get('news') or []):
+        url,title,date=(r.get('url') or '').strip(),(r.get('title') or '').strip(),parse_date(r.get('date'))
+        if not title or not date or not url.startswith(('http://','https://')):continue
+        date=date.astimezone(timezone.utc)
+        if date<now-timedelta(days=7) or date>now+timedelta(minutes=5) or title.lower() in seen:continue
+        seen.add(title.lower())
+        out.append({'headline':title,'summary':(r.get('snippet') or r.get('description') or '')[:400],'url':url,'datetime':date.isoformat(),
+                    'source':urlparse(url).hostname or 'Firecrawl','retrieved_at':now.isoformat()})
+        if len(out)>=limit:break
+    return out,f'{len(out)} fresh items' if not out else None
+
+
+def fallback_news_articles(company,now,fetch=None,limit=3,exclude_titles=()):
+    """Top up fresh (<=7 days) news: Google News RSS (India), then Bing News RSS, then Firecrawl, stopping at `limit`.
+    Returns ([(provider, article)], notes); notes hold one outcome line per provider tried. Bounded to ~10 s, no retries."""
+    fetch=fetch or get  # resolved at call time so tests can patch it
+    name=_SUFFIX.sub('',company.strip()) or company
+    q=f'"{name}"'
+    seen={t.strip().lower() for t in exclude_titles}
+    deadline=time.monotonic()+FALLBACK_BUDGET_S
+    providers=(('GOOGLE_NEWS_RSS','Google News RSS',lambda n:_rss_articles(fetch,'https://news.google.com/rss/search?q='+quote_plus(q+' when:7d')+'&hl=en-IN&gl=IN&ceid=IN:en',now,'Google News',seen,n)),
+               ('BING_NEWS_RSS','Bing News RSS',lambda n:_rss_articles(fetch,'https://www.bing.com/news/search?q='+quote_plus(q)+'&format=rss&qft=interval%3d%227%22',now,'Bing News',seen,n))
+               ,('FIRECRAWL','Firecrawl',lambda n:_firecrawl_articles(name,now,seen,n,5)))
+    out,notes=[],[]
+    for key,label,run in providers:
+        if len(out)>=limit:break
+        if deadline-time.monotonic()<1:notes.append(f'{label}: skipped (time budget spent)');continue
+        try:items,note=run(limit-len(out))
+        except Exception as exc:items,note=[],type(exc).__name__
+        if items is None:continue
+        out+=[(key,a) for a in items]
+        notes.append(f'{label}: {note}' if note else f'{label}: {len(items)} fresh items')
+    return out,notes
 
 
 def refresh_research_evidence(ticker, data_dir, emit):
@@ -162,12 +207,15 @@ def refresh_research_evidence(ticker, data_dir, emit):
                              'source':(content.get('provider') or {}).get('displayName','Yahoo Finance'),'retrieved_at':now.isoformat()})
             if len(articles)>=3:break
         yahoo_count=len(articles)
-        if yahoo_count<3:  # Yahoo coverage of Indian large caps is thin: top up from Google News RSS
-            articles+=google_news_articles(company,now,limit=3-yahoo_count,exclude_titles=[a['headline'] for a in articles])
-        if not articles:raise ValueError('No fresh, reachable news articles were verified. No archived articles were substituted. (Yahoo Finance and Google News RSS checked)')
+        notes=[f'Yahoo Finance: {len(news)} items, '+('none within 7 days' if not yahoo_count else f'{yahoo_count} fresh and reachable')]
+        providers=['YAHOO_FINANCE']*bool(yahoo_count)
+        if yahoo_count<3:  # Yahoo coverage of Indian large caps is thin: top up from Google/Bing/Firecrawl
+            extra,more=fallback_news_articles(company,now,limit=3-yahoo_count,exclude_titles=[a['headline'] for a in articles])
+            articles+=[a for _,a in extra];notes+=more
+            providers+=list(dict.fromkeys(p for p,_ in extra))
+        if not articles:raise ValueError('No fresh, reachable news articles were verified. No archived articles were substituted. (Yahoo Finance, Google News RSS, Bing News RSS and Firecrawl checked) Checked: '+'; '.join(notes))
         save('news','news_clean',articles)
-        label='+'.join(n for n,c in (('YAHOO_FINANCE',yahoo_count),('GOOGLE_NEWS_RSS',len(articles)-yahoo_count)) if c)
-        provenance['sources']['news']={'source':label,'articles':len(articles),'latest_publication':max(a['datetime'] for a in articles)}
+        provenance['sources']['news']={'source':'+'.join(providers),'articles':len(articles),'latest_publication':max(a['datetime'] for a in articles)}
         ev('evidence-refreshed',{'source':'News','count':len(articles)})
         return 'ok',len(articles),None
 
