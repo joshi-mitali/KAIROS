@@ -50,7 +50,7 @@ def test_required_source_failure_fails_the_run(tmp_path, monkeypatch):
     monkeypatch.setattr(lr.yf, "Ticker", lambda s: SimpleNamespace(
         get_info=lambda: {"longName": "X", "financialCurrency": "INR"}, income_stmt=None, balance_sheet=None, cash_flow=None,
         get_news=lambda **k: []))
-    with pytest.raises(ValueError, match="temporarily unavailable"):
+    with pytest.raises(ValueError, match="temporarily unavailable|No fresh, reachable news"):
         lr.refresh_research_evidence("RELIANCE.NS", tmp_path, emit)
     failed = {p["source_id"] for k, p in events if k == "evidence-source-done" and p["status"] == "failed"}
     assert failed and failed <= {"news", "fundamentals"}

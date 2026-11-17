@@ -213,7 +213,7 @@ def refresh_research_evidence(ticker, data_dir, emit):
             extra,more=fallback_news_articles(company,now,limit=3-yahoo_count,exclude_titles=[a['headline'] for a in articles])
             articles+=[a for _,a in extra];notes+=more
             providers+=list(dict.fromkeys(p for p,_ in extra))
-        if not articles:raise ValueError('No fresh, reachable news articles were verified. No archived articles were substituted. (Yahoo Finance, Google News RSS, Bing News RSS and Firecrawl checked) Checked: '+'; '.join(notes))
+        if not articles:raise ValueError('No fresh, reachable news articles were verified. No archived articles were substituted. Checked: '+'; '.join(notes))
         save('news','news_clean',articles)
         provenance['sources']['news']={'source':'+'.join(providers),'articles':len(articles),'latest_publication':max(a['datetime'] for a in articles)}
         ev('evidence-refreshed',{'source':'News','count':len(articles)})
