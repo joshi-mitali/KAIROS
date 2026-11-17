@@ -42,8 +42,7 @@ def test_cross_session_bad_token_and_expiry_cannot_submit(service):
     for token, owner in [(preview["approval_token"], "other"), ("wrong", "owner")]:
         with pytest.raises(ValueError):
             service.approve(preview["approval_id"], token, owner)
-    with service.connect() as db:
-        db.execute("UPDATE paper_approvals SET expires=0")
+    service.db.query("UPDATE paper_approvals SET expires=0")
     with pytest.raises(ValueError, match="expired"):
         service.approve(preview["approval_id"], preview["approval_token"], "owner")
     service.client.submit.assert_not_called()

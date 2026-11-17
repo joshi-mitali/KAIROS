@@ -12,6 +12,7 @@ authors = [
     { name = "KAIROS Data Engineering Team" }
 ]
 dependencies = [
+    "psycopg2-binary>=2.9.9",
     "pydantic>=2.5.0",
     "requests>=2.31.0",
     "pyarrow>=14.0.0",

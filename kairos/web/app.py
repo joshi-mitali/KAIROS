@@ -59,16 +59,20 @@ def create_app(data_dir: Path | None = None, runtime_dir: Path | None = None, pa
     paper = PaperApprovalService(runtime_dir / "paper-orders.db", paper_client or MegabullClient())
     feed = MarketFeed(paper.client)
     password = os.environ.get("KAIROS_WEB_PASSWORD", "")
-    # Persist the cookie-signing secret across restarts, outside source and frontend bundles.
-    secret_file = runtime_dir / ".session-secret"
-    if not secret_file.exists():
-        try:
-            with secret_file.open("x") as file:
-                file.write(secrets.token_hex(32))
-            secret_file.chmod(0o600)
-        except FileExistsError:
-            pass
-    cookie_secret = secret_file.read_text().strip()
+    # The cookie-signing secret must survive restarts: env var, else Postgres, else a file in the runtime dir.
+    cookie_secret = os.environ.get("KAIROS_SESSION_SECRET", "")
+    if not cookie_secret and runs.db.postgres:
+        cookie_secret = runs.db.setting("session_secret", lambda: secrets.token_hex(32))
+    if not cookie_secret:
+        secret_file = runtime_dir / ".session-secret"
+        if not secret_file.exists():
+            try:
+                with secret_file.open("x") as file:
+                    file.write(secrets.token_hex(32))
+                secret_file.chmod(0o600)
+            except FileExistsError:
+                pass
+        cookie_secret = secret_file.read_text().strip()
 
     def sign(session):
         import hmac
@@ -107,7 +111,8 @@ def create_app(data_dir: Path | None = None, runtime_dir: Path | None = None, pa
 
     @app.get("/api/health")
     def health():
-        return {"application": "KAIROS", "status": "ok", "environment": "paper-only", "owner_login_required": bool(password)}
+        return {"application": "KAIROS", "status": "ok", "environment": "paper-only", "owner_login_required": bool(password),
+                "storage": "postgres" if runs.db.postgres else "sqlite"}
 
     @app.post("/api/session")
     def session(body: LoginRequest, request: Request, response: Response):
@@ -158,7 +163,7 @@ def create_app(data_dir: Path | None = None, runtime_dir: Path | None = None, pa
             raise HTTPException(404,"Research run not found.")
         if run["status"] in ("QUEUED","RUNNING"):
             raise HTTPException(409,"The report is available once the run has finished.")
-        html=report.render(run,report.all_events(runs,run_id),runs.path.parent/"evidence"/run_id,print_mode=print_view)
+        html=report.render(run,report.all_events(runs,run_id),runs.restore_evidence(run_id),print_mode=print_view)
         headers={"Content-Security-Policy":"default-src 'none'; style-src 'unsafe-inline'"+("; script-src 'unsafe-inline'" if print_view else "")}
         if not print_view:
             headers["Content-Disposition"]=f'attachment; filename="{report.filename(run)}"'
@@ -179,10 +184,9 @@ def create_app(data_dir: Path | None = None, runtime_dir: Path | None = None, pa
                 for event in batch:
                     cursor=event["id"]
                     yield f'id: {cursor}\ndata: {json.dumps(event)}\n\n'
-                state=runs.get(run_id,user)
-                if state["status"] in ("COMPLETED","FAILED","INTERRUPTED") and not batch:
-                    break
                 if not batch:
+                    if runs.status(run_id) in ("COMPLETED","FAILED","INTERRUPTED"):
+                        break
                     yield ": heartbeat\n\n"
                 await asyncio.sleep(.3)
         return StreamingResponse(stream(),media_type="text/event-stream",headers={"Cache-Control":"no-cache","X-Accel-Buffering":"no"})

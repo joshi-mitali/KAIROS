@@ -127,20 +127,14 @@ class PostgresMemoryBackend(BaseMemoryBackend):
     def _init_connection(self) -> None:
         """Attempts connection to PostgreSQL and verifies pgvector support."""
         try:
-            import psycopg2  # type: ignore
-            self._client = psycopg2.connect(self.database_url)
-            self._client.autocommit = True
-            with self._client.cursor() as cur:
-                # Check pgvector extension
-                try:
-                    cur.execute("CREATE EXTENSION IF NOT EXISTS vector;")
-                    self._has_pgvector = True
-                except Exception as ext_err:
-                    logger.warning(f"pgvector extension creation failed: {ext_err}. Continuing with standard PG tables.")
-                    self._has_pgvector = False
-
-                cur.execute("""
-                    CREATE TABLE IF NOT EXISTS kairos_memory (
+            from kairos.storage.db import Database
+            self._client = Database(None, self.database_url)  # pooled, reconnecting; raises if unreachable
+            try:  # pgvector is optional: embeddings are stored as JSON text and ranked in Python
+                self._client.query("CREATE EXTENSION IF NOT EXISTS vector")
+                self._has_pgvector = True
+            except Exception as ext_err:
+                logger.warning(f"pgvector extension creation failed: {ext_err}. Continuing with standard PG tables.")
+            self._client.migrate([], ["""CREATE TABLE IF NOT EXISTS kairos_memory (
                         id TEXT PRIMARY KEY,
                         record_type TEXT NOT NULL,
                         ticker TEXT NOT NULL,
@@ -157,8 +151,7 @@ class PostgresMemoryBackend(BaseMemoryBackend):
                         lessons_learned TEXT,
                         embedding TEXT,
                         metadata JSONB
-                    );
-                """)
+                    )"""])
             self._connected = True
             logger.info("Successfully connected to PostgreSQL memory store (pgvector active: %s).", self._has_pgvector)
         except ImportError:
@@ -183,37 +176,36 @@ class PostgresMemoryBackend(BaseMemoryBackend):
     def store(self, record: MemoryRecord) -> str:
         if not self._connected or not self._client:
             raise RuntimeError("PostgreSQL memory backend is not available.")
-        with self._client.cursor() as cur:
-            cur.execute("""
-                INSERT INTO kairos_memory (
-                    id, record_type, ticker, timestamp, date, strategy, market_conditions,
-                    entry_price, exit_price, outcome, pnl, pnl_pct, rationale, lessons_learned,
-                    embedding, metadata
-                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-                ON CONFLICT (id) DO UPDATE SET
-                    outcome = EXCLUDED.outcome,
-                    pnl = EXCLUDED.pnl,
-                    pnl_pct = EXCLUDED.pnl_pct,
-                    lessons_learned = EXCLUDED.lessons_learned,
-                    metadata = EXCLUDED.metadata;
-            """, (
-                record.id,
-                record.record_type.value,
-                record.ticker,
-                record.timestamp,
-                record.date,
-                record.strategy,
-                record.market_conditions,
-                record.entry_price,
-                record.exit_price,
-                record.outcome.value,
-                record.pnl,
-                record.pnl_pct,
-                record.rationale,
-                record.lessons_learned,
-                json.dumps(record.embedding) if record.embedding else None,
-                json.dumps(record.metadata),
-            ))
+        self._client.query("""
+            INSERT INTO kairos_memory (
+                id, record_type, ticker, timestamp, date, strategy, market_conditions,
+                entry_price, exit_price, outcome, pnl, pnl_pct, rationale, lessons_learned,
+                embedding, metadata
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ON CONFLICT (id) DO UPDATE SET
+                outcome = EXCLUDED.outcome,
+                pnl = EXCLUDED.pnl,
+                pnl_pct = EXCLUDED.pnl_pct,
+                lessons_learned = EXCLUDED.lessons_learned,
+                metadata = EXCLUDED.metadata;
+        """, (
+            record.id,
+            record.record_type.value,
+            record.ticker,
+            record.timestamp,
+            record.date,
+            record.strategy,
+            record.market_conditions,
+            record.entry_price,
+            record.exit_price,
+            record.outcome.value,
+            record.pnl,
+            record.pnl_pct,
+            record.rationale,
+            record.lessons_learned,
+            json.dumps(record.embedding) if record.embedding else None,
+            json.dumps(record.metadata),
+        ))
         return record.id
 
     def store_batch(self, records: List[MemoryRecord]) -> int:
@@ -254,48 +246,44 @@ class PostgresMemoryBackend(BaseMemoryBackend):
     def count(self) -> Dict[str, int]:
         if not self._connected or not self._client:
             return {"total": 0, "completed_trades": 0, "proposals": 0, "research_runs": 0}
-        with self._client.cursor() as cur:
-            cur.execute("SELECT record_type, COUNT(*) FROM kairos_memory GROUP BY record_type;")
-            rows = cur.fetchall()
-            counts = {"total": 0, "completed_trades": 0, "proposals": 0, "research_runs": 0}
-            for rt, cnt in rows:
-                counts["total"] += cnt
-                if rt == RecordType.COMPLETED_TRADE.value:
-                    counts["completed_trades"] = cnt
-                elif rt == RecordType.HYPOTHETICAL_PROPOSAL.value:
-                    counts["proposals"] = cnt
-                elif rt == RecordType.RESEARCH_RUN.value:
-                    counts["research_runs"] = cnt
-            return counts
+        rows = [(r["record_type"], r["count"]) for r in self._client.query("SELECT record_type, COUNT(*) AS count FROM kairos_memory GROUP BY record_type")]
+        counts = {"total": 0, "completed_trades": 0, "proposals": 0, "research_runs": 0}
+        for rt, cnt in rows:
+            counts["total"] += cnt
+            if rt == RecordType.COMPLETED_TRADE.value:
+                counts["completed_trades"] = cnt
+            elif rt == RecordType.HYPOTHETICAL_PROPOSAL.value:
+                counts["proposals"] = cnt
+            elif rt == RecordType.RESEARCH_RUN.value:
+                counts["research_runs"] = cnt
+        return counts
 
     def get_all(self, limit: int = 100) -> List[MemoryRecord]:
         if not self._connected or not self._client:
             return []
-        with self._client.cursor() as cur:
-            cur.execute("SELECT id, record_type, ticker, timestamp, date, strategy, market_conditions, entry_price, exit_price, outcome, pnl, pnl_pct, rationale, lessons_learned, embedding, metadata FROM kairos_memory ORDER BY date DESC LIMIT %s;", (limit,))
-            rows = cur.fetchall()
-            results = []
-            for row in rows:
-                rec = MemoryRecord(
-                    id=row[0],
-                    record_type=RecordType(row[1]),
-                    ticker=row[2],
-                    timestamp=row[3],
-                    date=row[4],
-                    strategy=row[5],
-                    market_conditions=row[6],
-                    entry_price=row[7],
-                    exit_price=row[8],
-                    outcome=TradeOutcome(row[9]),
-                    pnl=row[10],
-                    pnl_pct=row[11],
-                    rationale=row[12] or "",
-                    lessons_learned=row[13] or "",
-                    embedding=json.loads(row[14]) if row[14] else None,
-                    metadata=row[15] if isinstance(row[15], dict) else json.loads(row[15] or "{}"),
-                )
-                results.append(rec)
-            return results
+        rows = [tuple(r.values()) for r in self._client.query("SELECT id, record_type, ticker, timestamp, date, strategy, market_conditions, entry_price, exit_price, outcome, pnl, pnl_pct, rationale, lessons_learned, embedding, metadata FROM kairos_memory ORDER BY date DESC LIMIT ?", (limit,))]
+        results = []
+        for row in rows:
+            rec = MemoryRecord(
+                id=row[0],
+                record_type=RecordType(row[1]),
+                ticker=row[2],
+                timestamp=row[3],
+                date=row[4],
+                strategy=row[5],
+                market_conditions=row[6],
+                entry_price=row[7],
+                exit_price=row[8],
+                outcome=TradeOutcome(row[9]),
+                pnl=row[10],
+                pnl_pct=row[11],
+                rationale=row[12] or "",
+                lessons_learned=row[13] or "",
+                embedding=json.loads(row[14]) if row[14] else None,
+                metadata=row[15] if isinstance(row[15], dict) else json.loads(row[15] or "{}"),
+            )
+            results.append(rec)
+        return results
 
 
 class SQLiteMemoryBackend(BaseMemoryBackend):

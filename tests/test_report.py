@@ -39,8 +39,7 @@ def env(tmp_path, monkeypatch):
 
 def seed(client, runs, status="COMPLETED", res=None, rounds=None, error=None):
     run_id = "ab12cd34ef56" + "0" * 20
-    with runs.connect() as db:
-        db.execute("INSERT INTO research_runs VALUES(?,?,?,?,?,?,?,?,?)", (run_id, client.cookies.get("kairos_session").split(".")[0], "TCS", "NEUTRAL", "live", status, time.time(), json.dumps(res) if res else None, error))
+    runs.db.query("INSERT INTO research_runs VALUES(?,?,?,?,?,?,?,?,?)", (run_id, client.cookies.get("kairos_session").split(".")[0], "TCS", "NEUTRAL", "live", status, time.time(), json.dumps(res) if res else None, error))
     t = time.time()
     runs.emit(run_id, "run-started", {})
     runs.emit(run_id, "agent-started", {"agent": "google_adk.market_analyst"})

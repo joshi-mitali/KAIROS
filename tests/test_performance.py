@@ -180,8 +180,7 @@ def test_run_list_summarises_result_and_gaps(tmp_path):
     store.worker.submit = MagicMock()
     run_id = store.create("o", "RELIANCE.NS", "NEUTRAL", "live")
     prov = {"sources": {"sentiment": {"status": "UNAVAILABLE"}, "supplementary": [{"name": "GDELT", "status": "unavailable"}, {"name": "RBI", "status": "ok"}]}}
-    with store.connect() as db:
-        db.execute("UPDATE research_runs SET status='COMPLETED',result=? WHERE id=?",
+    store.db.query("UPDATE research_runs SET status='COMPLETED',result=? WHERE id=?",
                    (encode({"verdict": {"recommendation": "NEUTRAL"}, "trading_proposal": {"direction": "HOLD"}, "provenance": prov}), run_id))
     store.emit(run_id, "run-completed", {})
     row = store.list("o")[0]
