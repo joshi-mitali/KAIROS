@@ -4,6 +4,8 @@ Package: `kairos/sources/`. Entry point: `collect_supplementary(symbol, company_
 
 Verified 17 Nov 2026 by live calls from this machine. Item counts below are for RELIANCE.NS / INFY.NS.
 
+News fallback (`kairos/pipeline/live_research.py`): Yahoo news is verified first (published within 7 days, URL returns 200); if fewer than 3 articles pass, `google_news_articles` tops up from Google News RSS India edition (`https://news.google.com/rss/search?q="<company>" when:7d&hl=en-IN&gl=IN&ceid=IN:en`), same 7-day window, deduplicated by title, one 6 s request, redirect links not followed (the 200 feed is the reachability check). Provenance `sources.news.source` is `YAHOO_FINANCE`, `GOOGLE_NEWS_RSS` or both joined by `+`.
+
 | id | Category | Consumed by | Endpoint actually used | Live status (17 Nov 2026) | Limits / terms |
 |---|---|---|---|---|---|
 | `nse_announcements` | disclosure | News, Fundamentals | `https://nsearchives.nseindia.com/content/RSS/{Online_announcements,Financial_Results,Corporate_action,Insider_Trading,Shareholding_Pattern}.xml` (docs page: nseindia.com/static/rss-feed; the `.in` host is not used) | HTTP 200, keyless, no cookies needed. Feeds hold only the latest ~20-30 entries and titles carry the company name only, so large caps are usually `empty` (RELIANCE 0, INFY 0). Online_announcements and Shareholding_Pattern returned 0 items today. Matching verified on a company present in the feed (Gammon India: 3 items). | Linked PDFs not extracted; item URL is often the generic NSE filings page. Name match is exact after stripping "Limited" etc. |

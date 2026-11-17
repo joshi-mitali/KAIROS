@@ -7,6 +7,7 @@ import hashlib
 import json
 import threading
 import time
+from urllib.parse import quote_plus
 from concurrent.futures import FIRST_EXCEPTION, ThreadPoolExecutor, wait
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
@@ -16,6 +17,7 @@ import requests
 import yfinance as yf
 from kairos.providers.yahoo import fetch_yahoo
 
+from kairos.sources._http import SourceError, get, parse_feed
 from kairos.trading.market import normalize_symbol
 from kairos.pipeline.refresh import classify_reddit_post
 from kairos.collectors.reddit_collector import fetch_reddit_evidence
@@ -53,6 +55,30 @@ def company_identity(symbol, provider):
     if not (name and currency):
         raise ValueError('Company name or currency is unavailable from Yahoo Finance. Retry later; nothing was guessed.')
     return {'longName':name,'currency':currency,'origin':origin}
+
+
+def google_news_articles(company,now,fetch=None,limit=3,exclude_titles=()):
+    """Fresh (<=7 days) Google News RSS (India edition) items for the company; [] on any failure. The 200 feed fetch is the
+    reachability check; redirect links are not followed. Bounded to one 6 s request."""
+    url='https://news.google.com/rss/search?q='+quote_plus(f'"{company}" when:7d')+'&hl=en-IN&gl=IN&ceid=IN:en'
+    fetch=fetch or get  # resolved at call time so tests can patch it
+    try:entries=parse_feed(fetch(url,timeout=6,retries=0).content)
+    except (SourceError,requests.RequestException):return []
+    seen={t.strip().lower() for t in exclude_titles}
+    out=[]
+    for e in entries:
+        link,title,published=e.get('link') or '',e.get('title') or '',e.get('published')
+        if not title or not published or not link.startswith(('http://','https://')):continue
+        published=published.astimezone(timezone.utc)
+        if published<now-timedelta(days=7) or published>now+timedelta(minutes=5):continue
+        if title.strip().lower() in seen:continue
+        seen.add(title.strip().lower())
+        headline,sep,publisher=title.rpartition(' - ')
+        if not sep or not headline:headline,publisher=title,'Google News'
+        out.append({'headline':headline,'summary':e.get('summary') or '','url':link,'datetime':published.isoformat(),
+                    'source':publisher.strip() or 'Google News','retrieved_at':now.isoformat()})
+        if len(out)>=limit:break
+    return out
 
 
 def refresh_research_evidence(ticker, data_dir, emit):
@@ -117,7 +143,8 @@ def refresh_research_evidence(ticker, data_dir, emit):
 
     def news_source():
         ev('evidence-refresh-started',{'source':'Yahoo Finance news','symbol':symbol})
-        news=fetch_yahoo('news',lambda:provider.get_news(count=10,tab='news'),valid=lambda items:bool(items))
+        try:news=fetch_yahoo('news',lambda:provider.get_news(count=10,tab='news'),valid=lambda items:bool(items))
+        except ValueError:news=[]  # Yahoo has no news at all: the Google fallback below may still fill in
         articles=[]
         for item in news:
             content=item.get('content',item)
@@ -134,9 +161,13 @@ def refresh_research_evidence(ticker, data_dir, emit):
             articles.append({'headline':title,'summary':content.get('summary',''),'url':url,'datetime':date,
                              'source':(content.get('provider') or {}).get('displayName','Yahoo Finance'),'retrieved_at':now.isoformat()})
             if len(articles)>=3:break
-        if not articles:raise ValueError('No fresh, reachable news articles were verified. No archived articles were substituted.')
+        yahoo_count=len(articles)
+        if yahoo_count<3:  # Yahoo coverage of Indian large caps is thin: top up from Google News RSS
+            articles+=google_news_articles(company,now,limit=3-yahoo_count,exclude_titles=[a['headline'] for a in articles])
+        if not articles:raise ValueError('No fresh, reachable news articles were verified. No archived articles were substituted. (Yahoo Finance and Google News RSS checked)')
         save('news','news_clean',articles)
-        provenance['sources']['news']={'source':'YAHOO_FINANCE','articles':len(articles),'latest_publication':max(a['datetime'] for a in articles)}
+        label='+'.join(n for n,c in (('YAHOO_FINANCE',yahoo_count),('GOOGLE_NEWS_RSS',len(articles)-yahoo_count)) if c)
+        provenance['sources']['news']={'source':label,'articles':len(articles),'latest_publication':max(a['datetime'] for a in articles)}
         ev('evidence-refreshed',{'source':'News','count':len(articles)})
         return 'ok',len(articles),None
 

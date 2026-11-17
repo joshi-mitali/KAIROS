@@ -97,6 +97,7 @@ def test_sentiment_analyst_reports_no_discussion(tmp_path):
 
 def _fake_run(monkeypatch, reddit_meta):
     import kairos.pipeline.live_research as lr
+    monkeypatch.setattr(lr, "google_news_articles", lambda *a, **k: [])  # no live Google News in tests
     frame = lambda: pd.DataFrame({"2025-03-31": [1.0]}, index=["Total Revenue"])
     fake = SimpleNamespace(income_stmt=pd.DataFrame({"2025-03-31": [100.0, 10.0]}, index=["Total Revenue", "Net Income"]),
                            balance_sheet=pd.DataFrame({"2025-03-31": [200.0, 50.0]}, index=["Total Assets", "Total Liabilities Net Minority Interest"]),
